@@ -1,0 +1,221 @@
+debuggroup conf 0.42s welcome to circos v0.62 25 Jun 2012
+debuggroup conf 0.42s loading configuration from file etc/circos.conf
+debuggroup conf 0.42s looking for conf file etc/circos.conf
+debuggroup conf 0.42s found conf file etc/circos.conf
+debuggroup summary 0.82s debug will appear for these features: summary,summary,timer
+debuggroup summary 0.83s parsing karyotype and organizing ideograms
+debuggroup summary 1.18s applying global and local scaling
+debuggroup summary 3.02s allocating image, colors and brushes
+debuggroup summary 4.17s drawing highlights and ideograms
+debuggroup summary 6.92s reading data and processing link id track_0 track from /home/martink/work/circos/svn/example/data/rn.bundle.txt
+debuggroup summary 7.94s reading data and processing link id track_1 track from /home/martink/work/circos/svn/example/data/mm.bundle.txt
+debuggroup summary 8.17s drawing links track_0 z 0
+debuggroup summary 9.05s drawing links track_1 z 0
+debuggroup summary 9.53s reading data and processing highlight track id track_0 from /home/martink/work/circos/svn/example/data/highlights.txt
+debuggroup summary 9.53s reading data and processing highlight track id track_1 from /home/martink/work/circos/svn/example/data/highlights.txt
+debuggroup summary 9.58s reading data and processing text track id track_2 from /home/martink/work/circos/svn/example/data/genes.txt
+debuggroup summary 10.28s reading data and processing heatmap track id track_3 from /home/martink/work/circos/svn/example/data/heatmap.hs.mm.20e6.txt
+debuggroup summary 10.33s reading data and processing heatmap track id track_4 from /home/martink/work/circos/svn/example/data/heatmap.hs.rn.20e6.txt
+debuggroup summary 10.36s reading data and processing heatmap track id track_5 from /home/martink/work/circos/svn/example/data/heatmap.hs.mm.10e6.txt
+debuggroup summary 10.40s reading data and processing heatmap track id track_6 from /home/martink/work/circos/svn/example/data/heatmap.hs.rn.10e6.txt
+debuggroup summary 10.47s reading data and processing heatmap track id track_7 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.1.txt
+debuggroup summary 10.52s reading data and processing heatmap track id track_8 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.2.txt
+debuggroup summary 10.57s reading data and processing heatmap track id track_9 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.3.txt
+debuggroup summary 10.64s reading data and processing heatmap track id track_10 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.4.txt
+debuggroup summary 10.69s reading data and processing heatmap track id track_11 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.5.txt
+debuggroup summary 10.72s reading data and processing heatmap track id track_12 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.6.txt
+debuggroup summary 10.76s reading data and processing heatmap track id track_13 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.7.txt
+debuggroup summary 10.79s reading data and processing heatmap track id track_14 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.8.txt
+debuggroup summary 10.83s reading data and processing heatmap track id track_15 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.9.txt
+debuggroup summary 10.86s reading data and processing heatmap track id track_16 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.10.txt
+debuggroup summary 10.89s reading data and processing heatmap track id track_17 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.11.txt
+debuggroup summary 10.93s reading data and processing heatmap track id track_18 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.12.txt
+debuggroup summary 10.96s reading data and processing heatmap track id track_19 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.13.txt
+debuggroup summary 11.00s reading data and processing heatmap track id track_20 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.14.txt
+debuggroup summary 11.03s reading data and processing heatmap track id track_21 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.15.txt
+debuggroup summary 11.06s reading data and processing heatmap track id track_22 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.16.txt
+debuggroup summary 11.10s reading data and processing heatmap track id track_23 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.17.txt
+debuggroup summary 11.13s reading data and processing heatmap track id track_24 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.18.txt
+debuggroup summary 11.17s reading data and processing heatmap track id track_25 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.19.txt
+debuggroup summary 11.20s reading data and processing heatmap track id track_26 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.20.txt
+debuggroup summary 11.23s reading data and processing heatmap track id track_27 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.21.txt
+debuggroup summary 11.27s reading data and processing heatmap track id track_28 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.22.txt
+debuggroup summary 11.30s reading data and processing heatmap track id track_29 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.1.txt
+debuggroup summary 11.35s reading data and processing heatmap track id track_30 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.2.txt
+debuggroup summary 11.41s reading data and processing heatmap track id track_31 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.3.txt
+debuggroup summary 11.46s reading data and processing heatmap track id track_32 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.4.txt
+debuggroup summary 11.51s reading data and processing heatmap track id track_33 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.5.txt
+debuggroup summary 11.55s reading data and processing heatmap track id track_34 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.6.txt
+debuggroup summary 11.60s reading data and processing heatmap track id track_35 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.7.txt
+debuggroup summary 11.64s reading data and processing heatmap track id track_36 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.8.txt
+debuggroup summary 11.69s reading data and processing heatmap track id track_37 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.9.txt
+debuggroup summary 11.73s reading data and processing heatmap track id track_38 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.10.txt
+debuggroup summary 11.78s reading data and processing heatmap track id track_39 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.11.txt
+debuggroup summary 11.82s reading data and processing heatmap track id track_40 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.12.txt
+debuggroup summary 11.87s reading data and processing heatmap track id track_41 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.13.txt
+debuggroup summary 11.91s reading data and processing heatmap track id track_42 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.14.txt
+debuggroup summary 11.96s reading data and processing heatmap track id track_43 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.15.txt
+debuggroup summary 12.00s reading data and processing heatmap track id track_44 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.16.txt
+debuggroup summary 12.08s reading data and processing heatmap track id track_45 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.17.txt
+debuggroup summary 12.14s reading data and processing heatmap track id track_46 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.18.txt
+debuggroup summary 12.18s reading data and processing heatmap track id track_47 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.19.txt
+debuggroup summary 12.23s reading data and processing heatmap track id track_48 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.20.txt
+debuggroup summary 12.28s reading data and processing heatmap track id track_49 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.21.txt
+debuggroup summary 12.36s reading data and processing heatmap track id track_50 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.22.txt
+debuggroup summary 12.41s reading data and processing scatter track id track_51 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.1.txt
+debuggroup summary 12.46s reading data and processing scatter track id track_52 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.2.txt
+debuggroup summary 12.51s reading data and processing scatter track id track_53 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.3.txt
+debuggroup summary 12.59s reading data and processing scatter track id track_54 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.4.txt
+debuggroup summary 12.67s reading data and processing scatter track id track_55 from /home/martink/work/circos/svn/example/data/heatmap.rn.5e6.hs.5.txt
+debuggroup summary 12.72s reading data and processing scatter track id track_56 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.1.txt
+debuggroup summary 12.76s reading data and processing scatter track id track_57 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.2.txt
+debuggroup summary 12.82s reading data and processing scatter track id track_58 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.3.txt
+debuggroup summary 12.85s reading data and processing scatter track id track_59 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.4.txt
+debuggroup summary 12.89s reading data and processing scatter track id track_60 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.5.txt
+debuggroup summary 12.92s reading data and processing scatter track id track_61 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.6.txt
+debuggroup summary 12.96s reading data and processing scatter track id track_62 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.7.txt
+debuggroup summary 12.99s reading data and processing scatter track id track_63 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.8.txt
+debuggroup summary 13.03s reading data and processing scatter track id track_64 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.9.txt
+debuggroup summary 13.07s reading data and processing scatter track id track_65 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.10.txt
+debuggroup summary 13.10s reading data and processing scatter track id track_66 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.11.txt
+debuggroup summary 13.14s reading data and processing scatter track id track_67 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.12.txt
+debuggroup summary 13.17s reading data and processing scatter track id track_68 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.13.txt
+debuggroup summary 13.21s reading data and processing scatter track id track_69 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.14.txt
+debuggroup summary 13.24s reading data and processing scatter track id track_70 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.15.txt
+debuggroup summary 13.28s reading data and processing scatter track id track_71 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.16.txt
+debuggroup summary 13.32s reading data and processing scatter track id track_72 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.17.txt
+debuggroup summary 13.35s reading data and processing scatter track id track_73 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.18.txt
+debuggroup summary 13.39s reading data and processing scatter track id track_74 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.19.txt
+debuggroup summary 13.42s reading data and processing scatter track id track_75 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.20.txt
+debuggroup summary 13.46s reading data and processing scatter track id track_76 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.21.txt
+debuggroup summary 13.49s reading data and processing scatter track id track_77 from /home/martink/work/circos/svn/example/data/heatmap.mm.5e6.hs.22.txt
+debuggroup summary 13.53s reading data and processing histogram track id track_78 from /home/martink/work/circos/svn/example/data/heatmap.hs.mm.20e6.txt
+debuggroup summary 13.62s reading data and processing scatter track id track_79 from /home/martink/work/circos/svn/example/data/heatmap.hs.mm.5e6.txt
+debuggroup summary 13.71s reading data and processing histogram track id track_80 from /home/martink/work/circos/svn/example/data/heatmap.hs.rn.20e6.txt
+debuggroup summary 13.80s reading data and processing scatter track id track_81 from /home/martink/work/circos/svn/example/data/heatmap.hs.rn.5e6.txt
+debuggroup summary 13.89s drawing highlight track z 0 highlights.txt 
+debuggroup summary 13.94s drawing highlight track z 0 highlights.txt 
+debuggroup summary 13.97s drawing text track z 0 genes.txt 
+debuggroup summary 13.97s placing text track data/genes.txt
+debuggroup summary 13.97s ... see progress with -debug_group text
+debuggroup summary 13.97s ... see placement summary with -debug_group textplace
+debuggroup summary 62.28s drawing heatmap track z 0 heatmap.hs.mm.20e6.txt 
+debuggroup summary 62.42s drawing heatmap track z 0 heatmap.hs.rn.20e6.txt 
+debuggroup summary 62.55s drawing heatmap track z 0 heatmap.hs.mm.10e6.txt 
+debuggroup summary 62.81s drawing heatmap track z 0 heatmap.hs.rn.10e6.txt 
+debuggroup summary 63.05s drawing heatmap track z 0 heatmap.mm.5e6.hs.1.txt 
+debuggroup summary 63.09s drawing heatmap track z 0 heatmap.mm.5e6.hs.2.txt 
+debuggroup summary 63.13s drawing heatmap track z 0 heatmap.mm.5e6.hs.3.txt 
+debuggroup summary 63.17s drawing heatmap track z 0 heatmap.mm.5e6.hs.4.txt 
+debuggroup summary 63.21s drawing heatmap track z 0 heatmap.mm.5e6.hs.5.txt 
+debuggroup summary 63.25s drawing heatmap track z 0 heatmap.mm.5e6.hs.6.txt 
+debuggroup summary 63.29s drawing heatmap track z 0 heatmap.mm.5e6.hs.7.txt 
+debuggroup summary 63.33s drawing heatmap track z 0 heatmap.mm.5e6.hs.8.txt 
+debuggroup summary 63.37s drawing heatmap track z 0 heatmap.mm.5e6.hs.9.txt 
+debuggroup summary 63.41s drawing heatmap track z 0 heatmap.mm.5e6.hs.10.txt 
+debuggroup summary 63.45s drawing heatmap track z 0 heatmap.mm.5e6.hs.11.txt 
+debuggroup summary 63.49s drawing heatmap track z 0 heatmap.mm.5e6.hs.12.txt 
+debuggroup summary 63.53s drawing heatmap track z 0 heatmap.mm.5e6.hs.13.txt 
+debuggroup summary 63.57s drawing heatmap track z 0 heatmap.mm.5e6.hs.14.txt 
+debuggroup summary 63.61s drawing heatmap track z 0 heatmap.mm.5e6.hs.15.txt 
+debuggroup summary 63.65s drawing heatmap track z 0 heatmap.mm.5e6.hs.16.txt 
+debuggroup summary 63.69s drawing heatmap track z 0 heatmap.mm.5e6.hs.17.txt 
+debuggroup summary 63.73s drawing heatmap track z 0 heatmap.mm.5e6.hs.18.txt 
+debuggroup summary 63.77s drawing heatmap track z 0 heatmap.mm.5e6.hs.19.txt 
+debuggroup summary 63.81s drawing heatmap track z 0 heatmap.mm.5e6.hs.20.txt 
+debuggroup summary 63.85s drawing heatmap track z 0 heatmap.mm.5e6.hs.21.txt 
+debuggroup summary 63.88s drawing heatmap track z 0 heatmap.mm.5e6.hs.22.txt 
+debuggroup summary 63.92s drawing heatmap track z 0 heatmap.rn.5e6.hs.1.txt 
+debuggroup summary 63.97s drawing heatmap track z 0 heatmap.rn.5e6.hs.2.txt 
+debuggroup summary 64.02s drawing heatmap track z 0 heatmap.rn.5e6.hs.3.txt 
+debuggroup summary 64.06s drawing heatmap track z 0 heatmap.rn.5e6.hs.4.txt 
+debuggroup summary 64.11s drawing heatmap track z 0 heatmap.rn.5e6.hs.5.txt 
+debuggroup summary 64.15s drawing heatmap track z 0 heatmap.rn.5e6.hs.6.txt 
+debuggroup summary 64.20s drawing heatmap track z 0 heatmap.rn.5e6.hs.7.txt 
+debuggroup summary 64.24s drawing heatmap track z 0 heatmap.rn.5e6.hs.8.txt 
+debuggroup summary 64.29s drawing heatmap track z 0 heatmap.rn.5e6.hs.9.txt 
+debuggroup summary 64.34s drawing heatmap track z 0 heatmap.rn.5e6.hs.10.txt 
+debuggroup summary 64.38s drawing heatmap track z 0 heatmap.rn.5e6.hs.11.txt 
+debuggroup summary 64.43s drawing heatmap track z 0 heatmap.rn.5e6.hs.12.txt 
+debuggroup summary 64.47s drawing heatmap track z 0 heatmap.rn.5e6.hs.13.txt 
+debuggroup summary 64.52s drawing heatmap track z 0 heatmap.rn.5e6.hs.14.txt 
+debuggroup summary 64.56s drawing heatmap track z 0 heatmap.rn.5e6.hs.15.txt 
+debuggroup summary 64.61s drawing heatmap track z 0 heatmap.rn.5e6.hs.16.txt 
+debuggroup summary 64.66s drawing heatmap track z 0 heatmap.rn.5e6.hs.17.txt 
+debuggroup summary 64.70s drawing heatmap track z 0 heatmap.rn.5e6.hs.18.txt 
+debuggroup summary 64.75s drawing heatmap track z 0 heatmap.rn.5e6.hs.19.txt 
+debuggroup summary 64.79s drawing heatmap track z 0 heatmap.rn.5e6.hs.20.txt 
+debuggroup summary 64.84s drawing heatmap track z 0 heatmap.rn.5e6.hs.21.txt 
+debuggroup summary 64.88s drawing heatmap track z 0 heatmap.rn.5e6.hs.22.txt 
+debuggroup summary 64.93s drawing scatter track z 0 heatmap.rn.5e6.hs.1.txt orient out
+debuggroup summary 64.97s drawing scatter track z 0 heatmap.rn.5e6.hs.2.txt orient out
+debuggroup summary 65.01s drawing scatter track z 0 heatmap.rn.5e6.hs.3.txt orient out
+debuggroup summary 65.06s drawing scatter track z 0 heatmap.rn.5e6.hs.4.txt orient out
+debuggroup summary 65.10s drawing scatter track z 0 heatmap.rn.5e6.hs.5.txt orient out
+debuggroup summary 65.14s drawing scatter track z 0 heatmap.mm.5e6.hs.1.txt orient out
+debuggroup summary 65.17s drawing scatter track z 0 heatmap.mm.5e6.hs.2.txt orient out
+debuggroup summary 65.19s drawing scatter track z 0 heatmap.mm.5e6.hs.3.txt orient out
+debuggroup summary 65.22s drawing scatter track z 0 heatmap.mm.5e6.hs.4.txt orient out
+debuggroup summary 65.24s drawing scatter track z 0 heatmap.mm.5e6.hs.5.txt orient out
+debuggroup summary 65.27s drawing scatter track z 0 heatmap.mm.5e6.hs.6.txt orient out
+debuggroup summary 65.29s drawing scatter track z 0 heatmap.mm.5e6.hs.7.txt orient out
+debuggroup summary 65.32s drawing scatter track z 0 heatmap.mm.5e6.hs.8.txt orient out
+debuggroup summary 65.34s drawing scatter track z 0 heatmap.mm.5e6.hs.9.txt orient out
+debuggroup summary 65.37s drawing scatter track z 0 heatmap.mm.5e6.hs.10.txt orient out
+debuggroup summary 65.39s drawing scatter track z 0 heatmap.mm.5e6.hs.11.txt orient out
+debuggroup summary 65.41s drawing scatter track z 0 heatmap.mm.5e6.hs.12.txt orient out
+debuggroup summary 65.44s drawing scatter track z 0 heatmap.mm.5e6.hs.13.txt orient out
+debuggroup summary 65.46s drawing scatter track z 0 heatmap.mm.5e6.hs.14.txt orient out
+debuggroup summary 65.49s drawing scatter track z 0 heatmap.mm.5e6.hs.15.txt orient out
+debuggroup summary 65.51s drawing scatter track z 0 heatmap.mm.5e6.hs.16.txt orient out
+debuggroup summary 65.54s drawing scatter track z 0 heatmap.mm.5e6.hs.17.txt orient out
+debuggroup summary 65.56s drawing scatter track z 0 heatmap.mm.5e6.hs.18.txt orient out
+debuggroup summary 65.59s drawing scatter track z 0 heatmap.mm.5e6.hs.19.txt orient out
+debuggroup summary 65.61s drawing scatter track z 0 heatmap.mm.5e6.hs.20.txt orient out
+debuggroup summary 65.63s drawing scatter track z 0 heatmap.mm.5e6.hs.21.txt orient out
+debuggroup summary 65.66s drawing scatter track z 0 heatmap.mm.5e6.hs.22.txt orient out
+debuggroup summary 65.68s drawing histogram track z 0 heatmap.hs.mm.20e6.txt orient out
+debuggroup summary 67.04s drawing scatter track z 0 heatmap.hs.mm.5e6.txt orient out
+debuggroup summary 67.43s drawing histogram track z 0 heatmap.hs.rn.20e6.txt orient in
+debuggroup summary 67.76s drawing scatter track z 0 heatmap.hs.rn.5e6.txt orient in
+debuggroup summary,output 68.12s generating output
+debuggroup summary,output 69.20s created PNG image ./circos.png (2411 kb)
+debuggroup summary,output 69.22s created SVG image ./circos.svg (2384 kb)
+debuggroup timer 69.22s report circos 68.799 s
+debuggroup timer 69.22s report color 0.958 s
+debuggroup timer 69.22s report colorcache 0.011 s
+debuggroup timer 69.22s report colordefinitions 0.415 s
+debuggroup timer 69.22s report colorfetch 0.171 s
+debuggroup timer 69.22s report colorlists 0.025 s
+debuggroup timer 69.22s report colorlookups 0.014 s
+debuggroup timer 69.22s report colortransparency 1.023 s
+debuggroup timer 69.22s report datarules 2.213 s
+debuggroup timer 69.22s report graphic_png_polygon 0.770 s
+debuggroup timer 69.22s report graphic_slice 2.346 s
+debuggroup timer 69.22s report graphic_slice_polygon_coord 0.446 s
+debuggroup timer 69.22s report graphic_slice_polygon_svg 0.802 s
+debuggroup timer 69.22s report graphic_slice_preprocess 0.207 s
+debuggroup timer 69.22s report highlights 0.000 s
+debuggroup timer 69.22s report ideograms_draw 2.745 s
+debuggroup timer 69.22s report ideograms_processing 0.022 s
+debuggroup timer 69.22s report ideograms_ticks_draw 2.129 s
+debuggroup timer 69.22s report ideograms_zoom 1.831 s
+debuggroup timer 69.22s report io 0.579 s
+debuggroup timer 69.22s report karyotype 0.328 s
+debuggroup timer 69.22s report parameter_seek 5.327 s
+debuggroup timer 69.22s report track_heatmap 1.851 s
+debuggroup timer 69.22s report track_highlight 0.059 s
+debuggroup timer 69.22s report track_histogram 0.548 s
+debuggroup timer 69.22s report track_preprocess 0.034 s
+debuggroup timer 69.22s report track_scatter 0.996 s
+debuggroup timer 69.22s report track_text_ashift 35.397 s
+debuggroup timer 69.22s report track_text_ashiftiter 17.057 s
+debuggroup timer 69.22s report track_text_draw 1.629 s
+debuggroup timer 69.22s report track_text_place 46.514 s
+debuggroup timer 69.22s report track_text_preashift 9.838 s
+debuggroup timer 69.22s report track_text_preprocess 0.559 s
+debuggroup timer 69.22s report track_text_refine 0.005 s
+debuggroup timer 69.22s report unitconvert 0.029 s
+debuggroup timer 69.22s report unitconvert_decision 0.002 s
+debuggroup timer 69.22s report unitconvert_delegate 0.009 s
+debuggroup timer 69.22s report unitparse 0.159 s

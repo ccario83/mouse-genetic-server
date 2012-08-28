@@ -1,4 +1,15 @@
+require 'sidekiq/web'
+
 RorWebsite::Application.routes.draw do
+
+  mount Sidekiq::Web => '/sidekiq'
+  
+  root :to => "uwf#index"
+  get "uwf/index"
+  post "uwf/submit"
+  
+  
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -54,5 +65,5 @@ RorWebsite::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
+  match ':controller(/:action(/:id))(.:format)'
 end

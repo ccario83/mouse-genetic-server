@@ -23,6 +23,14 @@ end
 
 gem 'jquery-rails', '2.0.2'
 
+gem 'jobber', '1.0.2', :path => 'lib/jobber/'
+gem 'redis', '2.2.2'
+gem 'simple_form'
+
+gem 'sidekiq'
+gem 'sinatra', '1.3.0', :require => nil
+gem 'slim'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

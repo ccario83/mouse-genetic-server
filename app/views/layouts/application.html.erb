@@ -1,14 +1,54 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>RorWebsite</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+		<title>BerndtLab | <%= @page_title %></title>
+
+		<!-- Style Sheets -->
+		<%= stylesheet_link_tag('bootstrap/css/bootstrap') %>
+		<%= stylesheet_link_tag('bootstrap/css/bootstrap-responsive.min') %>
+		<%= stylesheet_link_tag('main') %>
+	
+		<!-- JS/jQuery libraries -->
+		<%= javascript_include_tag('jquery-1.7.min') %>
+		<%= javascript_include_tag('jquery-ui-1.8.16') %>
+	</head>
+
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="#">Unified Workflow</a>
+					<div class="btn-group pull-right">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							<i class="icon-user"></i> Anonymous
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><%= link_to('Profile', '/') %></li>
+							<li class="divider"></li>
+							<li><a href="#">Sign Out</a></li>
+						</ul>
+					</div>
+					<div class="nav-collapse">
+						<ul class="nav">
+							<li><%= link_to('Home', '/') %></li>
+							<li><%= link_to('About', '/') %></li>
+							<li><%= link_to('Contact','/') %></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
 
 <%= yield %>
-
-</body>
+	
+	</body>
 </html>

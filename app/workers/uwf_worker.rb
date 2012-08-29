@@ -2,45 +2,47 @@ require 'jobber'
 require 'erb'
 
 class UwfWorker
-    EMMA_path = File.join(Rails.root, 'lib/EMMA/')
-    CIRCOS_path = File.join(Rails.root, 'lib/Circos/')
-    
+
     include Sidekiq::Worker
     sidekiq_options queue: 'UWF'
     sidekiq_options retry: false
     
-    def perform(job_ID)
-        job = restore_job(job_ID)
-        pheno_file = job.get_path(job.tracked_vars['@pheno_file'])
-        emma_type = job.tracked_vars['@emma_type']
-        snp_set = job.tracked_vars['@snp_set']
+    def perform(job_ID, pheno_file, emma_type, snp_set, chromosome = -1, start_position = -1, stop_position = -1)
 
-        emma_result_file = job.location + emma_type + '_results.txt'
-        chromosome = -1
-        start_position = -1
-        stop_position = -1
+        job_location    = File.join(DATA_path, job_ID)
 
-        # Create the berndt Emma config file
-        message = ERB.new(File.read(File.join(Rails.root,'app/views/uwf/BE_conf_template.erb')))
-        File.open(File.join(job.location, "BE.conf"), "w") { |f| f.write(message.result(binding)) }
-
-        # Create the berndt Circos config file
-        message = ERB.new(File.read(File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')))
-        File.open(File.join(job.location, "CG.conf"), "w") { |f| f.write(message.result(binding)) }
+        ## ----------- Run EMMA -----------
+        $redis.sadd("#{job_ID}:progress:log","Configuring EMMA")
+        config_template = File.join(Rails.root,'app/views/uwf/BE_conf_template.erb')
+        config_file     = File.join(job_location, "BE.conf")
+        
+        # Create a Berndt Emma config file with run parameters
+        message = ERB.new(File.read(config_template))
+        File.open(config_file, "w") { |f| f.write(message.result(binding)) }
 
         # Run the EMMA Job
-        print "UWF is starting an emma job [#{job.ID}]"
-        cmd = "python #{EMMA_path}BerndtEmma.py -c #{job.location}/BE.conf -p #{job.location}"
+        $redis.sadd("#{job_ID}:progress:log","Running EMMA")
+        cmd = "python #{EMMA_path}BerndtEmma.py -c #{config_file} -p #{job_location}"
         system(cmd)
-        #puts cmd
+        
+        
+        ## ----------- Run Circos -----------
+        $redis.sadd("#{job_ID}:progress:log","Configuring Circos")
+        config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
+        config_file     = File.join(job_location, "CG.conf")
+        
+        emma_result_file = job_location + emma_type + '_results.txt'
+        
+        # Create the Circos config file with run parameters
+        message = ERB.new(File.read(config_template))
+        File.open(config_file, "w") { |f| f.write(message.result(binding)) }
 
         # Run the Circos Plot Generator
-        print "UWF is starting an circos job [#{job.ID}]"
-        cmd = "python #{CIRCOS_path}circos_generator.py -g  #{job.location}/CG.conf -p #{job.location}"
+        $redis.sadd("#{job_ID}:progress:log","Running Circos")
+        cmd = "python #{CIRCOS_path}circos_generator.py -g  #{config_file} -p #{job_location}"
         system(cmd)
-        #puts cmd
         
         # All done!
-
+        $redis.set("#{job_ID}:finished", true)
     end
 end

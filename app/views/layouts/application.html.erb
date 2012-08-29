@@ -7,13 +7,14 @@
 		<title>BerndtLab | <%= @page_title %></title>
 
 		<!-- Style Sheets -->
-		<%= stylesheet_link_tag('bootstrap/css/bootstrap') %>
-		<%= stylesheet_link_tag('bootstrap/css/bootstrap-responsive.min') %>
+		<%= stylesheet_link_tag('bootstrap') %>
+		<%= stylesheet_link_tag('bootstrap-responsive.min') %>
 		<%= stylesheet_link_tag('main') %>
 	
 		<!-- JS/jQuery libraries -->
 		<%= javascript_include_tag('jquery-1.7.min') %>
 		<%= javascript_include_tag('jquery-ui-1.8.16') %>
+		<%= javascript_include_tag('bootstrap') %>
 	</head>
 
 	<body>
@@ -25,10 +26,10 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</a>
-					<a class="brand" href="#">Unified Workflow</a>
+					<a class="brand" href="#">Mouse Genetics Server</a>
 					<div class="btn-group pull-right">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<i class="icon-user"></i> Anonymous
+							<i class="icon-user"></i> Clint Cario
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
@@ -48,7 +49,32 @@
 			</div>
 		</div>
 
-<%= yield %>
+		<div class="container-fluid">
+			<div class="row-fluid">
+			
+				<!-- Left Panel -->
+				<div class="span2 well">
+					<%= render(:partial => "jobs_panel") %>
+				</div>
+				
+				<!-- Center Panel-->
+				<div class="span8">
+					<%= yield %>
+				</div>
+				
+				<!-- Right Panel -->
+				<div class="span2 well">
+					<%= render(:partial => "user_panel") %>
+				</div>
+					
+			</div>
+
+			<hr>
+			<footer>
+				<p>(c) 2012 University of Pittsburgh, Shapiro Group, Berndt Lab</p>
+			</footer>
+			
+		</div> <!-- /container -->
 	
 	</body>
 </html>

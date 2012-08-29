@@ -1,7 +1,7 @@
 PATH
   remote: lib/jobber/
   specs:
-    jobber (1.0.2)
+    jobber (1.0.3)
 
 GEM
   remote: https://rubygems.org/
@@ -133,7 +133,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
-  jobber (= 1.0.2)!
+  jobber (= 1.0.3)!
   jquery-rails (= 2.0.2)
   rails (= 3.2.3)
   redis (= 2.2.2)

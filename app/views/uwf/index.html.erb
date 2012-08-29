@@ -1,93 +1,49 @@
 <% @page_title = "Unified Workflow Submit" %>
-		<div class="container-fluid">
-			<div class="row-fluid">
-				<!-- Left Panel -->
-				<div class="span2 well">
-					<%= image_tag('matt.jpg')%>
-				</div>
-				<!-- Center Panel-->
-				<div class="span8">
-					<div class="row span12 well">
-						<h1> Local EMMA/EMMAX/GEMMA Server</h1>
-					</div>
-					<div class="row span10">
-						<b> Description </b><br />
-						This tool runs the <a style="text-decoration:underline;" href="http://mouse.cs.ucla.edu/emma/">UCLA EMMA</a>,  
-						<a style="text-decoration:underline;" href="http://genetics.cs.ucla.edu/emmax/">UCLA EMMAX</a>, or <a style="text-decoration:underline;" href="http://stephenslab.uchicago.edu/software.html">
-						University of Chicago GEMMA </a> algorithm on our Local Server with phenotype data from multiple mouse strains. EMMA, EMMAX, and GEMMA are efficient mixed model algorithms that determine the 
-						strength of associations between SNP genotypes and phenotype variations across different strains. The EMMAX algorithm approximates EMMA but is much faster and can handle larger SNP datasets. 
-						GEMMA produces results as accurate as EMMA but as quickly as EMMAX and can also handle larger SNP datasets. Please refer to the algorithm developer's publications and 
-						<a style="text-decoration:underline;" href="/research/links">websites</a> for more infomation. A guide to citing can be found <a style="text-decoration:underline;" href="/citing">here</a>.<br/><br/>
-		
-						<b> Instructions </b><br />
-						Please format your tab-delimited phenotype file with the follwing columns: 'Strain', 'Animal_Id', 'Sex' ('Male', 'Female', or 'NA'), and a fourth column 
-						including your phenotype. Rows can be individual animal data or strain means. As guidance please see a template file 
-						<a style="text-decoration:underline;" href="/media/Sample_EMMA.xls">here</a>. <i>Recommended:</i> Fill out this template, save it as a tab-delimited file,
-						and upload it to this form. A list of available strains and their spellings can be found 
-						<a style="text-decoration:underline;" href="/media/strain_names.xls">here</a>.<br /><br />
-						<i>Formatted Phenotype File:</i> Upload the phenotype file. Note: Use format as described above. <br />
-						<i>EMMA Algorithm:</i> Choose the desired algorithm. <br />
-						<i>SNP Dataset:</i> Choose from several SNP panels.
-						<hr/><br/>
+<div class="row span12 well">
+					<h3><center>Submit a New Job</center></h3>
 					</div>
 
-					<div class="row span10">
-					
+					<div class="row span12" style="margin-left:0px">
 						<%= simple_form_for('uwf_submit', :url => { :action => 'create' }, :html => { :class => 'form-horizontal' } ) do |f| %>
-							<fieldset>
-								<%= f.input :pheno_file, :as => :file, :label => 'Formatted Phenotype File', :hint => 'Please select the Phenotype file to upload here.'%>
-								<%= f.input :emma_type, :collection => [ 'emma', 'emmax', 'gemma' ], :selected => 'emmax', :label => 'EMMA Algorithm' %>
-								<%= f.input :snp_set, :collection => [ '4M', '65M'], :selected => '4M', :label => 'SNP Dataset' %>
-								
-								<div class="form-actions">
-									<%= f.submit 'Submit', :class => 'btn btn-primary' %>
-								</div>
+							<fieldset class="offset2">
+								<%= f.input :pheno_file, :as => :file, :label => 'Phenotype File', :required => false%>
+								<%= f.input :emma_type, :collection => [ 'emma', 'emmax', 'gemma' ], :selected => 'emmax', :label => 'GWA Algorithm', :required => false%>
+								<%= f.input :snp_set, :collection => [ '4M', '65M'], :selected => '4M', :label => 'SNP Dataset', :required => false %>
 							</fieldset>
-						<% end %>
-					<!--
-						<form enctype="multipart/form-data" method= "post" action="." class="form-horizontal" id="form">
-								<fieldset>
-								<div class="control-group">
-									<label class="control-label" for="pheno_file">Formatted Phenotype File</label>
-									<div class="controls">
-										<input class="input-file" name="pheno_file" id="pheno_file" type="file" />
-										<p class="help-block">Please select the Phenotype file to upload here.</p>
-									</div>
-								</div>
-							
-								<div class="control-group">
-									<label class="control-label" for="emma_type">EMMA Algorithm</label>
-									<div class="controls">
-										<select name="emma_type" id="emma_type">
-											<option value="emma">EMMA</option>
-											<option value="emmax" selected="True">EMMAX</option>
-											<option value="gemma">GEMMA</option>
-										</select>
-									</div>
-								</div>
-							
-								<div class="control-group">
-									<label class="control-label" for="snp_set">SNP Dataset</label>
-									<div class="controls">
-										<select name="snp_set" id="snp_set">
-											<option>4M</option>
-											<option>65M</option>
-										</select>
-									</div>
-								</div>
-								
 								<div class="form-actions">
-									<button class="btn btn-primary" type="submit">Submit</button>
+									<%= f.submit 'Submit', :class => 'btn btn-primary offset3' %>
+									<a href="#description" role="button" class="btn" data-toggle="modal">Help</a>
 								</div>
-								</fieldset>
-						</form>
-					-->
+						<% end %>
 					</div>
-				</div>
-			</div>
 
-			<hr>
-			<footer>
-				<p>(c) 2012 University of Pittsburgh, Shapiro Group, Berndt Lab</p>
-			</footer>
-		</div> <!-- /container -->
+					
+					<div class="modal hide fade in" id="description" tabindex="-1" role="dialog" aria-labelledby="descriptionLabel" aria-hidden="true">
+						<div class="modal-header"> 
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+							<h3 id = "descriptionLabel"> Description </h3> 
+						</div>
+						<div class="modal-body">
+							This tool runs the <a style="text-decoration:underline;" href="http://mouse.cs.ucla.edu/emma/">UCLA EMMA</a>,  
+							<a style="text-decoration:underline;" href="http://genetics.cs.ucla.edu/emmax/">UCLA EMMAX</a>, or <a style="text-decoration:underline;" href="http://stephenslab.uchicago.edu/software.html">
+							University of Chicago GEMMA </a> algorithm on our Local Server with phenotype data from multiple mouse strains. EMMA, EMMAX, and GEMMA are efficient mixed model algorithms that determine the 
+							strength of associations between SNP genotypes and phenotype variations across different strains. The EMMAX algorithm approximates EMMA but is much faster and can handle larger SNP datasets. 
+							GEMMA produces results as accurate as EMMA but as quickly as EMMAX and can also handle larger SNP datasets. Please refer to the algorithm developer's publications and 
+							<a style="text-decoration:underline;" href="/research/links">websites</a> for more infomation. A guide to citing can be found <a style="text-decoration:underline;" href="/citing">here</a>.<br/><br/>
+		
+							<b> Instructions </b><br />
+							Please format your tab-delimited phenotype file with the follwing columns: 'Strain', 'Animal_Id', 'Sex' ('Male', 'Female', or 'NA'), and a fourth column 
+							including your phenotype. Rows can be individual animal data or strain means. As guidance please see a template file 
+							<a style="text-decoration:underline;" href="/media/Sample_EMMA.xls">here</a>. <i>Recommended:</i> Fill out this template, save it as a tab-delimited file,
+							and upload it to this form. A list of available strains and their spellings can be found 
+							<a style="text-decoration:underline;" href="/media/strain_names.xls">here</a>.<br /><br />
+							<i>Phenotype File:</i> Upload the phenotype file. Note: Use format as described above. <br />
+							<i>GWA Algorithm:</i> Choose the desired algorithm. <br />
+							<i>SNP Dataset:</i> Choose from several SNP panels.
+							<hr/><br/>
+						</div>
+						<div class="modal-footer">
+							<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+						</div>
+					</div>
+

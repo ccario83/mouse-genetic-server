@@ -12,5 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require twitter/bootstrap
 //= require_tree .
 //  ALL JAVASCRIPT IS LOADED EXPLICITLY IN THE application.html.erb file 20120822 CC

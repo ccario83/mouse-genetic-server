@@ -29,8 +29,9 @@ class Job
 
 
     def process_uploaded_file(source)
-        @name = source.original_filename
-        File.open(File.join(@location, @name), "wb") { |f| f.write(source.read) }
+        @name = File.join(@location, source.original_filename)
+        File.open(@name, "wb") { |f| f.write(source.read) }
+        return @name
     end
 
 

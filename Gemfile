@@ -23,7 +23,7 @@ end
 
 gem 'jquery-rails', '2.0.2'
 
-gem 'jobber', '1.0.2', :path => 'lib/jobber/'
+gem 'jobber', '1.0.3', :path => 'lib/jobber/'
 gem 'redis', '2.2.2'
 gem 'simple_form'
 

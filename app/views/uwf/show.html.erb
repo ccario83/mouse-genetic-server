@@ -1,0 +1,16 @@
+<% @page_title = "Unified Workflow Results" %>
+<%= javascript_include_tag('job_progress') %>
+					<script type="text/javascript"> window.job_id = '<%= @job_id %>';</script>
+
+					<div class="row span12 well">
+						<% if @ready %>
+							<h3>Job Status: Finished</h3>
+							<%= image_tag('loadinfo.gif')%>
+						<% else %>
+							<h3>Job Status: Running...</h3>
+							<%= image_tag('loadinfo.gif', :style => 'float:left; padding: 10px;') %>
+							<h5 style="padding: 10px;"> Still processing, please wait...</h5>
+							<div id="progress_log_div"></div>
+						<% end %>
+					</div>
+

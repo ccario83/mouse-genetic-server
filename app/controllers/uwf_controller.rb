@@ -25,9 +25,9 @@ class UwfController < ApplicationController
     job.track_var('@snp_set', binding)
     job.save()
     
-    $redis.sadd("#{job.ID}:progress:log","Started")
-    UwfWorker.perform_async(job.ID, @pheno_file, @emma_type, @snp_set)
     # Use sidekiq to start the job
+    $redis.sadd("#{job.ID}:progress:log","started")
+    UwfWorker.perform_async(job.ID, @pheno_file, @emma_type, @snp_set)
     
     redirect_to(:action => "show/#{job.ID}")
   end

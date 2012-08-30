@@ -190,7 +190,7 @@ for section in sections:
         for rule_no in range(1,10):
             rule = {'condition':              '_VALUE_ >= 9' if rule_no==9 else '_VALUE_ <= %d'%(rule_no), 
                     'color':                  'spectral-9-div-%d'%(10-rule_no),
-                    'glyph_size':             rule_no if rule_no>3 else 3}
+                    'glyph_size':             rule_no if rule_no>7 else 6}
             plot['rules'].append(rule)
         plots.append(plot)
     if section == 'VEP_track':

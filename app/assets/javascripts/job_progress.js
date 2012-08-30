@@ -24,8 +24,7 @@ function write_progress(progress_log)
 	$('#progress_log_div').empty()
 	for(var i=0; i<progress_log.length; i++)
 	{
-		$('#progress_log_div').append(progress_log[i]);
-		$('#progress_log_div').append("<br/>");
+		$('#'+progress_log[i]).removeClass('incomplete').addClass('complete');
 	}
 	return;
 
@@ -33,6 +32,7 @@ function write_progress(progress_log)
 
 
 $(document).ready(function(){
+	check_progress();
 	// Keep polling the server for new markers
 	timerID = setInterval('check_progress()', 1500);
 });

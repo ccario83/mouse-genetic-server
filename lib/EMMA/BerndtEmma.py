@@ -25,6 +25,8 @@
 #  2012 04 17 --    Fixed bug that appended snp_set to geno.indir each time run() was called
 #  2012 04 25 --    Changed just_parse option in gemma to only parse for 65M
 #  2012 07 31 --    Added support to run from the command line with a config file
+#  2012 08 30 --    Added redis support for logging
+#  2012 08 30 --    Removed BEerror, replaced with write_error and sys.exit(1)
 #===============================================================================
 
 import sys              # for various system functions
@@ -34,16 +36,10 @@ from decimal import *   # For the progress bar
 import subprocess       # To call the emma or emmax scripts
 import shutil           # To be able to move emma-kin kinship matricies
 import tarfile          # To compress final results
+import redis            # To communicate back to ruby on rails
 #import rpy2.robjects as robjects    # To run R code (DEPRECIATED due to R version conflict with stringr)
 # Set decimal precision to 6
 getcontext().prec = 6
-
-
-class BEerror(Exception):
-    def __init__(self, value):
-        self.value = value
-        #sys.stderr.write('\n'+str(value))
-        sys.exit(1)
 
 
 class EmmaRunner(object):
@@ -52,10 +48,10 @@ class EmmaRunner(object):
     snp_strain_names = None
     official_name_map = None
     snp_database_dir = '/raid/Genotype Data/'
-    emma_code_dir = '/raid/WWW/website/backends/EMMA/'
-    emmax_code_dir = '/raid/WWW/website/backends/EMMA/'
-    strain_names_dir = '/raid/WWW/website/backends/EMMA/'
-    official_names_dir = '/raid/WWW/website/backends/EMMA/'
+    emma_code_dir = '/raid/WWW/ror_website/lib/EMMA/'
+    emmax_code_dir = '/raid/WWW/ror_website/lib/EMMA/'
+    strain_names_dir = '/raid/WWW/ror_website/lib/EMMA/'
+    official_names_dir = '/raid/WWW/ror_website/lib/EMMA/'
     # FOR DEVELOPMENT
     #snp_strain_names = None
     #official_name_map = None
@@ -89,6 +85,9 @@ class EmmaRunner(object):
         self._chosen_snp_set = None
         self._log_file = None
         self._error_file = None
+        self._redis_log = None
+        self._redis_error = None
+        self._redis_channel = None
         EmmaRunner.snp_strain_names = self._load_snp_strain_names(EmmaRunner.strain_names_dir+'snp_dataset_strain_names.txt')
         EmmaRunner.official_name_map = self._load_official_name_map(EmmaRunner.official_names_dir+'official_names.txt')
 
@@ -98,27 +97,43 @@ class EmmaRunner(object):
     def set_error_file(self, infile):
         self._error_file = infile
 
+    def set_redis_log(self, job_id):
+        if self._redis_channel == None:
+            self._redis_channel = redis.StrictRedis(host='localhost',port=6379,db=0)
+        self._redis_log = "%s:progress:log" % job_id
+
+    def set_redis_error(self, job_id):
+        if self._redis_channel == None:
+            self._redis_channel = redis.StrictRedis(host='localhost',port=6379,db=0)
+        self._redis_error = "%s:progress:errors" % job_id
+
     def write_log(self, entry):
         try:
-            if self._log_file is None:
-                print entry
-            else:
+            if not self._log_file is None:
                 log_ofh = open(self._log_file, 'a')
                 log_ofh.write(entry+'\n')
                 log_ofh.close()
+            if not self._redis_log is None:
+                self._redis_channel.sadd(self._redis_log, entry)
+            if self._log_file is None and self._redis_log is None:
+                print entry
         except:
-            BEerror("Error writing log entry for BerndtEmma")
+            print "Error writing log entry for BerndtEmma"
+            sys.exit(1)
     
     def write_error(self, entry):
         try:
-            if self._error_file is None:
-                print entry
-            else:
+            if not self._error_file is None:
                 error_ofh = open(self._error_file, 'a')
                 error_ofh.write(entry+'\n')
                 error_ofh.close()
+            if not self._redis_error is None:
+                self._redis_channel.sadd(self._redis_error, entry)
+            if self._error_file is None and self._redis_error is None:
+                print entry
         except:
-            BEerror("Error writing error entry for BerndtEmma")
+            print "Error writing error entry for BerndtEmma"
+            sys.exit(1)
     
     def _load_snp_strain_names(self, infile):
         '''
@@ -135,7 +150,8 @@ class EmmaRunner(object):
             dr = csv.DictReader(fh, delimiter='\t')
         except:
             self.write_error("Error loading the snp dataset strain name file")
-            BEerror("Error loading the snp dataset strain name file")
+            "Error loading the snp dataset strain name file"
+            sys.exit(1)
         header = dr.fieldnames
         strains = {}
         strains = dict([ (item, []) for item in header ])
@@ -167,7 +183,7 @@ class EmmaRunner(object):
             name_map = dict([ (line['exception'],{'official':line['official'], 'source':line['source']}) for line in dr ])
         except:
             self.write_error("Error loading the official strain name")
-            BEerror("Error loading the official strain name")
+            sys.exit(1)
             
         # === This next bit of code verifies the intregity of the official list ===
         official_names = [ entry['official'] for entry in name_map.values() if entry['source']=='official' ]
@@ -176,12 +192,12 @@ class EmmaRunner(object):
         for name in official_names:
             if name_map[name]['official'] != name:
                 self.write_error("At least one official name isn't properly corrected (ie. it doesn't map to itself). Please check that all names in the official column are correct.")
-                BEerror("At least one official name isn't properly corrected (ie. it doesn't map to itself). Please check that all names in the official column are correct.")
+                sys.exit(1)
         
         # Verify that the official list only has unique entries
         if not len(official_names) == len(self._find_uniq(official_names)):
             self.write_error("There are multiple official names for at least one name")
-            BEerror("There are multiple official names for at least one name")
+            sys.exit(1)
             
         # Verify that of every official mapping can be remapped
         for name in official_column:
@@ -189,7 +205,7 @@ class EmmaRunner(object):
                 name_map[name]['official']
             except:
                 self.write_error("At least one official name mapping does not match an official name")
-                BEerror("At least one official name mapping does not match an official name")
+                sys.exit(1)
         
         return name_map
     
@@ -224,7 +240,7 @@ class EmmaRunner(object):
         # If any unknown names were encountered, raise an exception
         if error_flag:
             self.write_error("Please use only strain names found on the <a href='http://www.berndtlab.pitt.edu/media/strain_names.xls'>official list</a> and resubmit your job")
-            BEerror("Please use only strain names found on the <a href='http://www.berndtlab.pitt.edu/media/strain_names.xls'>official list</a> and resubmit your job")
+            sys.exit(1)
         
         # If a single name was sent, also return just a single name, otherwise return a list
         if singleton_flag:
@@ -253,16 +269,16 @@ class EmmaRunner(object):
             dr = csv.DictReader(fh, delimiter='\t')
         except:
             self.write_error("There was a problem reading your phenotype file, please see the example and resubmit!")
-            BEerror("There was a problem reading your phenotype file, please see the example and resubmit!")
+            sys.exit(1)
         try:
             header = dr.fieldnames
         except:
             self.write_error("There was an error with the phenotype header line, please check it and resubmit!")
-            BEerror("There was an error with the phenotype header line, please check it and resubmit!")
+            sys.exit(1)
         # Check that the header looks ok
         if (['Strain', 'Animal_Id', 'Sex'] != header[0:3]) or (len(header)!=4):
             self.write_error("Expecting 'Strain', 'Animal_Id', 'Sex', and a phenotype name for column headers")
-            BEerror("Expecting 'Strain', 'Animal_Id', 'Sex', and a phenotype name for column headers")
+            sys.exit(1)
         # Get the phenotype name from 4th column and read the table
         self.phenotype = header[3]
         # Load the data into the raw phenotype object
@@ -274,20 +290,20 @@ class EmmaRunner(object):
         # Check that the Animal_Id is unique
         if not self._is_uniq(self._get_column(self.raw_phenos, 'Animal_Id')):
             self.write_error("Expecting unique Animal Id's")
-            BEerror("Expecting unique Animal Id's")
+            sys.exit(1)
         # Check that the sex is classified as either MALE, FEMALE, or NA (case insensitive)
         if not self._is_subset(self._get_column(self.raw_phenos, 'Sex'), ['Male','Female','NA'], case_sensitive=False):
             #print self._find_set_difference(self._get_column(self.raw_phenos, 'Sex'), ['Male','Female','NA'])
             self.write_error("Expecting 'Male', 'Female', or 'NA' for sex")
-            BEerror("Expecting 'Male', 'Female', or 'NA' for sex")
+            sys.exit(1)
         # Check that the phenotype values are all float coercible      
         try:
             [ float(val) for val in self._get_column(self.raw_phenos, header[3]) ]
         except:
             self.write_error("Phenotype values should float coercible (ie. a number)")
-            BEerror("Phenotype values should float coercible (ie. a number)")
+            sys.exit(1)
         if self.verbose:
-            self.write_log("The phenotype file was successfully loaded.")
+            self.write_log("phenos-read")
     
     
     def process_phenotypes(self, snp_set, sex_subset='NA'):
@@ -308,17 +324,17 @@ class EmmaRunner(object):
             self.geno_strains = self._lookup_official_names(EmmaRunner.snp_strain_names[snp_set])
         except:
             self.write_error("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
-            BEerror("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
+            sys.exit(1)
         # Verify that the correct subset is specified
         if not self._is_subset([sex_subset], ['Male','Female','NA'], case_sensitive=False):
             #print "Invalid sex specification(s):"
             #print self._find_set_difference(sex_subset, ['Male','Female','NA'])
             self.write_error("To subset by sex, please specify either Male, Female, or NA (to ignore sex/include both)")
-            BEerror("To subset by sex, please specify either Male, Female, or NA (to ignore sex/include both)")
+            sys.exit(1)
         # Make sure that snp_set is valid
         if not snp_set in EmmaRunner.snp_strain_names.keys():
             self.write_error("Please choose a valid SNP set for snp_set")
-            BEerror("Please choose a valid SNP set for snp_set")
+            sys.exit(1)
         
         # NOTE: phenotype strains are checked against the genotype strain names after sex filtering and multiple animal averaging occurs
         
@@ -358,7 +374,7 @@ class EmmaRunner(object):
         self._phenos_were_processed = True
         self._chosen_snp_set = snp_set
         if self.verbose:
-            self.write_log("The phenotype data was successfully processed.")
+            self.write_log("phenos-processed")
     
     
     def generate_genotype_files(self, snp_set, outdir=None):
@@ -389,17 +405,17 @@ class EmmaRunner(object):
         if not outdir:
             outdir = snp_database_dir
             #self.write_error("You must specify where to save your genotype files with outdir when calling generate_genotype_files.")
-            #BEerror("You must specify where to save your genotype files with outdir when calling generate_genotype_files.")
+            #sys.exit(1)
         # Get a list of official strains names for just this snp_set
         try:
             self.geno_strains = self._lookup_official_names(EmmaRunner.snp_strain_names[snp_set])
         except:
             self.write_error("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
-            BEerror("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
+            sys.exit(1)
         # Make sure that snp_set is valid
         if not snp_set in EmmaRunner.snp_strain_names.keys():
             self.write_error("Please choose a valid SNP set for snp_set")
-            BEerror("Please choose a valid SNP set for snp_set")
+            sys.exit(1)
         
         # Attempt to open file handles (file size is in bytes as found with wc --bytes file)
         try:
@@ -439,10 +455,10 @@ class EmmaRunner(object):
                 emmaX_ofh  = open(outdir + '7.9M_for_emmax.tped', 'w')
             else:
                 self.write_error("The requested snp set's genotype file was not found!")
-                BEerror("The requested snp set's genotype file was not found!")
+                sys.exit(1)
         except:
             self.write_error("There was an error opening an input or output file in generate_genotype_files.")
-            BEerror("There was an error opening an input or output file in generate_genotype_files.")
+            sys.exit(1)
         
         # The reader for the genotype file
         geno_r = csv.reader(geno_ifh, delimiter ='\t')
@@ -459,14 +475,13 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Throw away the description line
             geno_r.next()
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 132 thousand SNP genotype files for emma and emmaX ... ")
                 print "Generating 132 thousand SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file
             for line in geno_r:
@@ -514,12 +529,11 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 4 million SNP genotype files for emma and emmaX ... ")
                 print "Generating 4 million SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file            
             for line in geno_r:
@@ -567,12 +581,11 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 65 million SNP genotype files for emma and emmaX ... ")
                 print "Generating 65 million SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file
             for line in geno_r:
@@ -625,12 +638,11 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 12 million SNP genotype files for emma and emmaX ... ")
                 print "Generating 12 million SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file
             for line in geno_r:
@@ -683,12 +695,11 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 8 million SNP genotype files for emma and emmaX ... ")
                 print "Generating 8 million SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file            
             for line in geno_r:
@@ -737,12 +748,11 @@ class EmmaRunner(object):
             if not len(self._find_set_difference(self.geno_strains, self._lookup_official_names(header))) == 0:
                 #print header, self.geno_strains
                 self.write_error("The genotype file does not appear to have the expected strain names")
-                BEerror("The genotype file does not appear to have the expected strain names")
+                sys.exit(1)
             # Write the strains as headers to the emma file
             emma_w.writerow(self.geno_strains)
             
             if self.verbose:
-                self.write_log("Generating 7.9 million SNP genotype files for emma and emmaX ... ")
                 print "Generating 7.9 million SNP genotype files for emma and emmaX ... "
             # parse each line in the genotype file            
             for line in geno_r:
@@ -798,7 +808,7 @@ class EmmaRunner(object):
         
         self._genos_were_processed = True
         if self.verbose:
-            self.write_log("Genotype data was successfully processed.")
+            self.write_log("genos-processed")
     
     
     def generate_phenotype_files(self, outdir=None):
@@ -807,13 +817,13 @@ class EmmaRunner(object):
         # Make sure the phenotype files were processed  
         if (not self._phenos_were_processed) or (not self._chosen_snp_set in EmmaRunner.snp_strain_names.keys()):
             self.write_error("Please process your phenotypes first with process_phenotypes")
-            BEerror("Please process your phenotypes first with process_phenotypes")
+            sys.exit(1)
         # Get a list of official strains names for just this snp_set
         try:
             self.geno_strains = self._lookup_official_names(EmmaRunner.snp_strain_names[self._chosen_snp_set])
         except:
             self.write_error("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
-            BEerror("The requested SNP dataset does not have a valid strain list (or it was typed incorrectly)")
+            sys.exit(1)
   
         # NOTE, just use shutil to copy emmax tfam file to gemma tfam file, they are exactly the same
         #gemma_tfam_ofh   = open(outdir + self._chosen_snp_set + '_for_gemma.tfam', 'w')
@@ -855,7 +865,7 @@ class EmmaRunner(object):
         emmax_pheno_ofh.close()
         emma_pheno_ofh.close()
         if self.verbose:
-            self.write_log("Processed phenotype files were successfully written.")
+            self.write_log("phenos-processed")
 
     
     def run(self, snp_set=None, emma_type=None, geno_indir=None, phenos_indir=None, outdir=None):
@@ -882,31 +892,32 @@ class EmmaRunner(object):
             snp_set = self.chosen_snp_set
         elif not snp_set:
             self.write_error("You must specify a snp_set or have run process_phenotypes() with this EmmaRunner object.")
-            BEerror("You must specify a snp_set or have run process_phenotypes() with this EmmaRunner object.")
+            sys.exit(1)
         # If no geno_indir was given, attempt to set it to snp database directory
         if not geno_indir:
             # Update the SNP database location for this SNP set
             geno_indir = EmmaRunner.snp_database_dir + snp_set + '/'
+        self.write_log("genos-processed")
 
         # Make sure directories were specified
         if not snp_set or not emma_type or not phenos_indir or not outdir:
             self.write_error("You must specify at least an emma type ('emma','emmax') and a directory where processed phenotypes were saved with process_phenotypes().")
-            BEerror("You must specify at least an emma type ('emma','emmax') and a directory where processed phenotypes were saved with process_phenotypes().")
+            sys.exit(1)
         # Make sure the snp_set specification is valid
         if not snp_set in EmmaRunner.snp_strain_names.keys():
             self.write_error("Please choose a valid SNP set for snp_set")
-            BEerror("Please choose a valid SNP set for snp_set")
+            sys.exit(1)
         # Make sure the emma_type is valid
         if not emma_type in ['emma','emmax', 'gemma']:
             self.write_error("Please specify 'emma' or 'emmax' for the type of emma run (emma_type)")
-            BEerror("Please specify 'emma' or 'emmax' for the type of emma run (emma_type)")
+            sys.exit(1)
         # NOTE: The phenotype and genotype process checks were disabled to allow files processed from other BerntEmma sessions to be run
         # Check that the phenotypes were processed
         #if not self._phenos_were_processed:
-        #    BEerror("Please process phenotypes before running emma(x)")
+        #    self.write_error"Please process phenotypes before running emma(x)")
         # Check that the genotypes were processed
         #if not self._genos_were_processed:
-        #    BEerror("Please process your SNP genotypes before running emma(x)")
+        #    self.write_error"Please process your SNP genotypes before running emma(x)")
         
         
         # FOR EMMA, make sure 65M wasn't selected
@@ -914,17 +925,17 @@ class EmmaRunner(object):
             # Check for a valid genotype/pheontype files in the provided locations
             if not snp_set + '_for_emma.tab' in os.listdir(geno_indir):
                 self.write_error("A processed SNP genotype file was not found in the genotype directory (geno_indir) for snp_set. Please run generate_genotype_files() first.")
-                BEerror("A processed SNP genotype file was not found in the genotype directory (geno_indir) for snp_set. Please run generate_genotype_files() first.")
+                sys.exit(1)
             if not snp_set + '_for_emma_phenos.tab' in os.listdir(phenos_indir):
                 self.write_error("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
                 BEerror("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")            
             
             if snp_set == '65M' or snp_set == '12M':
                 self.write_error("Using the " + snp_set + " SNP set with emma is not recommended and disabled in this version of EmmaRunner")
-                BEerror("Using the " + snp_set + " SNP set with emma is not recommended and disabled in this version of EmmaRunner")
+                sys.exit(1)
             
             if self.verbose:
-                    self.write_log("Starting emma...")                
+                    self.write_log("emma-started")
             job_ifh = open(outdir + 'EMMA_job.Rscript', 'w')
             job_ifh.write('source("'+EmmaRunner.emma_code_dir+'emma.R")\n\n'
             + 'geno.infile = "' + geno_indir + snp_set + '_for_emma.tab'+'"\n' \
@@ -946,10 +957,10 @@ class EmmaRunner(object):
             # Check for a valid genotype/phenotype files in the provided locations
             if not snp_set + '_for_emmax_phenos.tab' in os.listdir(phenos_indir):
                 self.write_error("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
-                BEerror("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
+                sys.exit(1)
             if not snp_set + '_for_emmax.tfam' in os.listdir(phenos_indir):
                 self.write_error("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
-                BEerror("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
+                sys.exit(1)
             # Create a symlink for emmax in the current directory because paths are not handled properly by emmax
             try:
                 os.symlink(EmmaRunner.emmax_code_dir + 'emmax', outdir + 'emmax')
@@ -980,7 +991,8 @@ class EmmaRunner(object):
                     split_cmd = 'split -l 16310910 ' + geno_indir + '65M_for_emmax.tped ' + geno_indir + '65M_for_emmax_part'
                     # Run the split command
                     if self.verbose:
-                        self.write_log("Splitting 65M genotype files...")
+                        pass
+                        #self.write_log("Splitting 65M genotype files...")
                     subprocess.call(split_cmd, shell=True)
 
                 # Each genotype split should have a correspondingly named tped file, so copy the tfam file to these names. Also create the symbolic links for the genotype files.
@@ -998,18 +1010,21 @@ class EmmaRunner(object):
                 for idx in range(0,4):
                     # Run Emmax
                     if self.verbose:
-                        self.write_log("Running emmax...")
+                        self.write_log("emma-started")
                     emmax_cmd = outdir + 'emmax -d 40 -t ' + outdir + '65M_for_emmax_part' + part[idx] + ' -p ' + phenos_indir + '65M_for_emmax_phenos.tab -k ' + outdir + '65M_for_emmax.hIBS.kinf -o ' + outdir + 'emmax_run'
                     subprocess.call(emmax_cmd, shell=True)
                     pafex_cmd = EmmaRunner.emmax_code_dir + 'PAFEX 150000 .1 0 0 ' + outdir + 'emmax_run.ps ' + outdir + 'emmax_run_'+part[idx]
                     # Run PAFEX
                     if self.verbose:
-                        self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
+                        pass
+                        #self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
                     subprocess.call(pafex_cmd, shell=True)
                 
+                self.write_log("post-processing")
                 # Create a header and recombine all the split parsed/filtered result files
                 if self.verbose:
-                        self.write_log("Creating header line and merging results")
+                        pass
+                        #self.write_log("Creating header line and merging results")
                 header_cmd = "echo 'rsNum\tchr\tpos\tpVal' > " + outdir + "emmax_results.txt"
                 subprocess.call(header_cmd, shell=True)
                 join_cmd = 'cat ' + outdir + 'emmax_run_aa ' + outdir + 'emmax_run_ab ' + outdir + 'emmax_run_ac ' + outdir + 'emmax_run_ad >> ' + outdir + 'emmax_results.txt'
@@ -1019,12 +1034,13 @@ class EmmaRunner(object):
                 bin_cmd = EmmaRunner.emmax_code_dir + 'BINNER 1000 ' + outdir + 'emmax_results.txt ' + outdir + 'emmax_results_binned.txt'
                 # Run PAFEX
                 if self.verbose:
-                    self.write_log("Running BINNER filter...")
+                    pass
+                    #self.write_log("Running BINNER filter...")
                 subprocess.call(bin_cmd, shell=True)
                 
                 # Compress the binned file
                 self._compress_files(requested_files = [outdir + 'emmax_results_binned.txt'], gz_filename = 'emmax_results_binned.tar.gz', requested_location = outdir)
-
+    
             else: #(for 132K, 4M and 12M, etc... datasets)
                 # NOTE: It doesn't appear that emmax-kin will allow ouput file location specification. Make a symbolic link to this file in the current job directory
                 try:                
@@ -1045,18 +1061,21 @@ class EmmaRunner(object):
 
                 # Run Emmax
                 if self.verbose:
-                    self.write_log("Running emmax...")
+                    self.write_log("emma-started")
                 subprocess.call(emmax_cmd, shell=True)
                 
+                self.write_log("post-processing")
                 # Create the emmax run command and start it
                 pafex_cmd = EmmaRunner.emmax_code_dir + 'PAFEX 4000000 .1 0 1 ' + outdir + 'emmax_run.ps ' + outdir + 'emmax_run_aa.ps'
                 if self.verbose:
-                    self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
+                    pass
+                    #self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
                 subprocess.call(pafex_cmd, shell=True)
                 # Add the header line and call the final file emmax_results.ps
                 header_cmd = "echo 'rsNum\tchr\tpos\tpVal' > " + outdir + "emmax_results.txt"
                 if self.verbose:
-                    self.write_log("Creating header line and merging results")
+                    pass
+                    #self.write_log("Creating header line and merging results")
                 subprocess.call(header_cmd, shell=True)
                 join_cmd = 'cat ' + outdir + 'emmax_run_aa.ps >> ' + outdir + 'emmax_results.txt'
                 subprocess.call(join_cmd, shell=True)
@@ -1067,7 +1086,7 @@ class EmmaRunner(object):
             # Check for a valid genotype/phenotype files in the provided locations
             if not snp_set + '_for_gemma.fam' in os.listdir(phenos_indir):
                 self.write_error("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
-                BEerror("A processed phenotype file was not found in the phenotype directory (phenos_indir) for snp_set. Please run generate_phenotype_files() first.")
+                sys.exit(1)
             # Create a symlink for emmax in the current directory because paths are not handled properly by emmax
             try:
                 os.symlink(EmmaRunner.emmax_code_dir + 'gemma', outdir + 'gemma')
@@ -1095,12 +1114,15 @@ class EmmaRunner(object):
             gemma_cmd = './gemma -bfile ' + snp_set + '_for_gemma -k ' + snp_set + '_for_gemma.sXX.txt -fa 2 -o gemma_results' 
 
             # Run gemma
-            if self.verbose:
-                self.write_log("Running gemma...")
-            subprocess.call(gemma_cmd, shell=True)
             
             if self.verbose:
-                self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
+                self.write_log("emma-started")
+            subprocess.call(gemma_cmd, shell=True)
+            
+            self.write_log("post-processing")
+            if self.verbose:
+                pass
+                #self.write_log("Running Parse And Filter EmmaX (PAFEX)...")
             # Determine if filtering must be done or if results should just be parsed 
             # NOTE: Gemma creates the output subdirectory... keep all other files in the main job directory
             just_parse = 1 if not snp_set in ['65M' ] else 0
@@ -1112,7 +1134,8 @@ class EmmaRunner(object):
                 bin_cmd = EmmaRunner.emmax_code_dir + 'BINNER_gemma 1000 gemma_results.txt gemma_results_binned.txt'
                 # Run PAFEX
                 if self.verbose:
-                    self.write_log("Running BINNER filter...")
+                    pass
+                    #self.write_log("Running BINNER filter...")
                 subprocess.call(bin_cmd, shell=True)            
                 # Compress the binned file
                 self._compress_files(requested_files = ['gemma_results_binned.txt'], gz_filename = 'gemma_results_binned.tar.gz', requested_location = outdir)
@@ -1121,7 +1144,7 @@ class EmmaRunner(object):
             self._compress_files(requested_files = [outdir + 'gemma_results.txt'], gz_filename = 'gemma_results.tar.gz', requested_location = outdir)
         else:
             self.write_error("You somehow managed to specify an illegal emma type even after this was checked for. This should never happen, good work!")
-            BEerror("You somehow managed to specify an illegal emma type even after this was checked for. This should never happen, good work!")
+            sys.exit(1)
 
     
     def _find_uniq(self, inlist):
@@ -1164,7 +1187,7 @@ class EmmaRunner(object):
             return 0
         else:
             self.write_error("Error while trying to numerically encode sex information. Check that all sexes are 'Male', 'Female', or 'NA'")
-            BEerror("Error while trying to numerically encode sex information. Check that all sexes are 'Male', 'Female', or 'NA'")
+            sys.exit(1)
     
     # Modified to just pass for UWF
     def _compress_files(self, requested_files, gz_filename, requested_location):
@@ -1178,7 +1201,7 @@ class EmmaRunner(object):
             tf.close()
         except:
             self.write_error('Error compressing the requested file(s)! Please check the format and try again.')
-            BEerror('Error compressing the requested file(s)! Please check the format and try again.')
+            sys.exit(1)
     
     @staticmethod
     def mean(values):
@@ -1240,8 +1263,8 @@ if __name__ == "__main__":
 
     obj = EmmaRunner()
     
-    #obj.set_log_file(args.project_dir + '/log.txt')
-    #obj.set_error_file(args.project_dir + '/errors.txt')
+    obj.set_redis_log(os.path.split(os.path.dirname(args.project_dir))[1])
+    obj.set_redis_error(os.path.split(os.path.dirname(args.project_dir))[1])
     obj.load_phenotypes(pheno_file)
     obj.process_phenotypes(snp_set)
     obj.generate_phenotype_files(args.project_dir)

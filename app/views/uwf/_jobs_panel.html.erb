@@ -1,16 +1,26 @@
-<h3> Your Jobs </h3>
-						<ul class="nav nav-pills nav-stacked">
-							<li><%= link_to("Submit a job", :action => "new") %></li>
-							<li class="divider"><hr></li>
-							<li><%= link_to("Phenotype 1", :action => "show", :id => "11432") %></li>
-							<div class="progress progress-striped active">
+<center><h3> Your Jobs </h3></center>
+						<div class="job-link job-danger">
+							<%= link_to("Phenotype 1", :action => "show", :id => "11432") %>
+							<div class="progress progress-danger">
 								<div class="bar" style="width: 40%;"></div>
 							</div>
-
-							<li><%= link_to("Phenotype 2", :action => "show", :id => "4A461") %></li>
+						</div>
+						<div class="job-link job-success">
+							<%= link_to("Phenotype 2", :action => "show", :id => "4A461") %>
+							<div class="progress progress-success">
+								<div class="bar" style="width: 100%;"></div>
+							</div>
+						</div>
+						<div class="job-link job-active">
+							<%= link_to("Phenotype 3", :action => "show", :id => "4A461") %>
 							<div class="progress progress-striped active">
 								<div class="bar" style="width: 60%;"></div>
 							</div>
-							<li></li>
-						</ul>
+						</div>
+
+						<div class="job-link" style="font-size:16px;">
+							<i class="icon-arrow-right"></i>
+							<%= link_to("Submit a job", :action => "new") %>
 						
+						</div>
+

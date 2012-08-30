@@ -1,16 +1,35 @@
-<% @page_title = "Unified Workflow Results" %>
-<%= javascript_include_tag('job_progress') %>
+<% @page_title = "Unified Workflow Submit" %>
+<div class="row span12 well">
+					<% @page_title = "Unified Workflow Results" %>
+					<%= javascript_include_tag('job_progress') %>
 					<script type="text/javascript"> window.job_id = '<%= @job_id %>';</script>
-
-					<div class="row span12 well">
 						<% if @ready %>
 							<h3>Job Status: Finished</h3>
 							<%= image_tag('loadinfo.gif')%>
 						<% else %>
 							<h3>Job Status: Running...</h3>
-							<%= image_tag('loadinfo.gif', :style => 'float:left; padding: 10px;') %>
-							<h5 style="padding: 10px;"> Still processing, please wait...</h5>
-							<div id="progress_log_div"></div>
+							
+							<div id="job-progress">
+								<ul>
+									<li id="started" class="incomplete">Started</li>
+									<li id="config-emma" class="incomplete">Configuring EMMA</li>
+									<li id="run-emma" class="incomplete">Running EMMA
+										<ul>
+											<li id="phenos-read" class="incomplete">Reading phenotypes</li>
+											<li id="phenos-processed" class="incomplete">Processing phenotypes</li>
+											<li id="genos-processed" class="incomplete">Reading genotypes</li>
+											<li id="emma-started" class="incomplete">Running algorithm</li>
+											<li id="post-processing" class="incomplete">Post processing</li>
+										</ul>
+									</li>
+									<li id="config-circos" class="incomplete">Configuring Circos</li>
+									<li id="run-circos" class="incomplete"> Starting Circos</li>
+										<ul>
+											<li>Generating datapoints</li>
+											<li>Populating tracks</li>
+										</ul>
+									<li>
+							</div>
 						<% end %>
 					</div>
 

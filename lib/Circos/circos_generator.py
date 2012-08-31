@@ -10,6 +10,7 @@
 # Modification History:
 #  2012 07 26 --    First version completed
 #  2012 08 13 --    Debugs for UWF, created 'Circos' directory creation in project directory
+#  2012 08 31 --    Added support for redis communication
 #===============================================================================
 
 import sys              # General system functions
@@ -22,8 +23,13 @@ from mako.template import Template
 from mako.runtime import Context
 from StringIO import StringIO
 import ordereddict
+import redis            # To communicate back to ruby on rails
 
-
+# Try to open communication with redis
+try:
+    redis_channel = redis.StrictRedis(host='localhost',port=6379,db=0)
+except:
+    pass
 
 # Add this scripts location to path so executables can be found
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -44,8 +50,9 @@ db_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
 gen_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
 
 # Create the project directory
-if not os.path.isdir(args.project_dir+'/Circos'):
-    os.makedirs(args.project_dir+'/Circos')
+args.project_dir += '/' # Adding trailing slash is good for appending file to path, but doesn't hurt if it is already there
+if not os.path.isdir(args.project_dir+'Circos'):
+    os.makedirs(args.project_dir+'Circos')
 
 
 try:
@@ -98,26 +105,32 @@ def generate_track_data(track):
     pass
 # ================
 '''
+# Get the job ID from the project_dir
+job_id = os.path.split(os.path.dirname(args.project_dir))[1]
 
 # Generate the track datafiles based on config settings in [general] generator.conf return the location of the track data file (stored in project_dir/Circos)
 def generate_track_data(track_name, project_dir=str(args.project_dir), db_settings=dict(db_conf.items('database')), gen_settings=dict(gen_conf.items('general'))):
     # The MHP circos track is required for all other tracks except the SNP track, so go ahead and generate if it doesn't exist
-    MHP_of = project_dir+'/Circos/MHP_track.txt'    
+    MHP_of = project_dir+'/Circos/MHP_track.txt'
     try:
         with open(MHP_of) as f: pass
     except IOError as e:
-        print "\nGenerating MHP track"
+        try:
+            redis_channel.sadd("%s:progress:log" % job_id, "gen-datapoint")
+        except:
+            print "Generating SNP datapoints..."
+        #print "\nGenerating MHP track"
         cmd = './circos_MHP_track %s %s %s %s %s %s'%(gen_settings['bin_size'], gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], gen_settings['emma_file'], MHP_of)
-        print cmd
+        #print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
     
     if track_name == 'SNP_track':
-        print "\nGenerating SNP track"
+        #print "\nGenerating SNP track"
         SNP_if = str(gen_settings['snp_set'])+'_chr_pos_only.tab'
         SNP_of = project_dir + '/Circos/SNP_track.txt'
         cmd = './circos_SNP_track %s %s %s %s %s %s'%(gen_settings['bin_size'], gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], SNP_if , SNP_of)
-        print cmd
-        print script_dir
+        #print cmd
+        #print script_dir
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return SNP_of        
     
@@ -125,12 +138,12 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         return MHP_of
     
     if track_name == 'VEP_track':
-        print "\nGenerating VEP track"
+        #print "\nGenerating VEP track"
         VEP_if = MHP_of
         VEP_of = project_dir+'/Circos/VEP_track.txt'
         params = map(lambda k: db_settings[k], ['host','user','password','port','database','vep_table','cons_table','mut_table'])
         cmd = 'python circos_VEP_track.py -H %s -u %s -p %s -P %s -d %s -v %s -c %s -m %s -i %s -o %s'%tuple(params+[VEP_if, VEP_of])
-        print cmd
+        #print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return VEP_of
     
@@ -151,6 +164,11 @@ for section in gen_conf.sections():
 size_scale = (100 - (num_tracks*spacing) - start_radius)/(total_track_size)
 
 # Fill out the template
+# Try to open communication with redis
+try:
+    redis_channel.sadd("%s:progress:log" % job_id, "pop-tracks")
+except:
+    print "Populating Tracks..."
 template = Template(filename=args.template_if)
 time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 chromosome_selection = r'/\d+/;-21'
@@ -243,7 +261,11 @@ ctx = Context(buf, time=time, chromosome_selection=chromosome_selection, plots=p
 template.render_context(ctx)
 circos_buf = buf.getvalue()
 
-print "Generating Circos run script"
+try:
+    redis_channel.sadd("%s:progress:log" % job_id, "draw-image")
+except:
+    print "Drawing the image..."
+#print "Generating Circos run script"
 circos_od = args.project_dir+'/Circos/'
 circos_of = circos_od+'circos.conf'
 circos_ofh = open(circos_of, 'w')
@@ -251,6 +273,6 @@ circos_ofh.write(circos_buf)
 circos_ofh.close()
 
 cmd = script_dir+'/circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
-print "Running Circos script"
-print cmd
+#print "Running Circos script"
+#print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)

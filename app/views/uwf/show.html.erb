@@ -1,19 +1,21 @@
 <% @page_title = "Unified Workflow Submit" %>
 <div class="row span12 well">
 					<% @page_title = "Unified Workflow Results" %>
-					<%= javascript_include_tag('job_progress') %>
-					<script type="text/javascript"> window.job_id = '<%= @job_id %>';</script>
+					
 						<% if @ready %>
-							<h3>Job Status: Finished</h3>
-							<%= image_tag('loadinfo.gif')%>
+							<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
+							This causes the check_progress() JS function to stop the timer as an error function
+							-->
+							<center><%= image_tag(@circos_img, :width => '80%')%></center>
 						<% else %>
 							<h3>Job Status: Running...</h3>
-							
+							<%= javascript_include_tag('job_progress') %>
+							<script type="text/javascript"> window.job_id = '<%= @job_ID %>';</script>
 							<div id="job-progress">
 								<ul>
 									<li id="started" class="incomplete">Started</li>
-									<li id="config-emma" class="incomplete">Configuring EMMA</li>
-									<li id="run-emma" class="incomplete">Running EMMA
+									<li id="config-emma" class="incomplete">Configuring <%= @emma_type %></li>
+									<li id="run-emma" class="incomplete">Running <%= @emma_type %>
 										<ul>
 											<li id="phenos-read" class="incomplete">Reading phenotypes</li>
 											<li id="phenos-processed" class="incomplete">Processing phenotypes</li>
@@ -25,8 +27,10 @@
 									<li id="config-circos" class="incomplete">Configuring Circos</li>
 									<li id="run-circos" class="incomplete"> Starting Circos</li>
 										<ul>
-											<li>Generating datapoints</li>
-											<li>Populating tracks</li>
+											<li id="pop-tracks" class="incomplete">Populating tracks</li>
+											<li id="gen-datapoint" class="incomplete">Generating datapoints</li>
+											<li id="draw-image" class="incomplete">Drawing image</li>
+											<li class="incomplete">Finished!</li>
 										</ul>
 									<li>
 							</div>

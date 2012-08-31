@@ -50,8 +50,10 @@ class EmmaRunner(object):
     snp_database_dir = '/raid/Genotype Data/'
     emma_code_dir = '/raid/WWW/ror_website/lib/EMMA/'
     emmax_code_dir = '/raid/WWW/ror_website/lib/EMMA/'
+    gemma_code_dir = '/raid/WWW/ror_website/lib/EMMA/'
     strain_names_dir = '/raid/WWW/ror_website/lib/EMMA/'
     official_names_dir = '/raid/WWW/ror_website/lib/EMMA/'
+
     # FOR DEVELOPMENT
     #snp_strain_names = None
     #official_name_map = None
@@ -794,6 +796,11 @@ class EmmaRunner(object):
                 emma_w.writerow(outline)
                 emmaX_w.writerow(outlineX)
         
+        elif snp_set == "1.2M_UNC" or snp_set == "1.2M_NIEHS":
+            if self.verbose:
+                self.write_log("The 1.2M SNP sets are derived from other emma/emmax SNP input files using shell and awk scripts and are not created with Berndt Emma. Please run these instead... ")
+                print "The 1.2M SNP sets are derived from other emma/emmax SNP input files using shell and awk scripts and are not created with Berndt Emma. Please run these instead... "
+        
         geno_ifh.close()
         emma_ofh.close()
         emmaX_ofh.close()
@@ -948,6 +955,7 @@ class EmmaRunner(object):
             cmd = ['Rscript',outdir+'EMMA_job.Rscript']
             #print cmd
             process = subprocess.Popen(cmd)
+            self.write_log("post-processing")
             process.wait()
 
             # Compress the results
@@ -1079,6 +1087,7 @@ class EmmaRunner(object):
                 subprocess.call(header_cmd, shell=True)
                 join_cmd = 'cat ' + outdir + 'emmax_run_aa.ps >> ' + outdir + 'emmax_results.txt'
                 subprocess.call(join_cmd, shell=True)
+
             # Compress the results
             self._compress_files(requested_files = [outdir + 'emmax_results.txt'], gz_filename = 'emmax_results.tar.gz', requested_location = outdir)
         
@@ -1089,7 +1098,7 @@ class EmmaRunner(object):
                 sys.exit(1)
             # Create a symlink for emmax in the current directory because paths are not handled properly by emmax
             try:
-                os.symlink(EmmaRunner.emmax_code_dir + 'gemma', outdir + 'gemma')
+                os.symlink(EmmaRunner.gemma_code_dir + 'gemma', outdir + 'gemma')
             except OSError, e:
                 if e.errno != 17:
                     raise
@@ -1114,7 +1123,6 @@ class EmmaRunner(object):
             gemma_cmd = './gemma -bfile ' + snp_set + '_for_gemma -k ' + snp_set + '_for_gemma.sXX.txt -fa 2 -o gemma_results' 
 
             # Run gemma
-            
             if self.verbose:
                 self.write_log("emma-started")
             subprocess.call(gemma_cmd, shell=True)
@@ -1126,12 +1134,12 @@ class EmmaRunner(object):
             # Determine if filtering must be done or if results should just be parsed 
             # NOTE: Gemma creates the output subdirectory... keep all other files in the main job directory
             just_parse = 1 if not snp_set in ['65M' ] else 0
-            pafex_cmd = EmmaRunner.emmax_code_dir + 'PAFEX_gemma 4000000 .1 0 ' + str(just_parse) + ' output/gemma_results.assoc.txt ' + 'gemma_results.txt'
+            pafex_cmd = EmmaRunner.gemma_code_dir + 'PAFEX_gemma 4000000 .1 0 ' + str(just_parse) + ' output/gemma_results.assoc.txt ' + 'gemma_results.txt'
             subprocess.call(pafex_cmd, shell=True)
             
             if snp_set in [ '65M' ]:
                 #NOTE: Binner filter here reduces the number of results so that the MHP tool can plot them (both pre- and post- filtered files are made available to the user)
-                bin_cmd = EmmaRunner.emmax_code_dir + 'BINNER_gemma 1000 gemma_results.txt gemma_results_binned.txt'
+                bin_cmd = EmmaRunner.gemma_code_dir + 'BINNER_gemma 1000 gemma_results.txt gemma_results_binned.txt'
                 # Run PAFEX
                 if self.verbose:
                     pass

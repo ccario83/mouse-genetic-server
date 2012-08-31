@@ -9,7 +9,7 @@ function check_progress()
 		url:'/uwf/progress/' + job_id, // job_id is passed from the show and progress actions in the uwf controller
 		datatype:"json", 
 		success:write_progress,
-		error: function(data){alert('Cannot get the log for this job!');}
+		error: function(){clearInterval(timerID); location.reload();}
 	});
 	
 }
@@ -20,8 +20,7 @@ function write_progress(progress_log)
 	// write_progress is called when the ajax query is returned as json from the server 
 	// the json string becomes process_log, which we must parse back to an array here
 	//progress_log = jQuery.parseJSON(progress_log);
-	
-	$('#progress_log_div').empty()
+	if (progress_log == "finished") { location.reload(); }
 	for(var i=0; i<progress_log.length; i++)
 	{
 		$('#'+progress_log[i]).removeClass('incomplete').addClass('complete');
@@ -34,6 +33,6 @@ function write_progress(progress_log)
 $(document).ready(function(){
 	check_progress();
 	// Keep polling the server for new markers
-	timerID = setInterval('check_progress()', 1500);
+	timerID = setInterval('check_progress()', 5000);
 });
 

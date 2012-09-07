@@ -30,6 +30,21 @@
 	text-shadow: #888 0 -1px 0;
 }
 
+.main-panel
+{
+	margin-left: 0px;
+	padding: 0px;
+	padding: 0% 2.5%;
+	border-left: 2px solid #eee;
+	border-right: 2px solid #eee;
+}
+
+
+
+.user-panel
+{
+	padding: 0px;
+}
 
 .job-panel
 {
@@ -46,24 +61,30 @@
 
 .job-link
 {
-	border-top: 2px solid #eee;
+	border-top: 0px solid #eee;
 	font-size: 22px;
 	padding: 10px 20px 10px 20px;
+	margin-top: 10px;
 }
+/*
 .job-link:hover
 {
 	background: #eeeeee;
 	border-color: #eeeeee #eeeeee #dddddd;
-}
+	margin-top: 10px;
+}*/
 .job-link a:hover
 {
 	text-decoration: none;
+	margin-top: 10px;
 }
 
 .job-active
 {
 	background-color: #D9EDF7;
 	border: 1px solid #BCE8F1;
+	margin-top: 10px;
+	border-radius:5px;
 }
 .job-active > a
 {
@@ -71,12 +92,16 @@
 	color: #3A87AD;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 	text-decoration: none;
+	margin-top: 10px;
 }
 
 .job-warning
 {
 	background-color: #FCF8E3;
 	border: 1px solid #FBEED5;
+	margin-top: 10px;
+	border-radius:5px;
+
 }
 .job-warning > a
 {
@@ -90,6 +115,9 @@
 {
 	background-color: #DFF0D8;
 	border: 1px solid #D6E9C6;
+	margin-top: 10px;
+	border-radius:5px;
+	
 }
 .job-success > a
 {
@@ -103,6 +131,8 @@
 {
 	background-color: #F2DEDE;
 	border: 1px solid #EED3D7;
+	margin-top: 10px;
+	border-radius:5px;
 }
 .job-danger > a
 {
@@ -116,6 +146,13 @@
 {
 	margin: 10px 0px;
 }
+
+
+#fullscreen:-webkit-full-screen	{ height: 100% }
+#fullscreen:-moz-full-screen		{ width: 100% }
+#fullscreen:-ms-full-screen		{ width: 100% }
+#fullscreen:-o-full-screen		{ width: 100% }
+#fullscreen:full-screen			{ width: 100% }
 
 address
 {

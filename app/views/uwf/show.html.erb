@@ -1,13 +1,46 @@
-<% @page_title = "Unified Workflow Submit" %>
-<div class="row span12 well">
-					<% @page_title = "Unified Workflow Results" %>
-					
+<% @page_title = "Unified Workflow Results" %>
+
 						<% if @ready %>
 							<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
 							This causes the check_progress() JS function to stop the timer as an error function
 							-->
-							<center><%= image_tag(@circos_img, :width => '80%')%></center>
+							<div class="row-fluid">
+								<div class="img-polaroid">
+									<center>
+										<%= image_tag(@circos_img, :width => '60%', :id => 'fullscreen')%>
+										<h3>Click for full screen interactive mode</h3>
+									</center>
+								</div>
+							</div>
+
+							<br/>
+							<div class="row-fluid">
+								<table class="table table-bordered table-striped">
+									<thead>
+										<tr>
+											<th>Parameter</th>
+											<th>Value</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Job ID</td><td><%= @job.ID %></td>
+										</tr>
+										<tr>
+											<td>Phenotype</td><td><%= @pheno_file %></td>
+										</tr>
+										<tr>
+											<td>Algorithm</td><td><%= @emma_type %></td>
+										</tr>
+										<tr>
+											<td>SNP Set</td><td><%= @snp_set %></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
 						<% else %>
+						<div class="row span12">
 							<h3>Job Status: Running...</h3>
 							<%= javascript_include_tag('job_progress') %>
 							<script type="text/javascript"> window.job_id = '<%= @job_ID %>';</script>
@@ -34,6 +67,6 @@
 										</ul>
 									<li>
 							</div>
+						</div>
 						<% end %>
-					</div>
 

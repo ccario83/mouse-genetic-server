@@ -15,6 +15,7 @@
 		<%= javascript_include_tag('jquery-1.7.min') %>
 		<%= javascript_include_tag('jquery-ui-1.8.16') %>
 		<%= javascript_include_tag('bootstrap') %>
+		<%= javascript_include_tag('fullscreen') %>
 	</head>
 
 	<body>
@@ -53,17 +54,17 @@
 			<div class="row-fluid">
 			
 				<!-- Left Panel -->
-				<div class="span2 well job-panel">
+				<div class="span2 offset1 job-panel">
 					<%= render(:partial => "jobs_panel") %>
 				</div>
 				
 				<!-- Center Panel-->
-				<div class="span8">
+				<div class="span6 main-panel">
 					<%= yield %>
 				</div>
 				
 				<!-- Right Panel -->
-				<div class="span2 well">
+				<div class="span2 user-panel">
 					<%= render(:partial => "user_panel") %>
 				</div>
 					

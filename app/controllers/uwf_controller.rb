@@ -39,7 +39,7 @@ class UwfController < ApplicationController
     @job_ID = params['id'] # id is what comes after the slash in 'uwf/show/#' by default
     
     @job = restore_job(@job_ID)
-    @pheno_file = @job.get_path(@job.tracked_vars['@pheno_file'])
+    @pheno_file = File.basename(@job.tracked_vars['@pheno_file'])
     @emma_type = @job.tracked_vars['@emma_type']
     @snp_set = @job.tracked_vars['@snp_set']
     

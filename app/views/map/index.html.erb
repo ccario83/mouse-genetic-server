@@ -1,0 +1,69 @@
+<% @page_title = "Unified Workflow Submit" %>
+<% content_for :page_css do %>
+<%= stylesheet_link_tag('gmaps4rails')%>
+		<%= stylesheet_link_tag('simple_form')%>
+<% end %>
+<% content_for :page_js do %>
+<%= javascript_include_tag('gmaps4rails/gmaps4rails.base') %>
+		<%= javascript_include_tag('gmaps4rails/gmaps4rails.googlemaps') %>
+		<script src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js"></script>
+		<%= javascript_include_tag('update_map') %>
+<%  end %>
+
+				<!-- Left Panel -->
+				<div class="span2">
+				
+					<%= simple_form_for '', :html => {:id => 'map_options'} do |f| %>
+						<h3><center> Graphing options <center></h3>
+						<div class="well">
+							<%= f.label :'Sequencers', :required => false %>
+							<%= f.check_box :sequencer %><br />
+							<%= f.label :'Bioinformatic Resources', :required => false %>
+							<%= f.check_box :bioinf %><br />
+							<%= f.label :'Computational Resources', :required => false %>
+							<%= f.check_box :comp %>
+							<div class="form-actions offset1", style = "margin-bottom:0px; padding-bottom:0px;">
+								<a href="#description" role="button" class="center btn btn-primary" data-toggle="modal">Add a resource</a>
+							</div>
+						</div>
+					<% end %>
+				
+					<div class="modal hide fade in" id="description" tabindex="-1" role="dialog" aria-labelledby="descriptionLabel" aria-hidden="true">
+						<div class="modal-header"> 
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+							<h3 id = "descriptionLabel"> Add A New Resource </h3> 
+						</div>
+						<div class="modal-body">
+							<%= simple_form_for @resources, :url => { :action => 'create' } do |f| %>
+								<%= f.input :name, :label => 'Name:', :required => false %>
+								<%= f.input :address, :label => 'Department:', :required => false %>
+								<%= f.input :latitude, :label => 'Latitude:', :required => false %>
+								<%= f.input :longitude, :label => 'Longitude:', :required => false %>
+								<%= f.input :description, :label => 'Description:', :required => false %>
+								<%= f.input :owner, :label => 'Owner:', :required => false %>
+								<%= f.input :website, :label => 'Website:', :required => false %>
+								<%= f.association :resource_types, :as => :check_boxes %>
+
+						</div>
+						<div class="modal-footer">
+								<%= f.submit 'Save', :class => 'btn btn-primary' %>
+						</div>
+							<% end %>
+					</div>
+				
+				</div>
+				
+				<!-- Center Panel-->
+				<div class="span8">
+					<div class="row span12">
+						<%= gmaps4rails(@json) %>
+					</div>
+				</div>
+
+			
+			
+<%= yield :scripts %>
+
+
+
+

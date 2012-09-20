@@ -9,13 +9,15 @@
 		<!-- Style Sheets -->
 		<%= stylesheet_link_tag('bootstrap') %>
 		<%= stylesheet_link_tag('bootstrap-responsive.min') %>
+		<%= yield :page_css %>
 		<%= stylesheet_link_tag('main') %>
-	
+
 		<!-- JS/jQuery libraries -->
 		<%= javascript_include_tag('jquery-1.7.min') %>
 		<%= javascript_include_tag('jquery-ui-1.8.16') %>
 		<%= javascript_include_tag('bootstrap') %>
-		<%= javascript_include_tag('fullscreen') %>
+		<%= yield :page_js %>
+
 	</head>
 
 	<body>
@@ -52,30 +54,18 @@
 
 		<div class="container-fluid">
 			<div class="row-fluid">
-			
-				<!-- Left Panel -->
-				<div class="span2 offset1 job-panel">
-					<%= render(:partial => "jobs_panel") %>
-				</div>
-				
-				<!-- Center Panel-->
-				<div class="span6 main-panel">
-					<%= yield %>
-				</div>
-				
-				<!-- Right Panel -->
-				<div class="span2 user-panel">
-					<%= render(:partial => "user_panel") %>
-				</div>
-					
+				<%= yield %>
 			</div>
-
-			<hr>
-			<footer>
-				<p>(c) 2012 University of Pittsburgh, Shapiro Group, Berndt Lab</p>
-			</footer>
-			
 		</div> <!-- /container -->
+		
+
+		<div class="bottom-bar">
+			<div class="bottombar-inner">
+				<div class="container">
+					<p><center>(c) 2012 University of Pittsburgh, Berndt Lab</center></p>
+				</div>
+			</div>
+		</div>
 	
 	</body>
 </html>

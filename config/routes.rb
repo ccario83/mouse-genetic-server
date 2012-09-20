@@ -7,6 +7,7 @@ RorWebsite::Application.routes.draw do
   root :to => "uwf#index"
   get "uwf/index"
   post "uwf/submit"
+  get "map/index"
   
   #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path(.:format)' => 'static#show', :as => :custom_image

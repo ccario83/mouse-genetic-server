@@ -1,12 +1,7 @@
 /* Main stylesheet */
 
-/* Bootstrap overrides */
-.nav-tabs > li
-{
-	margin-bottom: -2px;
-}
 
-
+/* PANEL CSS */
 #job-progress *
 {
 	font-size: 24px;
@@ -38,8 +33,6 @@
 	border-left: 2px solid #eee;
 	border-right: 2px solid #eee;
 }
-
-
 
 .user-panel
 {
@@ -141,35 +134,38 @@
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 	text-decoration: none;
 }
-
-.progress
-{
-	margin: 10px 0px;
-}
+.progress { margin: 10px 0px; }
 
 
+
+/* FULLSCREEN CSS */
 #fullscreen:-webkit-full-screen	{ height: 100% }
 #fullscreen:-moz-full-screen		{ width: 100% }
 #fullscreen:-ms-full-screen		{ width: 100% }
 #fullscreen:-o-full-screen		{ width: 100% }
 #fullscreen:full-screen			{ width: 100% }
 
-address
-{
-margin-top: 10px;
-}
 
-.form-horizontal
-.control-label 
-{
-	width: 175px;
-}
 
-.form-horizontal
-.controls
-{
-	margin-left: 185px;
-}
+/* FORM OVERRIDES */
+.form-horizontal,
+.control-label { width: 175px; }
+
+.form-horizontal,
+.controls { margin-left: 185px; }
+
+
+
+/* GMAPS4RAILS OVERRIDES */
+/* Allows gmaps4rails map to align nicely with other bootstrap elements */ 
+.map_container { padding: 0px;}
+/* Fixes google map navigation button issue caused by bootstrap */
+#map img { max-width: none; }
+
+
+
+/* BOOTSTRAP OVERRIDES */
+.nav-tabs > li { margin-bottom: -2px; }
 
 .hero-unit
 {
@@ -180,42 +176,46 @@ margin-top: 10px;
 	background-color: #fff;
 }
 
+.bottom-bar
+{
+	border-top: 1px solid #aaa;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255,255,255,.65);
+
+}
+
 body
 {
 	/*height: 100%;*/
 	width: 100%;
 	position: absolute;
 	padding-top: 60px;
-	padding-bottom: 40px;
+	padding-bottom: 60px;
 	
 }
 
 .container-fluid,
 .row-fluid { height: inherit; }
-
-.sidebar-nav
-{
-	padding: 9px 0;
-}
+.modal-body { max-height: 800px; }
 
 
 /* SCROLL BAR STYLE */
 /* Let's get this party started */
-::-webkit-scrollbar {
-    width: 10px;
-}
+::-webkit-scrollbar { width: 10px; }
  
-/* Track */
-::-webkit-scrollbar-track {
-    /*-webkit-box-shadow: inset 0 0 3px rgba(50,50,50,0.4);*/
-    background: rgb(215,215,215); 
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
+::-webkit-scrollbar-track
+{
+	background: rgb(215,215,215); 
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
 }
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
-    background: rgb(175,175,175); 
+
+::-webkit-scrollbar-thumb
+{
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background: rgb(175,175,175); 
 }

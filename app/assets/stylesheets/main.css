@@ -1,5 +1,27 @@
 /* Main stylesheet */
 
+/* For a results flash */
+#notice
+{
+	z-index: 100000000;
+	max-width: 500px;
+	margin: 5px;
+	position: absolute; 
+	top: 25%; 
+	left:40%; 
+	display: none;
+	border: 1px solid #999;
+}
+#notice span
+{
+	display: block;
+	float: left;
+	padding: 5px 0px;
+	margin: 0px;
+	margin-bottom: 5px;
+	font-size: 16px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
 /* PANEL CSS */
 #job-progress *

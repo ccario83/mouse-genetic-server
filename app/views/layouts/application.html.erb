@@ -17,10 +17,15 @@
 		<%= javascript_include_tag('jquery-ui-1.8.16') %>
 		<%= javascript_include_tag('bootstrap') %>
 		<%= yield :page_js %>
+		<%= javascript_include_tag('main') %>
 
 	</head>
 
 	<body>
+		<% if notice %>
+		<div id="notice" class="alert alert-info"><button type="button" class="close" data-dismiss="alert">×</button><span><%= notice %><span></div>
+		<% end %>
+		
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container-fluid">

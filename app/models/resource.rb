@@ -1,5 +1,5 @@
 class Resource < ActiveRecord::Base
-    attr_accessible :name, :address, :latitude, :longitude, :description, :owner, :website, :resource
+    attr_accessible :name, :address, :latitude, :longitude, :description, :owner, :website, :resource, :resource_type_ids
     has_and_belongs_to_many :resource_types
     
     acts_as_gmappable :latitude => 'latitude', :longitude => 'longitude', :process_geocoding => :geocode?,

@@ -219,6 +219,7 @@ body
 	
 }
 
+.form-actions { background-color: rgba(0,0,0,0); }
 .container-fluid,
 .row-fluid { height: inherit; }
 .modal-body { max-height: 800px; }

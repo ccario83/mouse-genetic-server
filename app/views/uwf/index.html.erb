@@ -11,17 +11,18 @@
 					</div>
 
 					<div class="row span12" style="margin-left:0px">
-						<%= simple_form_for('uwf_submit', :url => { :action => 'update' }, :html => { :class => 'form-horizontal' } ) do |f| %>
-							<fieldset class="offset2">
+						<%= simple_form_for('uwf_submit', :url => { :action => 'create' }, :html => { :class => 'form-horizontal' } ) do |f| %>
+							<fieldset>
 								<%= f.input :job_name, :label => 'Give your job a name:', :required => false %>
 								<%= f.input :pheno_file, :as => :file, :label => 'Phenotype File', :required => false %>
 								<%= f.input :emma_type, :collection => [ 'emma', 'emmax', 'gemma' ], :selected => 'emmax', :label => 'GWA Algorithm', :required => false %>
 								<%= f.input :snp_set, :collection => [ '4M', '65M'], :selected => '4M', :label => 'SNP Dataset', :required => false %>
-							</fieldset>
 								<div class="form-actions">
-									<%= f.submit 'Submit', :class => 'btn btn-primary offset3' %>
+									<%= f.submit 'Submit', :class => 'btn btn-primary' %>
 									<a href="#description" role="button" class="btn" data-toggle="modal">Help</a>
 								</div>
+							</fieldset>
+
 						<% end %>
 					</div>
 

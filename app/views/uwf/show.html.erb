@@ -1,5 +1,8 @@
 <% @page_title = "Unified Workflow Results" %>
-
+<% content_for :page_js do %>
+<%= javascript_include_tag('gmaps4rails/gmaps4rails.base') %>
+		<%= javascript_include_tag('fullscreen') %>
+<% end %>
 				<!-- Left Panel -->
 				<div class="span2 offset1 job-panel">
 					<%= render(:partial => "jobs_panel") %>
@@ -12,11 +15,13 @@
 					This causes the check_progress() JS function to stop the timer as an error function
 					-->
 					<div class="row-fluid">
-						<div class="img-polaroid">
-							<center>
-								<%= image_tag(@circos_img, :width => '60%', :id => 'fullscreen')%>
-								<h3>Click for full screen interactive mode</h3>
-							</center>
+						<div id="fs-container" class="img-polaroid" onclick="full(document.getElementById('fs'))">
+							<div id="fs">
+								<center>
+									<%= image_tag(@circos_img, :id => 'circos_img')%>
+								</center>
+							</div>
+							<center><h3>Click for full screen interactive mode</h3></center>
 						</div>
 					</div>
 

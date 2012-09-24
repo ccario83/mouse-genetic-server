@@ -1,5 +1,5 @@
 /* Main stylesheet */
-
+html { height: 100%; }
 /* For a results flash */
 #notice
 {
@@ -161,11 +161,24 @@
 
 
 /* FULLSCREEN CSS */
-#fullscreen:-webkit-full-screen	{ height: 100% }
-#fullscreen:-moz-full-screen		{ width: 100% }
-#fullscreen:-ms-full-screen		{ width: 100% }
-#fullscreen:-o-full-screen		{ width: 100% }
-#fullscreen:full-screen			{ width: 100% }
+:-webkit-full-screen
+{
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: 0px 0px 4px white;
+    background-color: white;
+}
+:-moz-full-screen *
+{
+    position: absolute;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: 0px 0px 4px white;
+    background-color: white;
+}
+:-webkit-full-screen img { height: 100%; }
 
 
 

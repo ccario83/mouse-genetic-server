@@ -17,11 +17,11 @@
 						<h3><center> Graphing options <center></h3>
 						<div class="well">
 							<%= f.label :'Sequencers', :required => false %>
-							<%= f.check_box :sequencer %><br />
+							<%= f.check_box :sequencer, :checked => true%><br />
 							<%= f.label :'Bioinformatic Resources', :required => false %>
-							<%= f.check_box :bioinf %><br />
+							<%= f.check_box :bioinf, :checked => true %><br />
 							<%= f.label :'Computational Resources', :required => false %>
-							<%= f.check_box :comp %>
+							<%= f.check_box :comp, :checked => true %>
 							<div class="form-actions offset1", style = "margin-bottom:0px; padding-bottom:0px;">
 								<a href="#description" role="button" class="center btn btn-primary" data-toggle="modal">Add a resource</a>
 							</div>

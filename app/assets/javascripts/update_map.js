@@ -1,15 +1,13 @@
 function marker_toggle()
 {
-	alert("Looking for ajax");
-	$.ajax(
-	{
-		type:"get",
-		url:'/map/update/',
-		datatype:"json", 
-		success: Gmaps.map.replaceMarkers,
-		error: function(){alert("RoR is having trouble updating those resources.");}
-	});
+	check_boxes = [];
+	// Insert the value
+	$('#_sequencer').is(':checked')?check_boxes.push('Sequencer'):null;
+	$('#_bioinf').is(':checked')?check_boxes.push('Bioinformatic Resource'):null;
+	$('#_comp').is(':checked')?check_boxes.push('Computational Resource'):null;
 	
+	var check_boxes = JSON.stringify(check_boxes)
+	$.getJSON('map/update', { resource_types : check_boxes }, function(data){ Gmaps.map.replaceMarkers(data); } );
 };
 
 $(document).ready(function(){
@@ -34,5 +32,7 @@ $(document).ready(function(){
         height: 44,
         width: 50,
       }];
-    }
+    };
+    
+    marker_toggle();
 });

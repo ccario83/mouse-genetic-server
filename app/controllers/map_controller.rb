@@ -1,6 +1,6 @@
 class MapController < ApplicationController
 
-    respond_to :json, :html
+  respond_to :json, :html
 
   def index
     # Get all the resources
@@ -16,9 +16,20 @@ class MapController < ApplicationController
   end
   
   def update
-    @resources = Resource.where(:validated => 0)
-    @resources = @resources.to_gmaps4rails
-    
+    @resource_types =  ActiveSupport::JSON.decode(params[:resource_types])
+    puts @resource_types
+    @resources = []
+    Resource.where(:validated => 1).each do |resource|
+        resource.resource_types.each do |res_type|
+            puts res_type
+            if @resource_types.include? res_type.name
+                @resources << resource
+            end
+        end
+    end
+    if not @resources.empty?
+        @resources = @resources.to_gmaps4rails
+    end
     respond_with @resources
   end
 

@@ -12,7 +12,7 @@ RorWebsite::Application.routes.draw do
   
   #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path(.:format)' => 'static#show', :as => :custom_image
-  match 'data/*path(.svg)' => 'static#svg'
+  #match 'data/*path(.svg)' => 'static#svg'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

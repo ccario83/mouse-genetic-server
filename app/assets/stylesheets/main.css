@@ -164,6 +164,7 @@ html { height: 100%; }
 :-webkit-full-screen
 {
     position: absolute;
+    height: 100%;
     top: 0; left: 0; right: 0; bottom: 0;
     box-shadow: 0px 0px 4px white;
     background-color: white;
@@ -200,6 +201,8 @@ html { height: 100%; }
 
 
 /* BOOTSTRAP OVERRIDES */
+/*#circos_img { height:650px; }*/
+
 .nav-tabs > li { margin-bottom: -2px; }
 
 .hero-unit

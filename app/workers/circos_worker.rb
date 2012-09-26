@@ -6,7 +6,7 @@ class CircosWorker
     sidekiq_options queue: 'Circos'
     sidekiq_options retry: false
     
-    def perform(job_ID, emma_type, snp_set, chromosome = -1, start_position = -1, stop_position = -1)
+    def perform(job_ID, emma_type, snp_set, chromosome = -1, start_position = -1, stop_position = -1, bin_size=1000000)
 
         job_location    = File.join(DATA_path, job_ID)
         config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')

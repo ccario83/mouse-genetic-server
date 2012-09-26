@@ -8,8 +8,8 @@ emma_file = <%= emma_result_file %>
 chromosome = <%= chromosome %>
 start_position = <%= start_position %>
 stop_position = <%= stop_position %>
-## Be careful with this parameter, do at least 10000 for the full genome. 
-bin_size = 10000000
+## Be careful with this parameter, do at least 10000 for the full genome. (10000000 recommended)
+bin_size = <% bin_size %>
 ## Make sure you change the database in the database.conf file to reflect this
 snp_set = <%= snp_set %>
 

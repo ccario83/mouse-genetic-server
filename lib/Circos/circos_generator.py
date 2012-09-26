@@ -128,7 +128,9 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         #print "\nGenerating SNP track"
         SNP_if = str(gen_settings['snp_set'])+'_chr_pos_only.tab'
         SNP_of = project_dir + '/Circos/SNP_track.txt'
-        cmd = './circos_SNP_track %s %s %s %s %s %s'%(gen_settings['bin_size'], gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], SNP_if , SNP_of)
+        # Reduce the density of the SNP plot a bit compared to the others
+        bin_size = str(int(gen_settings['bin_size'])*5)
+        cmd = './circos_SNP_track %s %s %s %s %s %s'%(bin_size, gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], SNP_if , SNP_of)
         #print cmd
         #print script_dir
         subprocess.call(cmd, cwd = script_dir, shell=True)
@@ -171,7 +173,9 @@ except:
     print "Populating Tracks..."
 template = Template(filename=args.template_if)
 time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-chromosome_selection = r'/\d+/;-21'
+chromosome_selection = gen_conf.get('general','chromosome')
+if gen_conf.get('general','chromosome') == '-1':
+    chromosome_selection = r'/\d+/;-21'
 plots = []
 current_r0 = start_radius
 current_r1 = 0
@@ -208,7 +212,7 @@ for section in sections:
         for rule_no in range(1,10):
             rule = {'condition':              '_VALUE_ >= 9' if rule_no==9 else '_VALUE_ <= %d'%(rule_no), 
                     'color':                  'spectral-9-div-%d'%(10-rule_no),
-                    'glyph_size':             rule_no if rule_no>7 else 6}
+                    'glyph_size':             2*(rule_no - 3) if rule_no>7 else 7}
             plot['rules'].append(rule)
         plots.append(plot)
     if section == 'VEP_track':
@@ -274,5 +278,11 @@ circos_ofh.close()
 
 cmd = script_dir+'/circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
 #print "Running Circos script"
+#print cmd
+subprocess.call(cmd, cwd = script_dir, shell=True)
+
+
+# Create an image map
+cmd = 'python circos_image_mapper.py -p %scircos.svg '%circos_od
 #print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)

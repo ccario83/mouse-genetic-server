@@ -11,6 +11,13 @@
 #  2012 07 26 --    First version completed
 #  2012 08 13 --    Debugs for UWF, created 'Circos' directory creation in project directory
 #  2012 08 31 --    Added support for redis communication
+#  2012 09 26 --    Bin size automatically adjusted for SNP density track
+#  2012 09 26 --    Bug fixes to get chromosome support
+#  2012 09 27 --    Ticks are now generated on the fly instead of being static
+#  2012 09 27 --    Job id is now specified in config file (only used for redis communication)
+#  2012 09 27 --    CG.conf is now looked for in the project directory by default (better organization)
+#  2012 09 27 --    Various bug fixes for start/stop position support
+#  2012 09 27 --    Cleaned up how paths are handled a bit (use os.path functions instead of string concat)
 #===============================================================================
 
 import sys              # General system functions
@@ -39,21 +46,19 @@ sys.path.append(script_dir)
 # Get the command line arguments
 parser = argparse.ArgumentParser(description='This script intelligently generates circos plots based on input config files ')
 parser.add_argument('-d', '--database_config',      action='store',         default='database.conf',            dest='db_conf',     help='The location of the database config file')
-parser.add_argument('-g', '--generator_config',     action='store',         default='generator.conf',           dest='gen_conf',    help='The location of the plot generator config file')
+parser.add_argument('-g', '--generator_config',     action='store',         default=None,                       dest='gen_conf',    help='The location of the plot generator config file')
 parser.add_argument('-p', '--project_dir',          action='store',         default=None,                       dest='project_dir', help='The location to store the images')
 parser.add_argument('-t', '--template_file',        action='store',         default='circos_template.conf',     dest='template_if', help='The location of the circos template file')
 
 args = parser.parse_args()
 
+# Generate the default path for the generator_config file if not specified (one place to look would be the project_dir)
+if not args.gen_conf:
+    args.gen_conf = os.path.join(args.project_dir, 'CG.conf')
+
 # Get the config file information
 db_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
 gen_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
-
-# Create the project directory
-args.project_dir += '/' # Adding trailing slash is good for appending file to path, but doesn't hurt if it is already there
-if not os.path.isdir(args.project_dir+'Circos'):
-    os.makedirs(args.project_dir+'Circos')
-
 
 try:
     db_conf.read(args.db_conf)
@@ -86,14 +91,23 @@ except:
     gen_conf.set('general','chromosome','-1')
 
 try:
-    gen_conf.get('general','start_pos')
+    gen_conf.get('general','start_position')
 except:
-    gen_conf.set('general','start_pos','-1')
+    gen_conf.set('general','start_position','-1')
 
 try:
-    gen_conf.get('general','stop_pos')
+    gen_conf.get('general','stop_position')
 except:
-    gen_conf.set('general','stop_pos','-1')
+    gen_conf.set('general','stop_position','-1')
+
+# Attempt to get the job id for redis communication
+job_id = None
+use_redis = False
+try:
+    job_id = gen_conf.get('general','job_id')
+    use_redis = True
+except:
+    use_redis = False
 
 '''
 # ==== DEBUG ==== 
@@ -105,19 +119,17 @@ def generate_track_data(track):
     pass
 # ================
 '''
-# Get the job ID from the project_dir
-job_id = os.path.split(os.path.dirname(args.project_dir))[1]
 
 # Generate the track datafiles based on config settings in [general] generator.conf return the location of the track data file (stored in project_dir/Circos)
 def generate_track_data(track_name, project_dir=str(args.project_dir), db_settings=dict(db_conf.items('database')), gen_settings=dict(gen_conf.items('general'))):
     # The MHP circos track is required for all other tracks except the SNP track, so go ahead and generate if it doesn't exist
-    MHP_of = project_dir+'/Circos/MHP_track.txt'
+    MHP_of = os.path.join(project_dir, 'MHP_track.txt')
     try:
         with open(MHP_of) as f: pass
     except IOError as e:
-        try:
+        if use_redis:
             redis_channel.sadd("%s:progress:log" % job_id, "gen-datapoint")
-        except:
+        else:
             print "Generating SNP datapoints..."
         #print "\nGenerating MHP track"
         cmd = './circos_MHP_track %s %s %s %s %s %s'%(gen_settings['bin_size'], gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], gen_settings['emma_file'], MHP_of)
@@ -127,7 +139,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
     if track_name == 'SNP_track':
         #print "\nGenerating SNP track"
         SNP_if = str(gen_settings['snp_set'])+'_chr_pos_only.tab'
-        SNP_of = project_dir + '/Circos/SNP_track.txt'
+        SNP_of = os.path.join(project_dir, 'SNP_track.txt')
         # Reduce the density of the SNP plot a bit compared to the others
         bin_size = str(int(gen_settings['bin_size'])*5)
         cmd = './circos_SNP_track %s %s %s %s %s %s'%(bin_size, gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], SNP_if , SNP_of)
@@ -142,7 +154,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
     if track_name == 'VEP_track':
         #print "\nGenerating VEP track"
         VEP_if = MHP_of
-        VEP_of = project_dir+'/Circos/VEP_track.txt'
+        VEP_of = os.path.join(project_dir, 'VEP_track.txt')
         params = map(lambda k: db_settings[k], ['host','user','password','port','database','vep_table','cons_table','mut_table'])
         cmd = 'python circos_VEP_track.py -H %s -u %s -p %s -P %s -d %s -v %s -c %s -m %s -i %s -o %s'%tuple(params+[VEP_if, VEP_of])
         #print cmd
@@ -154,7 +166,53 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         # Not yet implemented
         return '/home/clinto/Desktop/AED697/Circos/PPH2_track.txt'
 
-# Compute the track size scale factor
+
+# Try to open communication with redis
+if use_redis:
+    redis_channel.sadd("%s:progress:log" % job_id, "pop-tracks")
+else:
+    print "Populating Tracks..."
+
+
+# Configure template variables dependent on zoom level
+template = Template(filename=args.template_if)
+time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+chromosome_selection = None
+chromosome_units = None
+multiplier = 1e-6
+format = r'%d'
+if gen_conf.get('general','chromosome') == '-1':
+    chromosome_selection = r'/\d+/;-21'
+    chromosome_units = 1e7
+    '''
+      total          unit           density
+       full   =>  10,000,000  =>   1,000,000
+    '''
+else:
+    chromosome_selection = gen_conf.get('general','chromosome')
+    start_position = int(gen_conf.get('general','start_position'))
+    stop_position  = int(gen_conf.get('general','stop_position'))
+    if not (start_position == -1 and stop_position == -1):
+        bp_range = stop_position - start_position
+        if bp_range < 0:
+            print "Trying to plot a negative range"
+            exit()
+        
+        chromosome_units = bp_range/200
+        chromosome_selection = '%s:%.2f-%.2f'%(chromosome_selection, start_position/chromosome_units, stop_position/chromosome_units)
+        '''
+          total            unit         density
+        200,000,000  =>  1,000,000  =>  125,000
+         10,000,000  =>    250,000  =>   12,500
+        '''
+        
+        if chromosome_units < 1000000:
+            format = r'%.2f'
+    else:
+        chromosome_units = 1000000
+
+# Compute the track size scale factor for dynamic track size calculations
 total_track_size = 0
 num_tracks = 0
 sizes = {'small':1, 'medium':4, 'large':8}
@@ -165,17 +223,8 @@ for section in gen_conf.sections():
 
 size_scale = (100 - (num_tracks*spacing) - start_radius)/(total_track_size)
 
-# Fill out the template
-# Try to open communication with redis
-try:
-    redis_channel.sadd("%s:progress:log" % job_id, "pop-tracks")
-except:
-    print "Populating Tracks..."
-template = Template(filename=args.template_if)
-time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-chromosome_selection = gen_conf.get('general','chromosome')
-if gen_conf.get('general','chromosome') == '-1':
-    chromosome_selection = r'/\d+/;-21'
+
+# Configure template for tracks 
 plots = []
 current_r0 = start_radius
 current_r1 = 0
@@ -207,8 +256,10 @@ for section in sections:
         plot['backgrounds'] = [{'color':      'white'}]
         plot['axes'] = [{'color':             'vvlgrey',
                          'thickness':         2,
-                         'spacing':           1.0}]
+                         'spacing':           1.0,}]
         plot['rules'] = []
+        plot['attributes'] = {'min':          0, 
+                              'max':          15}
         for rule_no in range(1,10):
             rule = {'condition':              '_VALUE_ >= 9' if rule_no==9 else '_VALUE_ <= %d'%(rule_no), 
                     'color':                  'spectral-9-div-%d'%(10-rule_no),
@@ -260,29 +311,31 @@ for section in sections:
         plots.append(plot)
     current_r0 = current_r1 + spacing
 
+# Use Mako template to generate the circos config file
 buf = StringIO()
-ctx = Context(buf, time=time, chromosome_selection=chromosome_selection, plots=plots)
+ctx = Context(buf, time=time, chromosome_selection=chromosome_selection, chromosome_units=chromosome_units, multiplier=multiplier, format=format, plots=plots)
 template.render_context(ctx)
 circos_buf = buf.getvalue()
 
-try:
+if use_redis:
     redis_channel.sadd("%s:progress:log" % job_id, "draw-image")
-except:
+else:
     print "Drawing the image..."
+    
 #print "Generating Circos run script"
-circos_od = args.project_dir+'/Circos/'
-circos_of = circos_od+'circos.conf'
+circos_od = args.project_dir
+circos_of = os.path.join(args.project_dir, 'circos.conf')
 circos_ofh = open(circos_of, 'w')
 circos_ofh.write(circos_buf)
 circos_ofh.close()
 
-cmd = script_dir+'/circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
+cmd = 'circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
 #print "Running Circos script"
 #print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)
 
 
 # Create an image map
-cmd = 'python circos_image_mapper.py -p %scircos.svg '%circos_od
+cmd = 'python circos_image_mapper.py -p %s'%os.path.join(circos_od, 'circos.svg')
 #print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)

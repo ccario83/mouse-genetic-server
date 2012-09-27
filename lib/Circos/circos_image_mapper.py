@@ -60,6 +60,11 @@ chr_Mb = {  1:193,
            20:166,
 }
 
+
+# Proper
+#chr_Mb = [197195432, 181748087, 159599783, 155630120, 152537259, 149517037, 152524553, 131738871, 124076172, 129993255, 121843856, 121257530, 120284312, 125194864,103494974, 98319150, 95272651, 90772031, 61342430, 166650296 ]
+#chr_Mb = dict(zip(range(1,21), chr_Mb))
+
 total_Mb = sum(chr_Mb.values())
 chr_rad = dict(zip(range(1,21), map(lambda x: (float(x)/total_Mb)*2*pi, chr_Mb.values())))
 
@@ -83,7 +88,7 @@ for chromo in range(1,21):
     # SVG path code for this band 
     paths += r"""
       <path
-     style="fill:#000000;stroke:#000000;stroke-width:5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1;opacity:0.15"
+     style="fill:#000000;stroke:#000000;stroke-width:5px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0;opacity:0"
      d="M %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,1 %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,0 %.4f,%.4f z"
      id="chr%s_click"
      onclick="alert(&quot;%s&quot;)"

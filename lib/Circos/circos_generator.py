@@ -18,6 +18,7 @@
 #  2012 09 27 --    CG.conf is now looked for in the project directory by default (better organization)
 #  2012 09 27 --    Various bug fixes for start/stop position support
 #  2012 09 27 --    Cleaned up how paths are handled a bit (use os.path functions instead of string concat)
+#  2012 10 01 --    Updated command line call for image_mapper.py
 #===============================================================================
 
 import sys              # General system functions
@@ -336,6 +337,6 @@ subprocess.call(cmd, cwd = script_dir, shell=True)
 
 
 # Create an image map
-cmd = 'python circos_image_mapper.py -p %s'%os.path.join(circos_od, 'circos.svg')
+cmd = 'python circos_image_mapper.py -p %s -c %s -b %s -e %s'%(os.path.join(circos_od, 'circos.svg'), gen_conf.get('general','chromosome'), gen_conf.get('general','start_position'), gen_conf.get('general','stop_position'))
 #print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)

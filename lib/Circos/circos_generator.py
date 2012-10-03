@@ -101,12 +101,18 @@ try:
 except:
     gen_conf.set('general','stop_position','-1')
 
+try:
+    int(gen_conf.get('general','stop_position'))
+except:
+    gen_conf.set('general','stop_position','1000000')
+
+
 # Attempt to get the job id for redis communication
 job_id = None
 use_redis = False
 try:
     job_id = gen_conf.get('general','job_id')
-    use_redis = True
+    use_redis = (False if job_id == -1 else True)
 except:
     use_redis = False
 

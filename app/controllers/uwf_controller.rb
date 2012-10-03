@@ -45,7 +45,7 @@ class UwfController < ApplicationController
     
     @ready = $redis.get("#{@job_ID}:finished") == "true"
     if @ready
-        @circos_img = File.join('/data/', @job_ID, "/Circos/circos.svg")
+        @circos_img = File.join('/data/', @job_ID, "/Plots/circos.png")
     end
   end
   

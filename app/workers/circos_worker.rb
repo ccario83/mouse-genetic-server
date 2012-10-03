@@ -3,28 +3,23 @@ require 'erb'
 class CircosWorker
     
     include Sidekiq::Worker
-    sidekiq_options queue: 'Circos'
+    sidekiq_options queue: 'UWF'
     sidekiq_options retry: false
     
-    def perform(job_ID, emma_type, snp_set, chromosome = -1, start_position = -1, stop_position = -1, bin_size=1000000)
-
-        job_location    = File.join(DATA_path, job_ID)
-        config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
-        config_file     = File.join(job_location, "CG.conf")
+    def perform(@job_location, @emma_results_file, @chromosome = -1, @start_position = -1, @stop_position = -1, @bin_size=1000000)
         
-        emma_result_file = job_location + emma_type + '_results.txt'
+        @config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
+        @config_file     = File.join(@job_location, 'CG.conf')
         
         # Create the Circos config file with run parameters
-        message = ERB.new(File.read(config_template))
-        File.open(config_file, "w") { |f| f.write(message.result(binding)) }
+        @config = ERB.new(File.read(@config_template))
+        File.open(@config_file, 'w') { |f| f.write(@config.result(binding)) }
 
         # Run the Circos Plot Generator
-        puts "Circos running with job [#{job.ID}]"
-        cmd = "python #{CIRCOS_path}circos_generator.py -g  #{config_file} -p #{job_location}"
-        system(cmd)
-        #puts cmd
-
+        puts "Circos running with job [#{@job_location}, #{@emma_results_file}, #{@chromosome}, #{@start_position}, #{@stop_position}, #{@bin_size}]"
+        @cmd = "python #{CIRCOS_path}circos_generator.py -p #{@job_location}"
+        system(@cmd)
+        
         # All done!
-
     end
 end

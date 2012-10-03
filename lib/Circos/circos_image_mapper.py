@@ -154,9 +154,9 @@ for band in range(1,len(region_sizes)+1):
 <path
 \tstyle="fill:url(#radialGrey);stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1.0;opacity:0.9"
 \td="M %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,1 %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,0 %.4f,%.4f z"
-\tid="chr%s_click"
-\tonclick="alert('%s')"
-\tonmouseover="this.style.fill='url(#radialYellow)'"
+\tid="%s"
+\tonclick="request_circos_image('%s')"
+\tonmouseover="this.style.fill='url(#radialGrey)'"
 \tonmouseout="this.style.fill='url(#radialGrey)'" />"""%(last_bix, last_biy, last_box, last_boy, ro, ro, box, boy, bix, biy, ri, ri, last_bix, last_biy, band_tag, band_tag)
     
     last_rad += slice_rads[band] + spacing_rads
@@ -173,6 +173,6 @@ svg += paths
 svg += '\n</svg>'
 
 # Write out the file
-ofh = open(circos_if+'_im','w')
+ofh = open(circos_if,'w')
 ofh.write(svg)
 ofh.close()

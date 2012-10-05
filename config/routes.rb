@@ -5,13 +5,9 @@ RorWebsite::Application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
   
   root :to => 'uwf#index'
-  get 'uwf/index'
-  post 'uwf/submit'
-  get 'map/index'
-  get 'map/update'
   
   #get 'data/:path', :controller => 'static', :action => 'show'
-  match 'data/*path(.:format)' => 'static#show', :as => :custom_image
+  match 'data/*path' => 'static#show'
   #match 'data/*path(.svg)' => 'static#svg'
   
   # The priority is based upon order of creation:

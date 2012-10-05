@@ -11,6 +11,8 @@
 #  2012 10 01 --    Changed command line arguments
 #  2012 10 01 --    Generalized and added support for all zoom levels
 #  2012 10 01 --    Tested on 4 zoom levels deep
+#  2012 10 05 --    Changed svg from hard coded size to viewBox or full screen resize display
+#  2012 10 05 --    Added zoom out icon with zoom_out id
 #===============================================================================
 
 from math import *
@@ -31,9 +33,9 @@ stop_pos = int(args.stop_pos)
 circos_if = args.circos_if
 
 #============ DEBUG ===================
-#chromosome = 1
-#start_pos = 10000000
-#stop_pos = 20000000
+#chromosome = -1
+#start_pos = -1
+#stop_pos = -1
 #circos_if = '/home/clinto/Desktop/svg_map_tmp/Full/circos.svg'
 #======================================
 
@@ -127,8 +129,34 @@ paths = """
        gradientUnits="userSpaceOnUse" />
 
   </defs>
-
-"""
+  <path
+     style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
+     d="M 36,20 A 16,16 0 1 1 4,20 16,16 0 1 1 36,20 z"
+     transform="matrix(-6.3011893,0,0,6.3071591,2975.7326,2574.0452)" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
+     d="M 32,20 A 12,12 0 1 1 8,20 12,12 0 1 1 32,20 z"
+     transform="matrix(-6.3011893,0,0,6.3071591,2975.7326,2574.0452)" />
+  <path
+     style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible"
+     d="m 2789.8476,2760.1064 -12.6024,40.9959 -44.1083,47.3037 c -3.0404,3.2608 -17.2162,7.9962 -28.3554,-3.1536 -9.4518,-9.4608 -6.5111,-25.2425 -3.1506,-28.3823 l 47.2589,-44.1494 40.9578,-12.6143 z" />
+  <text
+     style="font-size:243.67947388px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="2320.5518"
+     y="3325.9998"
+     id="text10376"
+     transform="scale(1.2047513,0.83004681)"><tspan
+       id="tspan10378"
+       x="2320.5518"
+       y="3325.9998">-</tspan></text>
+  <rect
+     style="opacity:0;fill:#000000;fill-opacity:1;stroke:none"
+     id="zoom_out"
+     width="322.96918"
+     height="308.28876"
+     x="2668.1658"
+     y="2577.938" />"""
+     
 last_rad = (2*pi) - (spacing_rads/2)# Or 0, we are dealing with radians here
 last_bix = ri * sin(last_rad) + xc
 last_biy = r - ri * cos(last_rad)
@@ -155,8 +183,8 @@ for band in range(1,len(region_sizes)+1):
 \tstyle="fill:url(#radialGrey);stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1.0;opacity:0.9"
 \td="M %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,1 %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,0 %.4f,%.4f z"
 \tid="%s"
-\tonclick="request_circos_image('%s')"
-\tonmouseover="this.style.fill='url(#radialGrey)'"
+\tonclick="top.request_circos_image('%s')"
+\tonmouseover="this.style.fill='url(#radialYellow)'"
 \tonmouseout="this.style.fill='url(#radialGrey)'" />"""%(last_bix, last_biy, last_box, last_boy, ro, ro, box, boy, bix, biy, ri, ri, last_bix, last_biy, band_tag, band_tag)
     
     last_rad += slice_rads[band] + spacing_rads
@@ -164,6 +192,9 @@ for band in range(1,len(region_sizes)+1):
 
 circos_ifh = open(circos_if,'r')
 svg = circos_ifh.read()
+
+svg.replace(r'<svg width="3000px" height="3000px"', r'<svg height="100%" viewBox="0 0 3000 3000"', 1)
+
 
 # Remove the </svg> tag, add the new paths, and re-append the </svg> tag
 # Note: Indexing is ugly here always assumes last 7 characters of Circos SVG files are '</svg>\n' 
@@ -176,3 +207,4 @@ svg += '\n</svg>'
 ofh = open(circos_if,'w')
 ofh.write(svg)
 ofh.close()
+

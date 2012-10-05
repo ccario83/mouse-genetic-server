@@ -2,14 +2,12 @@
 class StaticController < ApplicationController
 
   def show
-    send_file File.join(DATA_path, params[:path])
-  end
-  
-  def svg
-    file = File.open(File.join(DATA_path, params[:path]), "rb")
+    file = File.open(File.join(DATA_path, params[:path]+'.'+params[:format]))
     contents = file.read
-    respond_to do |format|  
-        format.svg { contents }
+    respond_to do |format|
+        format.svg { send_data(contents, :type=>"image/svg+xml", :disposition =>"inline") }
+        format.png { render :text => contents }
     end
   end
+
 end

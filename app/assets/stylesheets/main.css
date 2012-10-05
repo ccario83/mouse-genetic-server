@@ -181,6 +181,11 @@ html { height: 100%; }
 }
 :-webkit-full-screen img { height: 100%; }
 
+#circos_img
+{
+    max-width: 100%;
+    height: 100%;
+}
 
 
 /* FORM OVERRIDES */

@@ -1,7 +1,6 @@
 <% @page_title = "Unified Workflow Results" %>
 <% content_for :page_js do %>
 <%= javascript_include_tag('gmaps4rails/gmaps4rails.base') %>
-		<%= javascript_include_tag('fullscreen') %>
 		<%= javascript_include_tag('interactive_circos_plot') %>
 <% end %>
 <span id="job_ID" style="display:none;"><%= @job_ID %></span>
@@ -24,7 +23,7 @@
 									<!--<iframe id="circos_img" src="<%= @circos_img %>" type="image/svg+xml" style="border: 0px;"></iframe>-->
 							</div>
 							</center>
-							<center><h3>Click here full screen interactive mode</h3></center>
+							<center><h3>Click here for full screen interactive mode</h3></center>
 						</div>
 					</div>
 

@@ -13,8 +13,10 @@
 #  2012 10 01 --    Tested on 4 zoom levels deep
 #  2012 10 05 --    Changed svg from hard coded size to viewBox or full screen resize display
 #  2012 10 05 --    Added zoom out icon with zoom_out id
+#  2012 10 08 --    Fixed bug with fullscreen view, removed zoom out icon for first plot
 #===============================================================================
 
+import os
 from math import *
 import argparse
 
@@ -33,10 +35,10 @@ stop_pos = int(args.stop_pos)
 circos_if = args.circos_if
 
 #============ DEBUG ===================
-#chromosome = -1
+#chromosome = 2
 #start_pos = -1
 #stop_pos = -1
-#circos_if = '/home/clinto/Desktop/svg_map_tmp/Full/circos.svg'
+#circos_if = '/home/clinto/Desktop/svg_map_tmp/circos.svg'
 #======================================
 
 
@@ -128,7 +130,10 @@ paths = """
        gradientTransform="matrix(2.5974791,0.00221231,-0.00221671,2.6026589,-2395.6882,-2146.2243)"
        gradientUnits="userSpaceOnUse" />
 
-  </defs>
+  </defs>"""
+  
+if chromosome != -1:
+    paths = paths +"""
   <path
      style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
      d="M 36,20 A 16,16 0 1 1 4,20 16,16 0 1 1 36,20 z"
@@ -152,11 +157,12 @@ paths = """
   <rect
      style="opacity:0;fill:#000000;fill-opacity:1;stroke:none"
      id="zoom_out"
+     onclick="top.zoom_out()"
      width="322.96918"
      height="308.28876"
      x="2668.1658"
      y="2577.938" />"""
-     
+
 last_rad = (2*pi) - (spacing_rads/2)# Or 0, we are dealing with radians here
 last_bix = ri * sin(last_rad) + xc
 last_biy = r - ri * cos(last_rad)
@@ -193,7 +199,7 @@ for band in range(1,len(region_sizes)+1):
 circos_ifh = open(circos_if,'r')
 svg = circos_ifh.read()
 
-svg.replace(r'<svg width="3000px" height="3000px"', r'<svg height="100%" viewBox="0 0 3000 3000"', 1)
+svg = svg.replace(r'<svg width="3000px" height="3000px"', r'<svg height="100%" viewBox="0 0 3000 3000"',1)
 
 
 # Remove the </svg> tag, add the new paths, and re-append the </svg> tag
@@ -204,6 +210,7 @@ svg += paths
 svg += '\n</svg>'
 
 # Write out the file
+circos_if = os.path.splitext(circos_if)[0]+'_im.svg'
 ofh = open(circos_if,'w')
 ofh.write(svg)
 ofh.close()

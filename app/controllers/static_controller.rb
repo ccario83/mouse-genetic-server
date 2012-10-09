@@ -2,7 +2,11 @@
 class StaticController < ApplicationController
 
   def show
-    file = File.open(File.join(DATA_path, params[:path]+'.'+params[:format]))
+    begin
+        file = File.open(File.join(DATA_path, params[:path]+'.'+params[:format]))
+    rescue Errno::ENOENT => e
+        raise ActionController::RoutingError.new('Not Found')
+    end
     contents = file.read
     respond_to do |format|
         format.svg { send_data(contents, :type=>"image/svg+xml", :disposition =>"inline") }

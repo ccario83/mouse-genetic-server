@@ -60,4 +60,29 @@ class UwfController < ApplicationController
     end
   end
 
+
+  def generate
+    @job_ID = params['id'] # id is what comes after the slash in 'uwf/show/#' by default
+    @job = restore_job(@job_ID)
+    @emma_type = @job.tracked_vars['@emma_type']
+    @snp_set = @job.tracked_vars['@snp_set']
+    @emma_result_file = File.join(DATA_path, @job_ID,'/' + @emma_type + '_results.txt')
+    
+    @image_tag = params['image_tag']
+    @chromosome = @image_tag.split("_")[0]
+    @start_pos = @image_tag.split("_")[1]
+    @stop_pos = @image_tag.split("_")[2]
+    
+    @job_location = ''
+    @density = 12500
+    if (@start_pos == '-1' and @stop_pos == '-1')
+        @job_location = File.join(DATA_path, @job_ID, "Plots/Chr#{@chromosome}")
+        @density = 125000
+    else
+        @job_location = File.join(DATA_path, @job_ID, "Plots/Chr#{@chromosome}/#{@start_pos}_#{@stop_pos}")
+    end
+
+    CircosWorker.perform_async(@job_location, @snp_set, @emma_result_file, @chromosome, @start_pos, @stop_pos, @density)
+    render :json => "Ok! Job started!"
+  end
 end

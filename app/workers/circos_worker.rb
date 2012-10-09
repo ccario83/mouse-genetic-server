@@ -8,6 +8,7 @@ class CircosWorker
     def perform(job_location, snp_set, emma_result_file, chromosome = -1, start_position = -1, stop_position = -1, bin_size = 1000000)
         
         job_ID = -1
+        Dir.mkdir(job_location)
         
         config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
         config_file     = File.join(job_location, 'CG.conf')

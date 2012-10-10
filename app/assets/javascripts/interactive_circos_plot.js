@@ -73,16 +73,10 @@ function image_exists(image_path)
 	image_found = true;
 	$.ajax(
 	{
-		url: image_path,
-		type:'HEAD',
+		url: '/exists/'+image_path,
 		async: false,
-		error: function(x, e)
-		{
-			if (x.status == 404)
-			{
-				image_found = false;
-			}
-		},
+		error: function(){alert("The server isn't sure if that file exists or not!");},
+		success: function(data) { image_found = data['status'] },
 	});
 	return image_found;
 };
@@ -91,7 +85,7 @@ function image_exists(image_path)
 function request_circos_image(image_tag) 
 {
 
-	image_path = image_tag_to_path(image_tag);
+	var image_path = image_tag_to_path(image_tag);
 	if (!image_exists(image_path))
 	{ 
 		// Don't try to generate another image if we are already working on it
@@ -108,7 +102,7 @@ function request_circos_image(image_tag)
 
 	$('iframe#circos_img').remove();
 	parent.append(newElement);
-
+	color_loaded_segments();
 };
 
 
@@ -151,7 +145,7 @@ function check_on_images()
 	
 	for (var i = 0; i < $.plots.loading_images.length; i++) 
 	{
-		image_tag = $.plots.loading_images[i];
+		var image_tag = $.plots.loading_images[i];
 		if (image_exists(image_tag_to_path(image_tag)))
 		{
 			stop_pulsate($("#circos_img").contents().find("#"+image_tag));
@@ -169,30 +163,58 @@ function check_on_images()
 
 function zoom_out()
 {
-
 	var lastImage = $.plots.zoom_image_list.pop();
 	var parent = $('iframe#circos_img').parent();
 	var newElement = "<iframe id='circos_img' src='"+lastImage+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+	
+	var oldElement = $('iframe#circos_img').attr('src');
+	$.plots.last_image_tag = oldElement;
+	
 	$('iframe#circos_img').remove();
 	parent.append(newElement);
+	color_loaded_segments();
+};
+
+function zoom_back_in()
+{
+	if ($.plots.last_image_tag != "")
+	{
+		$.plots.zoom_image_list.push($.plots.last_image_tag);
+		zoom_out();
+		$.plots.last_image_tag = "";
+	}
+	color_loaded_segments();
 };
 
 
 function pulsate(el)
 {
-	$(el).animate({ opacity: 0.2 }, 1200, 'linear')
-		 .animate({ opacity: 0.9 }, 1200, 'linear', function () {pulsate(el)});
+	$(el).animate({ opacity: 0.0 }, 800, 'linear')
+		 .animate({ opacity: 1.0 }, 800, 'linear', function () {pulsate(el)});
 };
 
 function stop_pulsate(el)
 {
-	$(el).animate({ opacity: 0.9 }, 1200, 'linear').stop();
-	$(el).attr('style','fill:#FFFF99;stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1.0;opacity:0.2');
+	$(el).stop(true, true);
 	color_loaded_segments();
 };
 
 function color_loaded_segments()
 {
+	var IDs = [];
+	$("#circos_img").contents().find("#sections").contents().each(function(){ IDs.push(this.id); });
+	
+
+	for (var i = 0; i < IDs.length; i++)
+	{
+		var image_tag = IDs[i];
+		if (typeof image_tag === 'undefined') { continue; }
+		if (image_exists(image_tag_to_path(image_tag)))
+		{
+			el = $("#circos_img").contents().find("#"+image_tag)
+			el.attr('style','fill:#FFFF99;stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0.2;opacity:0.2');
+		}
+	}
 
 };
 
@@ -201,8 +223,9 @@ $(document).ready(function ()
 {
 	$.plots = {}
 	$.plots.zoom_image_list = [];
+	$.plots.last_image_tag = "";
 	$.plots.loading_images = [];
-	$.plots.simultaneous_request_limit = 1;
+	$.plots.simultaneous_request_limit = 3;
 	$.plots.timerID;
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
 

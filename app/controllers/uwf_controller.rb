@@ -85,4 +85,5 @@ class UwfController < ApplicationController
     CircosWorker.perform_async(@job_location, @snp_set, @emma_result_file, @chromosome, @start_pos, @stop_pos, @density)
     render :json => "Ok! Job started!"
   end
+
 end

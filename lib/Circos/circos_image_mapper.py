@@ -14,6 +14,7 @@
 #  2012 10 05 --    Changed svg from hard coded size to viewBox or full screen resize display
 #  2012 10 05 --    Added zoom out icon with zoom_out id
 #  2012 10 08 --    Fixed bug with fullscreen view, removed zoom out icon for first plot
+#  2012 10 09 --    Disabled onMouseOver effect (still in code, however)
 #===============================================================================
 
 import os
@@ -54,9 +55,9 @@ xc = r
 # Y coordinate of center point
 yc = r
 # The inner radius of the clickable band per region
-ri = 0
+ri = 380
 # The outer radius of the clickable band per region
-ro = 1500
+ro = 1268
 # The spacing between ideograms in Mb to attempt to correct for spacing between args.chromosomes in zoom level 0
 spacing = 0
 
@@ -109,9 +110,8 @@ paths = """
        r="500"
        gradientTransform="matrix(2.5974791,0.00221231,-0.00221671,2.6026589,-2395.6882,-2146.2243)"
        gradientUnits="userSpaceOnUse" />
-
     <linearGradient
-       id="linearYellow">
+       id="linearLtGrey">
       <stop
          style="stop-color:#000000;stop-opacity:0.10;"
          offset="0" />
@@ -120,8 +120,8 @@ paths = """
          offset="1" />
     </linearGradient>
     <radialGradient
-       xlink:href="#linearYellow"
-       id="radialYellow"
+       xlink:href="#linearLtGrey"
+       id="radialLtGray"
        cx="1500"
        cy="1500"
        fx="1500"
@@ -129,39 +129,20 @@ paths = """
        r="500"
        gradientTransform="matrix(2.5974791,0.00221231,-0.00221671,2.6026589,-2395.6882,-2146.2243)"
        gradientUnits="userSpaceOnUse" />
+  </defs>
 
-  </defs>"""
-  
-if chromosome != -1:
-    paths = paths +"""
-  <path
-     style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
-     d="M 36,20 A 16,16 0 1 1 4,20 16,16 0 1 1 36,20 z"
-     transform="matrix(-6.3011893,0,0,6.3071591,2975.7326,2574.0452)" />
-  <path
-     style="fill:#ffffff;fill-opacity:1;stroke:none;display:inline"
-     d="M 32,20 A 12,12 0 1 1 8,20 12,12 0 1 1 32,20 z"
-     transform="matrix(-6.3011893,0,0,6.3071591,2975.7326,2574.0452)" />
-  <path
-     style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:8;marker:none;visibility:visible;display:inline;overflow:visible"
-     d="m 2789.8476,2760.1064 -12.6024,40.9959 -44.1083,47.3037 c -3.0404,3.2608 -17.2162,7.9962 -28.3554,-3.1536 -9.4518,-9.4608 -6.5111,-25.2425 -3.1506,-28.3823 l 47.2589,-44.1494 40.9578,-12.6143 z" />
-  <text
-     style="font-size:243.67947388px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-     x="2320.5518"
-     y="3325.9998"
-     id="text10376"
-     transform="scale(1.2047513,0.83004681)"><tspan
-       id="tspan10378"
-       x="2320.5518"
-       y="3325.9998">-</tspan></text>
-  <rect
-     style="opacity:0;fill:#000000;fill-opacity:1;stroke:none"
-     id="zoom_out"
-     onclick="top.zoom_out()"
-     width="322.96918"
-     height="308.28876"
-     x="2668.1658"
-     y="2577.938" />"""
+  <polygon
+     transform="matrix(0,-2.0034602,2.0034602,0,-36.804498,2996.6263)"
+     points="165,155 15,155 90,32 "
+     id="left"
+     onclick="top.zoom_out()" />
+  <polygon
+     transform="matrix(0,2.0034602,-2.0034602,0,741.35813,2633.0519)"
+     points="165,155 15,155 90,32 "
+     id="right" 
+     onclick="top.zoom_back_in()"/>
+<g id="sections">"""
+
 
 last_rad = (2*pi) - (spacing_rads/2)# Or 0, we are dealing with radians here
 last_bix = ri * sin(last_rad) + xc
@@ -189,10 +170,12 @@ for band in range(1,len(region_sizes)+1):
 \tstyle="fill:url(#radialGrey);stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1.0;opacity:0.9"
 \td="M %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,1 %.4f,%.4f L%.4f,%.4f A%.4f,%.4f 0 0,0 %.4f,%.4f z"
 \tid="%s"
-\tonclick="top.request_circos_image('%s')"
-\tonmouseover="this.style.fill='url(#radialYellow)'"
-\tonmouseout="this.style.fill='url(#radialGrey)'" />"""%(last_bix, last_biy, last_box, last_boy, ro, ro, box, boy, bix, biy, ri, ri, last_bix, last_biy, band_tag, band_tag)
-    
+\tonclick="top.request_circos_image('%s')" />"""%(last_bix, last_biy, last_box, last_boy, ro, ro, box, boy, bix, biy, ri, ri, last_bix, last_biy, band_tag, band_tag)
+
+# Put this in the path tag to get mouse effects
+#  onmouseover="this.style.fill='url(#radialLtGrey)'"
+#  onmouseout="this.style.fill='url(#radialGrey)'"
+
     last_rad += slice_rads[band] + spacing_rads
     last_bix, last_biy, last_box, last_boy = bix, biy, box, boy
 
@@ -207,7 +190,7 @@ svg = svg.replace(r'<svg width="3000px" height="3000px"', r'<svg height="100%" v
 # Should make regex when you have time later (HA!)
 svg=svg[0:-7]
 svg += paths
-svg += '\n</svg>'
+svg += '\n</g>\n</svg>'
 
 # Write out the file
 circos_if = os.path.splitext(circos_if)[0]+'_im.svg'

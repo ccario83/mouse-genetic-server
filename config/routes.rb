@@ -8,6 +8,7 @@ RorWebsite::Application.routes.draw do
   
   #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path' => 'static#show'
+  match 'exists/data/*path' => 'static#exists'
   #match 'data/*path(.svg)' => 'static#svg'
   
   # The priority is based upon order of creation:

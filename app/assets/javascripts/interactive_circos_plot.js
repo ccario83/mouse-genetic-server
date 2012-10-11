@@ -8,10 +8,9 @@ function unfull()
 	var job_ID = $('#job_ID').text();
 	image = "/data/"+job_ID+"/Plots/circos.png";
 	var newElement = "<img alt='Circos' id='circos_thumb' src="+image+" width='75%' />"
-	
-	var parent = $('#circos_img').parent();
-	$('#circos_img').remove();
-	parent.append(newElement);
+
+	var parent = document.getElementById('fs');
+	parent.innerHTML = newElement;
 	
 	$.plots.zoom_image_list = [];
 	$.plots.image_found = false;
@@ -20,14 +19,8 @@ function unfull()
 
 function full(el)
 {
-	var job_ID = $('#job_ID').text();
-	image = "/data/"+job_ID+"/Plots/circos_im.svg";
-	var newElement = "<iframe id='circos_img' src='"+image+"' type='image/svg+xml' style='border: 0px;'></iframe>";
-	
-	var parent = $('#circos_thumb').parent();
-	$('#circos_thumb').remove();
-	parent.append(newElement);
-	
+
+	// Go fullscreen
 	if(el.webkitRequestFullScreen) 
 	{
 		el.webkitRequestFullScreen();
@@ -36,7 +29,23 @@ function full(el)
 	{
 		el.mozRequestFullScreen();
 	}
+	
+	// Get the path of the SVG image
+	var job_ID = $('#job_ID').text();
+	image_path = "/data/"+job_ID+"/Plots/circos_im.svg";
+	
+	
+	// Replace the PNG thumbnail with the SVG image
+	var newElement = "<iframe id='circos_img' src='"+image_path+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+	document.getElementById('fs').innerHTML = newElement;
 
+	// Color any loaded segments
+	color_loaded_segments();
+
+	// Disable the 'last' and zoom-out buttons
+	$.plots.last_image_tag = ""
+	button_toggle("polygon#right", "disable");
+	button_toggle("polygon#left", "disable");
 };
 
 
@@ -84,7 +93,6 @@ function image_exists(image_path)
 
 function request_circos_image(image_tag) 
 {
-
 	var image_path = image_tag_to_path(image_tag);
 	if (!image_exists(image_path))
 	{ 
@@ -94,15 +102,21 @@ function request_circos_image(image_tag)
 		return;
 	}
 
-	var parent = $('iframe#circos_img').parent();
-	var newElement = "<iframe id='circos_img' src='"+image_path+"' type='image/svg+xml' style='border: 0px;'></iframe>";
-	
+	// Store the old element for zooming out
 	var oldElement = $('iframe#circos_img').attr('src');
 	$.plots.zoom_image_list.push(oldElement);
+	
+	// Generate the new SVG element and replace the iframe source with it
+	var newElement = "<iframe id='circos_img' src='"+image_path+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+	document.getElementById('fs').innerHTML = newElement;
 
-	$('iframe#circos_img').remove();
-	parent.append(newElement);
+	// Color any loaded segments
 	color_loaded_segments();
+	
+	// Disable the 'last' button, enable the zoom-out button
+	$.plots.last_image_tag = ""
+	button_toggle("polygon#right", "disable");
+	button_toggle("polygon#left", "enable");
 };
 
 
@@ -163,16 +177,30 @@ function check_on_images()
 
 function zoom_out()
 {
-	var lastImage = $.plots.zoom_image_list.pop();
-	var parent = $('iframe#circos_img').parent();
-	var newElement = "<iframe id='circos_img' src='"+lastImage+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+	if ($.plots.zoom_image_list.length != 0)
+	{
+		// Get the old SVG elements source and remember it for the 'last' button click
+		var oldElement = $('iframe#circos_img').attr('src');
+		$.plots.last_image_tag = oldElement;
 	
-	var oldElement = $('iframe#circos_img').attr('src');
-	$.plots.last_image_tag = oldElement;
-	
-	$('iframe#circos_img').remove();
-	parent.append(newElement);
-	color_loaded_segments();
+		// Get the higher zoom level's SVG element
+		var lastImage = $.plots.zoom_image_list.pop();
+
+		// Generate the new SVG element and replace the iframe source with it
+		var newElement = "<iframe id='circos_img' src='"+lastImage+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+		document.getElementById('fs').innerHTML = newElement;
+
+		// Color any loaded segments
+		color_loaded_segments();
+	}
+	if ($.plots.zoom_image_list.length == 0) 
+	{ 
+		button_toggle("polygon#left", "disable");
+	}
+	else
+	{
+		button_toggle("polygon#left", "enable");
+	}
 };
 
 function zoom_back_in()
@@ -180,10 +208,9 @@ function zoom_back_in()
 	if ($.plots.last_image_tag != "")
 	{
 		$.plots.zoom_image_list.push($.plots.last_image_tag);
-		zoom_out();
 		$.plots.last_image_tag = "";
+		zoom_out();
 	}
-	color_loaded_segments();
 };
 
 
@@ -199,23 +226,83 @@ function stop_pulsate(el)
 	color_loaded_segments();
 };
 
+
+/*
+function wait_on_SVG(selector)
+{
+	var content = $("#circos_img").contents().find(selector);
+	// JIK, wait for DOM tree to fully update
+	if(content.length == 0)
+	{
+		console.log("content not yet available for '"+selector+"'; trying again...");
+		wait_on_SVG(selector);
+	}
+	console.log("DOM looks ready now...");
+	return; 
+}*/
+
 function color_loaded_segments()
 {
-	var IDs = [];
-	$("#circos_img").contents().find("#sections").contents().each(function(){ IDs.push(this.id); });
+	//wait_on_SVG("#selections");
+	var content = $("#circos_img").contents().find("#sections");
+
+	// JIK, wait for DOM tree to fully update
+	if(content.length == 0)
+	{
+		console.log("content not yet available to color sections; trying again...");
+		setTimeout(function(){color_loaded_segments()}, 100);
+		return;
+	}
+	console.log("DOM looks ready now...");
 	
+	var IDs = [];
+	content.find('path').each(function(){ IDs.push(this.id); });
 
 	for (var i = 0; i < IDs.length; i++)
 	{
 		var image_tag = IDs[i];
-		if (typeof image_tag === 'undefined') { continue; }
 		if (image_exists(image_tag_to_path(image_tag)))
 		{
 			el = $("#circos_img").contents().find("#"+image_tag)
 			el.attr('style','fill:#FFFF99;stroke:none;stroke-width:0px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:0.2;opacity:0.2');
 		}
 	}
+};
 
+
+function button_toggle(selector, state)
+{
+	//wait_on_SVG(selector);
+	var button = $("#circos_img").contents().find(selector);
+
+	// JIK, wait for DOM tree to fully update
+	if(button.length == 0)
+	{
+		console.log("content not yet available to toggle buttons; trying again...");
+		return setTimeout(function(){button_toggle(selector, state)}, 100);
+	}
+	console.log("DOM looks ready now...");
+
+	var opacity = 0;
+	var fun = ""
+	
+	// Re-enable
+	if (state=="enable")
+	{
+		if (selector == "polygon#right") { fun = "top.zoom_back_in()"; }
+		if (selector == "polygon#left") { fun = "top.zoom_out()"; }
+		opacity = 1;
+	}
+	else // Disable
+	{
+		fun = ""
+		opacity = 0.5
+	}
+	
+
+	// Change button state
+	button.css('fill-opacity',opacity);
+	button.attr('onclick', fun);
 };
 
 
@@ -225,7 +312,7 @@ $(document).ready(function ()
 	$.plots.zoom_image_list = [];
 	$.plots.last_image_tag = "";
 	$.plots.loading_images = [];
-	$.plots.simultaneous_request_limit = 3;
+	$.plots.simultaneous_request_limit = 2;
 	$.plots.timerID;
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
 

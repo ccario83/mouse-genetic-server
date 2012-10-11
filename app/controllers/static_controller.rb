@@ -16,9 +16,7 @@ class StaticController < ApplicationController
 
   def exists
     filename = File.join(DATA_path, params[:path]+'.'+params[:format])
-    puts filename
     if (FileTest.exists?(filename))
-        puts "I EXIST!"
         render :json => { :status => true, }
     else
         render :json => { :status => false, }

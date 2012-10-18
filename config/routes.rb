@@ -2,6 +2,9 @@ require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
 
+  get "phenotypes/show"
+  get "phenotypes/lookup"
+
   mount Sidekiq::Web => '/sidekiq'
   
   root :to => 'uwf#index'

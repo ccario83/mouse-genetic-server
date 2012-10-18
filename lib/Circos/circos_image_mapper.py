@@ -136,12 +136,15 @@ paths = """
      points="165,155 15,155 90,32 "
      id="left"
      onclick="top.zoom_out()" />
+<g id="sections">"""
+
+"""
   <polygon
      transform="matrix(0,2.0034602,-2.0034602,0,741.35813,2633.0519)"
      points="165,155 15,155 90,32 "
      id="right" 
      onclick="top.zoom_back_in()"/>
-<g id="sections">"""
+"""
 
 
 last_rad = (2*pi) - (spacing_rads/2)# Or 0, we are dealing with radians here

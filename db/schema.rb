@@ -149,6 +149,15 @@ ActiveRecord::Schema.define(:version => 20120919190136) do
   add_index "MouseAnatomyTerms", ["MA_termName"], :name => "MA_termName", :unique => true
   add_index "MouseAnatomyTerms", ["accessionID"], :name => "accessionID", :unique => true
 
+  create_table "Name", :primary_key => "_test_key", :force => true do |t|
+    t.string "TEST",      :limit => 8,  :null => false
+    t.string "TESTDESC",  :limit => 60, :null => false
+    t.float  "UNITPRICE"
+  end
+
+  add_index "Name", ["TEST"], :name => "TEST", :unique => true
+  add_index "Name", ["_test_key"], :name => "_test_key", :unique => true
+
   create_table "PathBaseTerms", :primary_key => "ID", :force => true do |t|
     t.string "term",                                      :null => false
     t.string "pathBaseNumber",      :limit => 64,         :null => false
@@ -196,13 +205,72 @@ ActiveRecord::Schema.define(:version => 20120919190136) do
   add_index "Strains", ["JRnum"], :name => "JRnum", :unique => true
   add_index "Strains", ["StrainName"], :name => "StrainName", :unique => true
 
-  create_table "TestName", :primary_key => "_test_key", :force => true do |t|
-    t.string "TEST",      :limit => 8,  :null => false
-    t.string "TESTDESC",  :limit => 60, :null => false
-    t.float  "UNITPRICE"
+  create_table "anat_alts", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "alt",     :limit => 16
   end
 
-  add_index "TestName", ["TEST"], :name => "TEST", :unique => true
-  add_index "TestName", ["_test_key"], :name => "_test_key", :unique => true
+  create_table "anat_is_as", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "is_a",    :limit => 16
+  end
+
+  create_table "anat_relationships", :force => true do |t|
+    t.string "type",         :limit => 16
+    t.string "relationship", :limit => 16
+    t.string "term_id",      :limit => 16
+  end
+
+  create_table "anat_synonyms", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "name",    :limit => 128
+    t.string "type",    :limit => 16
+    t.text   "tag"
+  end
+
+  create_table "anat_terms", :primary_key => "term_id", :force => true do |t|
+    t.string  "name",        :limit => 128
+    t.text    "def"
+    t.text    "tag"
+    t.text    "comment"
+    t.string  "created_by",  :limit => 64
+    t.date    "created_on"
+    t.text    "xref"
+    t.boolean "is_obsolete"
+  end
+
+  create_table "mpath_alts", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "alt",     :limit => 16
+  end
+
+  create_table "mpath_is_as", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "is_a",    :limit => 16
+  end
+
+  create_table "mpath_relationships", :force => true do |t|
+    t.string "type",         :limit => 16
+    t.string "relationship", :limit => 16
+    t.string "term_id",      :limit => 16
+  end
+
+  create_table "mpath_synonyms", :force => true do |t|
+    t.string "term_id", :limit => 16
+    t.string "name",    :limit => 128
+    t.string "type",    :limit => 16
+    t.text   "tag"
+  end
+
+  create_table "mpath_terms", :primary_key => "term_id", :force => true do |t|
+    t.string  "name",        :limit => 128
+    t.text    "def"
+    t.text    "tag"
+    t.text    "comment"
+    t.string  "created_by",  :limit => 64
+    t.date    "created_on"
+    t.text    "xref"
+    t.boolean "is_obsolete"
+  end
 
 end

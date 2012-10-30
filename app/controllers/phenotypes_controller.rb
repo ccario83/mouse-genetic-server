@@ -3,7 +3,6 @@ class PhenotypesController < ApplicationController
     redirect_to(:action => "show/")
   end
 
-
   def show
   end
 

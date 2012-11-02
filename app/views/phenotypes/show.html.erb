@@ -10,7 +10,10 @@
 <script type="text/javascript">
 	function lookup()
 	{
-		alert($('#mpath_iframe').contents().find("#mpath_id").html())
+		var mpath = $("#mpath_iframe").contents().find(".jowl-template-result").html();
+		var anat  = $("#anat_iframe").contents().find(".jowl-template-result").html();
+		var qstring = mpath.replace(" ","=") + '&' + anat.replace(" ","=");
+		location.href='/phenotypes/lookup?'+qstring;
 	}
 </script>
 
@@ -23,8 +26,8 @@
 	</div>
 	
 	<div class="centered">
-		<!--<button class="btn centered" type="button" onclick="lookup()">Submit</button>-->
-		<button class="btn centered" type="button" onclick="location.href='/phenotypes/lookup?mpath=603&anat=0002433'">Submit</button>
+		<button class="btn centered" type="button" onclick="lookup()">Submit</button>
+		<!--<button class="btn centered" type="button" onclick="location.href='/phenotypes/lookup?mpath=603&anat=0002433'">Submit</button>-->
 	</div>
 
 

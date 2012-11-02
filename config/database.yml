@@ -31,3 +31,13 @@ production:
   username: ror
   password: m1ckeym0use
   socket: /tmp/mysql.sock # Where it can find the socket file (tmp file for sql connections
+  
+phenotype:
+  adapter: mysql
+  encoding: utf8
+  reconnect: false
+  database: phenotypes
+  host: www.berndtlab.pitt.edu
+  username: ror
+  password: m1ckeym0use
+  socket: /tmp/mysql.sock # Where it can find the socket file (tmp file for sql connections

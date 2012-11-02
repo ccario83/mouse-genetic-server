@@ -3,12 +3,13 @@ class PhenotypesController < ApplicationController
     redirect_to(:action => "show/")
   end
 
+
   def show
   end
 
   def lookup
-    @mpath_id = params['mpath']
-    @anat_id = params['anat']
+    @mpath_id = params['MPATH']
+    @anat_id = 'MA:'+params['MA']
     
     # Find all the mice with mpath and ma ids for the above
     

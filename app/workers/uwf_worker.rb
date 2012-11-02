@@ -10,16 +10,18 @@ class UwfWorker
     def perform(job_ID, pheno_file, emma_type, snp_set, chromosome = -1, start_position = -1, stop_position = -1, bin_size = 1000000)
 
         ## ----------- Run EMMA -----------
+        # Set the job location
         job_location    = File.join(DATA_path, job_ID)
+        # Signal to redis that the configuration of emma has begun for this job
         $redis.sadd("#{job_ID}:progress:log",'config-emma')
+        # Get the BerndtEmma configuration template
         config_template = File.join(Rails.root,'app/views/uwf/BE_conf_template.erb')
         config_file     = File.join(job_location, 'BE.conf')
-        
-        # Create a Berndt Emma config file with run parameters
+        # And populate it with the parameters passed to this function
         config = ERB.new(File.read(config_template))
         File.open(config_file, 'w') { |f| f.write(config.result(binding)) }
 
-        # Run the EMMA Job
+        # Signal to redis that an EMMA algorighm analysis has begun for this job and run it
         $redis.sadd("#{job_ID}:progress:log",'run-emma')
         #cmd = "python #{EMMA_path}BerndtEmma.py -c #{config_file} -p #{job_location}"
         #system(cmd)
@@ -32,23 +34,25 @@ class UwfWorker
         
         
         ## ----------- Run Circos to make the full plot -----------
+        # Get the path where plots should be saved, and create it
         job_location    = File.join(DATA_path, job_ID, 'Plots')
         Dir.mkdir(job_location)
+        # Signal to redis that circos plot configuration has begun for this job
         $redis.sadd("#{job_ID}:progress:log",'config-circos')
         
+        # Get the circos_generator configuration template 
         config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
         config_file     = File.join(job_location, 'CG.conf')
-        
-        # Create the Circos config file with run parameters
+        # And populate it with the parameters passed to this function
         config = ERB.new(File.read(config_template))
         File.open(config_file, 'w') { |f| f.write(config.result(binding)) }
 
-        # Run the Circos Plot Generator
+        # Signal to redis that the full genome Circos plot generation has begun, and run it
         $redis.sadd("#{job_ID}:progress:log",'run-circos')
         cmd = "python #{CIRCOS_path}circos_generator.py -p #{job_location}"
         system(cmd)
         
-        # All done!
+        # Signal to redis we are now all done!
         $redis.set("#{job_ID}:finished", true)
         ##----------------------------------------------------------
         

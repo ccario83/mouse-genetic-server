@@ -1,18 +1,22 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-
-  get "phenotypes/show"
-  get "phenotypes/lookup"
-
-  mount Sidekiq::Web => '/sidekiq'
   
+  # Redirect the root url to the uwf page
   root :to => 'uwf#index'
   
+  # Phenotype generator routes
+  get "phenotypes/show"
+  get "phenotypes/lookup"
+  
+  # Static handlers for development mode
   #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path' => 'static#show'
   match 'exists/data/*path' => 'static#exists'
   #match 'data/*path(.svg)' => 'static#svg'
+  
+  # Route to the sidekiq manager
+  mount Sidekiq::Web => '/sidekiq'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

@@ -13,3 +13,10 @@
 # ActiveSupport::Inflector.inflections do |inflect|
 #   inflect.acronym 'RESTful'
 # end
+ActiveSupport::Inflector.inflections do |inflect|
+   inflect.singular /diagnoses$/, 'diagnosis'
+   inflect.plural  /diagnosis$/, 'diagnoses'
+   inflect.singular /mice$/, 'mouse'
+   inflect.plural  /mouse$/, 'mice'
+   
+end

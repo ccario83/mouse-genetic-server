@@ -1,2 +1,17 @@
-<h1><%=@mpath_id%></h1>
-<h1><%=@anat_id%></h1>
+<h4>Pathology:</h4><%=PathBaseTerm.find(@mpath_id).term%><h4>Anatomy:</h4><%=MouseAnatomyTerm.find(@anat_id).term %>
+<hr>
+<table class="table table-striped">
+  <tr>
+      <th> Mouse ID </th>
+      <th> Strain </th>
+      <th> DOB </th>
+  </tr>
+  </tr>
+      <% @results.each do |result| %>
+      <% @mouse = Mouse.find(result.mouse_id) %>
+      <td><%= result.mouse_id %></td>
+      <td><%= @mouse.strain %></td>
+      <td><%= @mouse.date_born %></td>
+  </tr>
+      <% end %>
+</table>

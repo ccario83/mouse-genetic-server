@@ -8,9 +8,10 @@ class PhenotypesController < ApplicationController
   end
 
   def lookup
-    @mpath_id = params['MPATH']
-    @anat_id = 'MA:'+params['MA']
+    @mpath_id = params['MPATH'].to_i
+    @anat_id =  params['MA'].to_i
     
+    @results = Diagnosis.select(:mouse_id).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
     # Find all the mice with mpath and ma ids for the above
     
     

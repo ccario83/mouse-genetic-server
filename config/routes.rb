@@ -3,7 +3,7 @@ require 'sidekiq/web'
 RorWebsite::Application.routes.draw do
 
   get "phenotypes/show"
-  get "phenotypes/lookup"
+  get "phenotypes/query"
 
   mount Sidekiq::Web => '/sidekiq'
   

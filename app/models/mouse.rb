@@ -4,5 +4,6 @@ class Mouse < ActiveRecord::Base
 
   has_many :diagnoses
   has_many :special_tests
+  belongs_to :strain
 
 end

@@ -95,7 +95,7 @@ autocomplete field.
 			hint: false, //Message (if any) to show when unfocused.
 			onSelect : function(item){}, //function that can be overridden
 			formatListItem : function(listitem, type, identifier, termarray){ //formatting of results, can be overridden
-				if(type){ listitem.append($('<div class="type"/>').text(type)); }
+				if(type){ } //listitem.append($('<div class="type"/>').text(type)); }
 				listitem.append($('<div class="name"/>').text(identifier));
 				if(termarray.length) { listitem.append($('<div class="terms"/>').text(termarray.join(', '))
 					.prepend($('<span/>').addClass('termlabel').text("")));

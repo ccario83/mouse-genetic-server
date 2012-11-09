@@ -266,6 +266,9 @@ body
 	outline: none;
 }
 
+/* Simple selected/unselected class */
+.selected { opacity: 1.0; }
+.unselected { opacity: .2; }
 
 /* SCROLL BAR STYLE */
 /* Let's get this party started */

@@ -3,12 +3,14 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'mysql'
 
+# Gems for UI (Do manually, way too bloated)
+#gem 'less-rails-bootstrap'
+#gem 'jquery-ui-rails'
+#gem 'therubyracer'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-group :development do
-  gem 'sqlite3', '1.3.5'
-end
 
 # Gems used only for assets and not required
 # in production environments by default.

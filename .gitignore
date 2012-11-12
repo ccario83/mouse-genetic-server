@@ -19,3 +19,7 @@
 *~
 .project
 .DS_Store
+
+# Dev directories
+s/
+server/

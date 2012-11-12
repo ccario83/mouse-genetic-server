@@ -1,38 +1,161 @@
-<style type="text/css">
-	.centered
+<% content_for :page_js do %>
+	<%= javascript_include_tag('underscore') %>
+	<%= javascript_include_tag('g.raphael-min-0.5-1') %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span4 well">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<h3> Phenotype Selection:</h3>
+				</div>
+				<div class="row-fluid">
+					<table class="table table-striped">
+						<tr>
+							<td><b>Pathology</b></th>
+							<td><%=PathBaseTerm.find(@mpath_id).term%></th>
+						</tr>
+						<tr>
+							<td><b>Anatomy</b></td>
+							<td><%=MouseAnatomyTerm.find(@anat_id).term %></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="span4">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<h3> Age Selection:</h3>
+				</div>
+				<div class="row-fluid">
+					<label for="ages">Mice Ages (days):</label>
+					<input type="text" id="ages" style="border: 0; color: #f6931f; font-weight: bold;" />
+					<div id="age-range"></div>
+				</div>
+			</div>
+		</div>
+		<div id="sexes" class="span4 well">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<h3> Sex Selection:</h3>
+				</div>
+				<div class="row-fluid">
+					<div class="span6">
+						<img id="M_mouse" src="/assets/blue-mouse.svg" width="75px" style="position: relative; padding:20px;">
+						Male
+					</div>
+					<div class="span6">
+						<img id="F_mouse" src="/assets/pink-mouse.svg" width="75px" style="position: relative; padding:20px;">
+						Female
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="row-fluid">
+		<div class="span6">
+			<table id="strains" class = "table table-striped"></table>
+		</div>
+		<div id="chart" class="span6">
+		</div>
+</div> <!-- /container -->
+
+
+<script>
+var data;
+var strains;
+var grouped_by_strain;
+var mpath = <%= @mpath_id %>;
+var anat = <%= @anat_id %>;
+var youngest = 0;
+var oldest = 9999;
+var sex = 'B';
+
+$(document).ready(function () 
+{
+
+	lookup(mpath, anat, youngest, oldest, sex);
+
+});
+
+function lookup(mpath, anat, youngest, oldest, sex)
+{
+	var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex;
+	//
+	$.ajax(
 	{
-		width: 200px;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-	}
-</style>
-<script type="text/javascript">
-	function lookup()
+		// Send the request as a get to the url /generate/job_id?image_tag
+		type:"get",
+		url: url, 
+		datatype:"json",
+		success: function(data) { generate_table(data); },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
+	});
+}
+
+function generate_table(data)
+{
+	strains = _.uniq(_.pluck(data,'strain'));
+	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(strains, item['strain']); }))
+	
+	var table = new Array(), i = 0;
+	table[i++] = '<tr><th>Strain</th><th>Number of Mice</th></tr>'
+	for (var group_num = 0; group_num < grouped_by_strain.length; group_num++)
 	{
-		alert($('#mpath_iframe').contents().find("#mpath_id").html())
+		table[i++] ='<tr><td>';
+		table[i++] = grouped_by_strain[group_num][0]['strain'];
+		table[i++] = '</td><td>';
+		table[i++] = grouped_by_strain[group_num].length;
+		table[i++] = '</td></tr>';
+
 	}
+	$('#strains').append(table.join(''));
+	set_age_slider(get_age_range());
+}
+
+function set_age_slider(age_range)
+{
+	var youngest = age_range[0];
+	var oldest = age_range[1];
+	$( "#age-range" ).slider(
+	{
+		range: true,
+		min: youngest,
+		max: oldest,
+		values: [ youngest, oldest ],
+		slide: function( event, ui )
+		{
+			$( "#ages" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+	});
+	$( "#ages" ).val($( "#age-range" ).slider( "values", 0 ) + " - " + $( "#age-range" ).slider( "values", 1 ) );
+}
+
+function get_age_range()
+{
+	youngest = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
+	oldest = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
+	return [youngest, oldest];
+}
+
+function get_sexes()
+{
+	var sexes = _.uniq(_.map(_.flatten(grouped_by_strain), function(item){ return item.sex; }))
+	if (sexes.length>1)
+	{return "B";}
+	else
+	{return sexes;}
+}
+
+function set_sex_selection(sex)
+{
+
+}
+
+$("#M_mouse").click(function() { $(this).toggleClass("unselected"); set_sex_selection(); });
+$("#F_mouse").click(function() { $(this).toggleClass("unselected"); set_sex_selection(); });
+
 </script>
-
-	<div class="span5 offset1">
-		<iframe id="mpath_iframe" src="/mpath_jOWL.html" width="100%" height="500px" marginheight="0" frameborder="0" scrolling="no"></iframe>
-	</div>
-	
-	<div class="span5">
-		<iframe id="anat_iframe" src="/anat_jOWL.html" width="100%" height="500px" marginheight="0" frameborder="0" scrolling="no"></iframe>
-	</div>
-	
-	<div class="centered">
-		<!--<button class="btn centered" type="button" onclick="lookup()">Submit</button>-->
-		<button class="btn centered" type="button" onclick="location.href='/phenotypes/lookup?mpath=603&anat=0002433'">Submit</button>
-	</div>
-
-
-
-	<div class="column span-24">
-		Powered by <a href="http://jowl.ontologyonline.org" title="jOWL" style="font-size:large">jOWL</a>.<br/>
-		Created by <a href="http://ontologyonline.org/DavidDecraene.html" style="text-decoration:none;">David Decraene</a>.<br/>
-		OntologyOnline.org	
-	</div>
-	
-

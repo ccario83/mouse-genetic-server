@@ -9,16 +9,17 @@
 		<!-- Style Sheets -->
 		<%= stylesheet_link_tag('bootstrap') %>
 		<%= stylesheet_link_tag('bootstrap-responsive.min') %>
-		<%= yield :page_css %>
+		<%= stylesheet_link_tag('jquery-ui/jquery-ui-1.9.1.custom.min') %>
 		<%= stylesheet_link_tag('main') %>
+		<%= yield :page_css %>
 
 		<!-- JS/jQuery libraries -->
-		<%= javascript_include_tag('jquery-1.7.min') %>
-		<%= javascript_include_tag('jquery-ui-1.8.16') %>
+		<%= javascript_include_tag('jquery-1.8.2.min') %>
+		<%= javascript_include_tag('jquery-ui-1.9.1.custom.min') %>
 		<%= javascript_include_tag('bootstrap') %>
-		<%= yield :page_js %>
 		<%= javascript_include_tag('main') %>
-		
+		<%= yield :page_js %>
+				
 	</head>
 
 	<body>

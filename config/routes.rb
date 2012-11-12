@@ -7,7 +7,7 @@ RorWebsite::Application.routes.draw do
   
   # Phenotype generator routes
   get "phenotypes/show"
-  get "phenotypes/lookup"
+  get "phenotypes/query"
   
   # Static handlers for development mode
   #get 'data/:path', :controller => 'static', :action => 'show'

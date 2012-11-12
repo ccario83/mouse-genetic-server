@@ -9,9 +9,4 @@
 //
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
-//
-//= require jquery
-//= require jquery_ujs
-//= require twitter/bootstrap
-//= require_tree .
-//  ALL JAVASCRIPT IS LOADED EXPLICITLY IN THE application.html.erb file 20120822 CC
+//= require jquery.ui.all

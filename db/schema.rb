@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120919190136) do
+ActiveRecord::Schema.define(:version => 20120920221903) do
 
   create_table "resource_types", :force => true do |t|
     t.string "name", :limit => 64, :null => false
@@ -30,9 +30,15 @@ ActiveRecord::Schema.define(:version => 20120919190136) do
     t.string   "description"
     t.string   "owner",       :limit => 64
     t.string   "website"
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-    t.binary   "validated",   :limit => 1,  :default => "0"
+    t.boolean  "validated",                 :default => false
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "resource_type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "users", :force => true do |t|

@@ -1,6 +1,8 @@
 <% content_for :page_js do %>
 	<%= javascript_include_tag('underscore') %>
-	<%= javascript_include_tag('g.raphael-min-0.5-1') %>
+	<%= javascript_include_tag('raphael-min') %>
+	<%= javascript_include_tag('g.raphael-min') %>
+	<%= javascript_include_tag('g.bar-min') %>
 <% end %>
 
 <div class="container-fluid">
@@ -59,7 +61,7 @@
 		<div class="span6">
 			<table id="strains" class = "table table-striped"></table>
 		</div>
-		<div id="chart" class="span6">
+		<div id="chart" class="span6" style=" margin: 0 auto; width: 640px; height: 480px;">
 		</div>
 </div> <!-- /container -->
 
@@ -71,18 +73,22 @@ var grouped_by_strain;
 var mpath = <%= @mpath_id %>;
 var anat = <%= @anat_id %>;
 var youngest = 0;
+var very_youngest;
 var oldest = 9999;
+var very_oldest;
 var sex = 'B';
 
-$(document).ready(function () 
+
+$(window).bind("load", function()
 {
-
 	lookup(mpath, anat, youngest, oldest, sex);
-
+	$("#M_mouse").click(function() { change_sex_selection('M'); });
+	$("#F_mouse").click(function() { change_sex_selection('F'); });
 });
 
 function lookup(mpath, anat, youngest, oldest, sex)
 {
+	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
 	var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex;
 	//
 	$.ajax(
@@ -96,8 +102,10 @@ function lookup(mpath, anat, youngest, oldest, sex)
 	});
 }
 
-function generate_table(data)
+function generate_table(data_)
 {
+	// set the data globally
+	data = data_;
 	strains = _.uniq(_.pluck(data,'strain'));
 	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(strains, item['strain']); }))
 	
@@ -112,26 +120,32 @@ function generate_table(data)
 		table[i++] = '</td></tr>';
 
 	}
-	$('#strains').append(table.join(''));
+	$('#strains').empty().append(table.join(''));
 	set_age_slider(get_age_range());
+	set_sex_selection(get_sexes());
+	update_bar_chart();
 }
 
 function set_age_slider(age_range)
 {
 	var youngest = age_range[0];
 	var oldest = age_range[1];
-	$( "#age-range" ).slider(
+	very_youngest = (typeof(very_youngest) === "undefined") ? youngest : very_youngest;
+	very_oldest = (typeof(very_oldest) === "undefined") ? oldest : very_oldest;
+	$("#age-range").slider(
 	{
 		range: true,
-		min: youngest,
-		max: oldest,
+		min: very_youngest,
+		max: very_oldest,
 		values: [ youngest, oldest ],
 		slide: function( event, ui )
 		{
 			$( "#ages" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-		}
+		}, 
 	});
 	$( "#ages" ).val($( "#age-range" ).slider( "values", 0 ) + " - " + $( "#age-range" ).slider( "values", 1 ) );
+	// Set the stop function here cause it doesn't like it in document.ready()
+	$("#age-range").slider("option", "stop", function() { change_age_slider() } );
 }
 
 function get_age_range()
@@ -139,6 +153,26 @@ function get_age_range()
 	youngest = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
 	oldest = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
 	return [youngest, oldest];
+}
+
+function change_age_slider()
+{
+
+	youngest = $("#age-range").slider("option","values")[0];
+	oldest = $("#age-range").slider("option","values")[1];
+	lookup(mpath, anat, youngest, oldest, sex);
+}
+
+
+
+function set_sex_selection(sexes)
+{
+	if (sexes == 'B')
+	{
+		$("#M_mouse").removeClass('unselected');
+		$("#F_mouse").removeClass('unselected');
+	}
+	else { $("#"+sexes+"_mouse").removeClass('unselected'); }
 }
 
 function get_sexes()
@@ -150,12 +184,53 @@ function get_sexes()
 	{return sexes;}
 }
 
-function set_sex_selection(sex)
+function change_sex_selection(clicked_sex)
 {
+	
+	
+	if (!$("#M_mouse").hasClass('unselected') && (!$("#F_mouse").hasClass('unselected')))
+	{
+		$("#"+clicked_sex+"_mouse").addClass('unselected');
+		if (clicked_sex == 'M'){ sex = 'F' }
+		else {sex = 'M'}
+	}
+	else if (((!$("#M_mouse").hasClass('unselected')) && $("#F_mouse").hasClass('unselected') && clicked_sex == 'F') || ((!$("#F_mouse").hasClass('unselected')) && $("#M_mouse").hasClass('unselected') && clicked_sex == 'M'))
+	{
+		$("#"+clicked_sex+"_mouse").removeClass('unselected');
+		sex = 'B'
+	}
+	else
+	{
+		if (clicked_sex == 'M'){ sex = 'F' }
+		else {sex = 'M'}
 
+		$("#"+clicked_sex+"_mouse").addClass('unselected');
+		$("#"+sex+"_mouse").removeClass('unselected');
+	}
+	
+	lookup(mpath, anat, youngest, oldest, sex);
 }
 
-$("#M_mouse").click(function() { $(this).toggleClass("unselected"); set_sex_selection(); });
-$("#F_mouse").click(function() { $(this).toggleClass("unselected"); set_sex_selection(); });
+function update_bar_chart()
+{
+	var flat = _.flatten(grouped_by_strain)
+	var sums = {};
+	for (var i in strains) { sums[strains[i]] = 0; }
+	var totals = {};
+	for (var i in strains) { totals[strains[i]] = 0; }
+	var averages = {};
+	for (var i in strains) { totals[strains[i]] = 0; }
+	for (var i = 0; i < flat.length; i++) 
+	{
+		sums[flat[i]['strain']] += flat[i]['score'];
+		totals[flat[i]['strain']]++;
+	}
+	for (var i in strains) 
+	{
+		averages[strains[i]] = sums[strains[i]]/totals[strains[i]];
+	}
 
+	var r = Raphael("chart");
+	r.barchart(330, 10, 300, 220, _.toArray(averages));
+};
 </script>

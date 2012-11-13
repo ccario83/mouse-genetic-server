@@ -8,7 +8,7 @@
 #===============================================================================
 require 'securerandom'
 # Set some paths
-FILE_UPLOAD_ROOT = DATA_path
+FILE_UPLOAD_ROOT = '../data/'
 DATA_URL = '/data/'
 
 class Job

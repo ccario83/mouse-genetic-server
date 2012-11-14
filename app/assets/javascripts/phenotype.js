@@ -7,6 +7,8 @@ var sex = 'B';
 // Global for debugging purposes
 var data;
 var grouped_by_strain;
+var severities;
+
 
 $(window).bind("load", function()
 {
@@ -45,7 +47,7 @@ function process_data(data_)
 
 
 	var frequencies = new Array();
-	var severities = new Array();
+	severities = new Array();
 	for (idx in data)
 	{
 		var sex = data[idx].sex;
@@ -209,7 +211,7 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 {
 
 	selected_strains = selected_strains.sort();
-	var charted_data = [];
+	charted_data = [];
 	
 	// Generate the data
 	if (selected_sexes == 'B' || selected_sexes == 'M')
@@ -362,3 +364,39 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 		series: charted_data,
 	});
 };
+
+
+function do_stats()
+{
+
+
+	var output = '', // initialise as string
+	fe = severities['F'];
+	for (val in fe)
+	{
+		if (fe.hasOwnProperty(val)) 
+		{
+			output += "fe['" + val + "'] is: " + fe[val];
+			output += "\n";
+		}
+	}
+	console.log(output);
+
+	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
+	var url = "/phenotypes/stats?data=" + data + "&selected_strains=" + encodeURIComponent(selected_strains);
+	//
+	$.ajax(
+	{
+		// Send the request as a get to the url /generate/job_id?image_tag
+		type:"get",
+		url: url, 
+		datatype:"json",
+		success: function(data) { process_stats(data); },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
+	});
+}
+
+function process_stats(data)
+{
+	alert(data);
+}

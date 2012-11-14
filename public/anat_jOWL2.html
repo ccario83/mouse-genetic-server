@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:DC="http://purl.org/metadata/dublin_core_elements#" xml:lang="en" lang="en">
+</head>
+	<title>Pathology</title>
+	<link rel="stylesheet" href="http://ontologyonline.org/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+	<link rel="stylesheet" href="http://jowl.ontologyonline.org/css/jOWL.css" type="text/css"/>
+	<link type="text/css" rel="stylesheet" href="http://jowl.ontologyonline.org/css/jq/custom-theme/jquery-ui-1.7.custom.css" />
+	<!--<link href="/assets/main.css?body=1" media="screen" rel="stylesheet" type="text/css" />-->
+
+	<style type="text/css">
+		.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 0px solid #999999; background: #dadada url(assets/images/jquery-ui/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; outline: none; }
+		.jowl-content{ overflow-y: scroll; height: 100px; min-height: 50px;}
+	</style>
+	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.0/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="http://jowl.ontologyonline.org/scripts/jquery.tooltip.js"></script>
+	<script type="text/javascript" src="http://jowl.ontologyonline.org/scripts/jOWL.js"></script>
+	<script type="text/javascript" src="/assets/jOWL/jOWL_UI.js"></script>
+	<script type="text/javascript" src="http://jowl.ontologyonline.org/scripts/jOWLBrowser.js"></script>
+	<script type="text/javascript">
+		/** 
+		Modify this configuration object to fine-tune the visualisation of the jOWL browser.
+		*/
+		var configuration = 
+		{
+			ontology : "/anat_RDF.owl", //the ontology to load
+			owlClass : null,             //The class to show when loading
+		}
+
+		/** 
+		Do not Modify the code below unless you know what you are doing.
+		*/
+		$(document).ready(function() 
+		{
+			try { console.log('init console...'); } catch(e) { console = { log: function() {} } }
+			$("#tabs").tabs();
+			var mode = jOWL.getURLParameters()["mode"];
+			//display wine ontology as default	
+			jOWLBrowser.isReady = true;
+			if(mode != 'Ubiquity') jOWL.load(configuration.ontology, initjOWL, {reason : true, locale : 'en' });
+		});
+
+		function initjOWL()
+		{
+			if(!jOWLBrowser.isReady) {setTimeout(initjOWL, 200); return;} 
+			//wait a bit until everything (document) is loaded up
+			else 
+			{
+				createOntologyWidget();
+				var conceptWidget = createConceptWidget();
+				createOverviewWidget();
+			}
+		}
+
+		/** Ubiquity calls this function */
+		function jOWLParseDoc(doc){ jOWL.parse(doc, {reason : true, locale : 'en' }); initjOWL(); }
+	</script>
+</head>
+<body>
+	<div class="container" style="margin-top:0px;">
+		<div class="column span-12">
+			<div id="conceptwidget">
+				<form action="" style="display:none;">
+					Treeview: <input type="radio" name="visualisation" value="treeview" checked="checked"/>
+					Navigation Bar: <input type="radio" name="visualisation" value="navbar"/>
+				</form>
+				<table id="browser">
+						<tr>
+							<div style="color:#999">Enter Search Terms here</div>
+							<input id="owlauto" type="text" size="40" style="display:block;width:99%;margin:5px 0px;" title="enter a search term"/>
+						</tr>
+						<tr>
+							<div id="treeview" class="ui-widget-content">
+								<h4 class="ui-dialog-titlebar ui-state-default">Mouse Anatomy</h4>
+							</div>
+						</tr>
+						<tr>
+							<div id="description" class="resourcebox" data-jowl="owl:Class">
+								<div class="propertybox">
+									<span id="mpath_id" data-jowl="term">${term}</span>
+								</div>
+							</div>
+						</tr>
+				</table>
+			</div>
+		</div>
+		<div style="position:absolute; top:100px; left:500px;">
+			Powered by <a href="http://jowl.ontologyonline.org" title="jOWL" style="font-size:large">jOWL</a>.<br/>
+			Created by <a href="http://ontologyonline.org/DavidDecraene.html" style="text-decoration:none;">David Decraene</a>.<br/>
+			OntologyOnline.org	
+		</div>
+	</div>
+
+</body>

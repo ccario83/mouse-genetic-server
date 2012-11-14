@@ -2,6 +2,14 @@ class PhenotypesController < ApplicationController
   def index
   end
 
+  def test
+    @mpath_id = 343;
+    @anat_id = 2434;
+    @all_strains = ["AKR/J", "SJL/J", "C57BLKS/J", "BALB/cByJ", "C57L/J", "129S1/SvImJ", "LP/J", "P/J", "C57BL/6J", "NZO/H1LtJ", "SM/J", "BUB/BnJ", "C57BL/10J", "PWD/PhJ", "SWR/J", "NON/ShiLtJ", "NOD.B10Sn-H2<b>/J", "PL/J", "C57BR/cdJ", "A/J", "MRL/MpJ", "FVB/NJ", "CBA/J", "DBA/2J", "NZW/LacJ", "BTBR T<+> tf/J", "KK/HlJ", "WSB/EiJ"];
+    @very_youngest = 201;
+    @very_oldest = 1016;
+  end
+
   def show
     @mpath_id = params['MPATH'].to_i
     @anat_id =  params['MA'].to_i

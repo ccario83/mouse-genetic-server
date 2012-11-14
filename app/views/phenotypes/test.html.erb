@@ -1,0 +1,94 @@
+<% content_for :page_css do %>
+<%= stylesheet_link_tag('liteAccordion/liteaccordion')%>
+<% end %>
+
+<% content_for :page_js do %>
+<script>
+			var mpath = <%= @mpath_id %>;
+			var anat = <%= @anat_id %>;
+			var all_strains = <%=raw @all_strains %>;
+			var very_youngest = <%= @very_youngest %>;
+			var very_oldest = <%= @very_oldest %>;
+		</script>
+		<%= javascript_include_tag('underscore') %>
+		<%= javascript_include_tag('highcharts/highcharts') %>
+		<%= javascript_include_tag('highcharts/modules/exporting') %>
+		<%= javascript_include_tag('phenotype') %>
+		<%= javascript_include_tag('liteAccordion/jquery.easing.1.3') %>
+		<%= javascript_include_tag('liteAccordion/liteaccordion.jquery') %>
+		
+<% end %>
+
+<style type="text/css">
+	.centered
+	{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+</style>
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+            <div id = "accordion" class="centered">
+                <ol>
+                    <li>
+                        <h2><span>Pathology Selection</span></h2>
+                        <div style="margin-left:15px;">
+                            <iframe id="mpath_iframe" src="/mpath_jOWL2.html" width="100%" height="400px" marginheight="0" frameborder="0" scrolling="no"></iframe>
+                        </div>
+                    </li>
+                    <li>
+                        <h2><span>Anatomy Selection</span></h2>
+                        <div style="margin:15px;">
+                            <iframe id="anat_iframe" src="/anat_jOWL2.html" width="100%" height="400px" marginheight="0" frameborder="0" scrolling="no"></iframe>
+                        </div>
+                    </li>
+                    <li>
+                        <h2><span>Age Selection</span></h2>
+                        <div>
+                            	<div style="padding:20px; width: 350px;">
+                                <label for="ages">Mice Ages (days):</label>
+                                <input type="text" id="ages" style="border: 0; color: #f6931f; font-weight: bold;" />
+                                <div id="age-range" ></div>
+                                </div>
+                        </div>
+                    </li>
+                    <li>
+                        <h2><span>Sex Selection</span></h2>
+                        <div>
+                            <div style="padding:20px; width: 350px;">
+                                <div class="span6">
+                                    <img id="M_mouse" src="/assets/blue-mouse.svg" width="75px" style="position: relative; padding:20px;">
+                                    Male
+                                </div>
+                                <div class="span6">
+                                    <img id="F_mouse" src="/assets/pink-mouse.svg" width="75px" style="position: relative; padding:20px;">
+                                    Female
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <h2><span>Strain Selection</span></h2>
+                        <div>
+                        </div>
+                    </li>
+                </ol>
+                <noscript>
+                    <p>Please enable JavaScript to get the full experience.</p>
+                </noscript>
+            </div>
+    <hr>
+    <div class="row-fluid">
+        <div id="chart" class="centered" style="width:960px;">
+        </div>
+    </div>
+</div> <!-- /container -->
+            <script>
+                $('#accordion').liteAccordion({containerHeight: 250,});
+            </script>
+
+	
+

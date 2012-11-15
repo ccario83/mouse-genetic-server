@@ -37,7 +37,7 @@
 			try { console.log('init console...'); } catch(e) { console = { log: function() {} } }
 			$("#tabs").tabs();
 			var mode = jOWL.getURLParameters()["mode"];
-			//display wine ontology as default	
+			//display ontology as default	
 			jOWLBrowser.isReady = true;
 			if(mode != 'Ubiquity') jOWL.load(configuration.ontology, initjOWL, {reason : true, locale : 'en' });
 		});
@@ -72,9 +72,7 @@
 							<input id="owlauto" type="text" size="40" style="display:block;width:99%;margin:5px 0px;" title="enter a search term"/>
 						</tr>
 						<tr>
-							<div id="treeview" class="ui-widget-content">
-								<h4 class="ui-dialog-titlebar ui-state-default">Mouse Anatomy</h4>
-							</div>
+
 						</tr>
 						<tr>
 							<div id="description" class="resourcebox" data-jowl="owl:Class">
@@ -86,11 +84,11 @@
 				</table>
 			</div>
 		</div>
-		<div style="position:absolute; top:100px; left:500px;">
+		<!--<div style="position:absolute; top:100px; left:500px;">
 			Powered by <a href="http://jowl.ontologyonline.org" title="jOWL" style="font-size:large">jOWL</a>.<br/>
 			Created by <a href="http://ontologyonline.org/DavidDecraene.html" style="text-decoration:none;">David Decraene</a>.<br/>
 			OntologyOnline.org	
-		</div>
+		</div>-->
 	</div>
 
 </body>

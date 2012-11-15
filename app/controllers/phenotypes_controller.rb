@@ -1,4 +1,4 @@
-require('rinruby')
+require 'securerandom'
 
 class PhenotypesController < ApplicationController
   def index
@@ -55,17 +55,22 @@ class PhenotypesController < ApplicationController
   
   
   def stats
-    @data = params['data']
-    @strains = params['selected_strains'].split(",")
-    R.eval 'library(agricolae)'
-    R.assign 'values', @data
-    R.assign 'strains', @strains
-    R.eval 'data = data.frame(values = values, strains = factor(strains))'
-    R.eval 'amod <- aov(data$values ~ data$strains ,data)'
-    R.eval 'results <- HSD.test(amod, "data$strains")'
-    R.eval 'letters <- as.vector(results$M)'
-    @results = R.pull 'letters'
-    render :json => @results.to_json
+    @values = params['values'].collect{|i| i.to_i}
+    @strains = params['strains']
+    @id = SecureRandom.hex(3)
+    StatWorker.perform_async(@id, @values, @strains)
+    render :json => "#{@id}".to_json
+  end
+  
+  def check_stats
+    @id = params['id']
+    if !($redis.exists("#{@id}:letters"))
+        render :json => 'Not ready.'.to_json
+    else
+        @response = $redis.smembers("#{@id}:letters")[0]
+        puts @response
+        render :json => @response
+    end
   end
   
 end

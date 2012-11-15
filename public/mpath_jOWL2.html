@@ -37,7 +37,7 @@
 			try { console.log('init console...'); } catch(e) { console = { log: function() {} } }
 			$("#tabs").tabs();
 			var mode = jOWL.getURLParameters()["mode"];
-			//display wine ontology as default	
+			//display ontology as default	
 			jOWLBrowser.isReady = true;
 			if(mode != 'Ubiquity') jOWL.load(configuration.ontology, initjOWL, {reason : true, locale : 'en' });
 		});

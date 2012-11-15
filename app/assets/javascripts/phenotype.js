@@ -4,6 +4,10 @@ var youngest = very_youngest;
 var oldest = very_oldest;
 var sex = 'B';
 
+var stats_timerID=0;
+var chart;
+var groupings;
+var chart_groupings = [];
 // Global for debugging purposes
 var data;
 var grouped_by_strain;
@@ -20,14 +24,16 @@ $(window).bind("load", function()
 function lookup(mpath, anat, youngest, oldest, sex, selected_strains)
 {
 	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
-	var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex + "&selected_strains=" + encodeURIComponent(selected_strains);
+	//var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex + "&selected_strains=" + encodeURIComponent(selected_strains);
 	//
 	$.ajax(
 	{
 		// Send the request as a get to the url /generate/job_id?image_tag
-		type:"get",
-		url: url, 
-		datatype:"json",
+		type:'post',
+		url: '/phenotypes/query',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: {MPATH:mpath, MA:anat, youngest:youngest, oldest:oldest, sex:sex, selected_strains:selected_strains},
+		dataType:'json',
 		success: function(data) { process_data(data); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
 	});
@@ -307,7 +313,6 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 	
 	
 	// Create the chart
-	var chart;
 	chart = new Highcharts.Chart(
 	{
 		chart:
@@ -362,41 +367,115 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 			}
 		},
 		series: charted_data,
+		events:
+		{
+			load: do_stats(),
+			redraw: adjust_groupings(),
+		}
 	});
 };
 
 
 function do_stats()
 {
-
-
-	var output = '', // initialise as string
-	fe = severities['F'];
-	for (val in fe)
+	console.log("im doing stats! " + stats_timerID);
+	clearInterval(stats_timerID);
+	var strains = [];
+	var values = [];
+	
+	for (sex in severities)
 	{
-		if (fe.hasOwnProperty(val)) 
+		severity = severities[sex]
+		for (str in severity)
 		{
-			output += "fe['" + val + "'] is: " + fe[val];
-			output += "\n";
+			if (severity.hasOwnProperty(str))
+			{
+				for (val in severity[str])
+				{
+					//console.log(sex +": "+str +": "+severity[str][val]);
+					strains.push(str);
+					values.push(severity[str][val]);
+				}
+			}
 		}
 	}
-	console.log(output);
-
+	
 	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
-	var url = "/phenotypes/stats?data=" + data + "&selected_strains=" + encodeURIComponent(selected_strains);
+	//var url = "/phenotypes/stats?values=" + encodeURIComponent(values) + "&strains=" + encodeURIComponent(strains);
 	//
 	$.ajax(
 	{
 		// Send the request as a get to the url /generate/job_id?image_tag
-		type:"get",
-		url: url, 
-		datatype:"json",
-		success: function(data) { process_stats(data); },
+		type:'post',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		url: '/phenotypes/stats',
+		data: {strains:strains, values:values},
+		dataType:'json',
+		success: function(id) { poll_stats(id); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
 	});
 }
 
-function process_stats(data)
+function poll_stats(id)
 {
-	alert(data);
-}
+	stats_timerID = setInterval(function()
+	{ 
+		$.ajax(
+		{
+			// Send the request as a get to the url /generate/job_id?image_tag
+			type:'post',
+			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+			url: '/phenotypes/check_stats',
+			data: {id:id},
+			dataType:'json',
+			success: function(response) { check_stats(response); },
+			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
+		});
+	}, 5000);
+	console.log("im polling with a new timer! " + stats_timerID);
+};
+
+
+function check_stats(response)
+{
+	console.log("i just checked on " + stats_timerID + " and its not ready");
+	// The server will return null if the job isn't done, otherwise it returns the letters
+	if (response == 'Not ready.')
+		{ return; }
+	else
+	{
+		groupings = response;
+		console.log(response);
+		clearInterval(stats_timerID);
+		
+		var imageWidth = 30;
+		for (var i = 0; i < chart.series[0].data.length; i++)
+		{
+			var x = chart.plotLeft + chart.xAxis[0].translate(i, false) - imageWidth / 2;
+			var y = chart.plotTop - imageWidth / 2 + 25;
+			chart_groupings[i] = chart.renderer.text(response[i].toUpperCase(), x, y).attr({ zIndex: 100 }).add();
+		}
+	}
+
+};
+
+
+function adjust_groupings()
+{
+
+	if (typeof(chart) === "undefined" || typeof(groupings) === "undefined")
+		{ return; }
+
+	console.log("redrawing groupings");
+	var imageWidth = 30;
+	for (var i = 0; i < chart.series[0].data.length; i++)
+	{
+		var x = chart.plotLeft + chart.xAxis[0].translate(i, false) - imageWidth / 2;
+		var y = chart.plotTop - imageWidth / 2 + 25;
+
+		chart_groupings[i].attr({ x: x, y: y});
+	}
+};
+
+
+

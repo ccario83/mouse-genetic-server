@@ -17,16 +17,19 @@ class PhenotypesController < ApplicationController
     @anat_id =  params['MA'].to_i
     
     @results = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
-    @mice = @results.joins(:mouse => :strain).select('strains.name AS strain, age')
+    @mice = @results.joins(:mouse => :strain).select('strains.name AS strain, age, code')
     @all_strains = []
     @all_ages = []
+    @all_codes = []
     @mice.each do |mouse|
         @all_strains.push(mouse.strain)
         @all_ages.push(mouse.age)
+        @all_codes.push(mouse.code)
     end
     @all_strains.uniq!
     @very_youngest = @all_ages.min
     @very_oldest = @all_ages.max
+    @all_codes.uniq!
   end
 
 
@@ -36,13 +39,18 @@ class PhenotypesController < ApplicationController
     
     @youngest = params['youngest'].to_i
     @oldest = params['oldest'].to_i
+    @code = params['code']
     @sex = params['sex']
     @strains = params['selected_strains'].split(",")
     
     @results = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
     @results = @results.joins(:mouse => :strain).select('mouse_id, strains.name AS strain, age, sex, score')
     # Filter by age if required
-    @results = @results.where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
+    if (@code != '')
+        @results = @results.where("code = :code", :code => @code)
+    else
+        @results = @results.where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
+    end
     # Filter by sex, if required
     if not @sex == "B"
         @results = @results.where("sex = :sex", :sex => @sex)
@@ -65,11 +73,11 @@ class PhenotypesController < ApplicationController
   def check_stats
     @id = params['id']
     if !($redis.exists("#{@id}:letters"))
-        render :json => 'Not ready.'.to_json
+        render :json => { :status => 'Not ready.', :data => '', :id => @id}.to_json
     else
-        @response = $redis.smembers("#{@id}:letters")[0]
-        puts @response
-        render :json => @response
+        @data = $redis.smembers("#{@id}:letters")[0]
+        puts @data
+        render :json => { :status => 'Ready.', :data => @data, :id => @id}.to_json
     end
   end
   

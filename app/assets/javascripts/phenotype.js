@@ -2,12 +2,17 @@
 var selected_strains = all_strains;
 var youngest = very_youngest;
 var oldest = very_oldest;
+var code = '';
 var sex = 'B';
 
-var stats_timerID=0;
+var stats_timerID = 0;
 var chart;
 var groupings;
+
 var chart_groupings = [];
+chart_groupings['box'] = [];
+chart_groupings['text'] = [];
+
 // Global for debugging purposes
 var data;
 var grouped_by_strain;
@@ -16,23 +21,28 @@ var severities;
 
 $(window).bind("load", function()
 {
-	lookup(mpath, anat, youngest, oldest, sex, selected_strains);
+	lookup();
 	$("#M_mouse").click(function() { change_sex_selection('M'); });
 	$("#F_mouse").click(function() { change_sex_selection('F'); });
+	$("#code").change(function() { change_code(); });
 });
 
-function lookup(mpath, anat, youngest, oldest, sex, selected_strains)
+function lookup()
 {
+	clearInterval(stats_timerID);
+	stats_timerID = 0;
+	console.log("[---]\t[------]\tRequesting new filtered strain data...");
 	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
 	//var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex + "&selected_strains=" + encodeURIComponent(selected_strains);
 	//
 	$.ajax(
 	{
 		// Send the request as a get to the url /generate/job_id?image_tag
+		//async: false,
 		type:'post',
 		url: '/phenotypes/query',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: {MPATH:mpath, MA:anat, youngest:youngest, oldest:oldest, sex:sex, selected_strains:selected_strains},
+		data: {MPATH:mpath, MA:anat, youngest:youngest, oldest:oldest, code:code, sex:sex, selected_strains:selected_strains},
 		dataType:'json',
 		success: function(data) { process_data(data); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
@@ -45,11 +55,12 @@ function process_data(data_)
 	data = data_;
 	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(selected_strains, item['strain']); }))
 	selected_strains = _.uniq(_.pluck(data,'strain'));
-	selected_sexes = get_sexes(grouped_by_strain)
+	selected_sexes = get_sexes(grouped_by_strain);
 
 	set_age_slider(get_age_range(grouped_by_strain));
 	set_sex_selection(selected_sexes);
-	update_table(grouped_by_strain);
+	
+	//update_table(grouped_by_strain);
 
 
 	var frequencies = new Array();
@@ -91,8 +102,6 @@ function process_data(data_)
 		}
 	}
 
-
-	
 	update_bar_chart(selected_strains, selected_sexes, average_severities, frequencies);
 
 }
@@ -153,16 +162,25 @@ function get_age_range(grouped_by_strain)
 
 function change_age_slider()
 {
-
+	code = '';
 	youngest = $("#age-range").slider("option","values")[0];
 	oldest = $("#age-range").slider("option","values")[1];
-	lookup(mpath, anat, youngest, oldest, sex, selected_strains);
+	lookup();
 }
 
+function change_code()
+{
 
+	youngest = very_youngest;
+	oldest = very_oldest;
+	code = $('#code').val();
+	lookup();
+}
 
 function set_sex_selection(sexes)
 {
+	$("#M_mouse").addClass('unselected');
+	$("#F_mouse").addClass('unselected');
 	if (sexes == 'B')
 	{
 		$("#M_mouse").removeClass('unselected');
@@ -208,7 +226,7 @@ function change_sex_selection(clicked_sex)
 		$("#"+sex+"_mouse").removeClass('unselected');
 	}
 	
-	lookup(mpath, anat, youngest, oldest, sex, selected_strains);
+	lookup();
 }
 
 
@@ -360,17 +378,20 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 		},
 		plotOptions:
 		{
-			column: 
+			column:
 			{
 				pointPadding: 0.2,
-				borderWidth: 0
+				borderWidth: 0, 
+				events:
+				{
+					legendItemClick: function() {setTimeout(adjust_groupings,1500);},
+				}
 			}
 		},
 		series: charted_data,
 		events:
 		{
 			load: do_stats(),
-			redraw: adjust_groupings(),
 		}
 	});
 };
@@ -378,8 +399,13 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 
 function do_stats()
 {
-	console.log("im doing stats! " + stats_timerID);
-	clearInterval(stats_timerID);
+	if (stats_timerID != 0)
+	{
+		console.log("[" + stats_timerID + "]\t[------]\tAttempting to clear previous timer... ");
+		clearInterval(stats_timerID);
+		stats_timerID = 0;
+	}
+	console.log("[" + stats_timerID + "]\t[------]\tTukeys HSD groups are being requested... ");
 	var strains = [];
 	var values = [];
 	
@@ -403,57 +429,92 @@ function do_stats()
 	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
 	//var url = "/phenotypes/stats?values=" + encodeURIComponent(values) + "&strains=" + encodeURIComponent(strains);
 	//
+	console.log("[" + stats_timerID + "]\t[------]\tSending strain data to server via AJAX post...");
 	$.ajax(
 	{
 		// Send the request as a get to the url /generate/job_id?image_tag
+		async: false,
 		type:'post',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		url: '/phenotypes/stats',
 		data: {strains:strains, values:values},
 		dataType:'json',
 		success: function(id) { poll_stats(id); },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { clearInterval(stats_timerID); status_timerID = 0; alert("Error: " + errorThrown);},
 	});
 }
 
 function poll_stats(id)
 {
+	if (stats_timerID != 0)
+	{
+		console.log("[" + stats_timerID + "]\t[------]\tERROR! Previous timer is STILL alive...");
+		clearInterval(stats_timerID);
+	}
+	console.log("[" + stats_timerID + "]\t[" + id + "]\tServer ack sent data, send tracking id... ");
+
 	stats_timerID = setInterval(function()
 	{ 
 		$.ajax(
 		{
 			// Send the request as a get to the url /generate/job_id?image_tag
+			async: false,
 			type:'post',
 			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 			url: '/phenotypes/check_stats',
 			data: {id:id},
 			dataType:'json',
 			success: function(response) { check_stats(response); },
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { clearInterval(stats_timerID); status_timerID = 0; alert("Error: " + errorThrown);},
 		});
-	}, 5000);
-	console.log("im polling with a new timer! " + stats_timerID);
+	}, 1000);
+	console.log("[" + stats_timerID + "]\t[" + id + "]\tA new polling timer has been started...");
 };
 
 
 function check_stats(response)
 {
-	console.log("i just checked on " + stats_timerID + " and its not ready");
 	// The server will return null if the job isn't done, otherwise it returns the letters
-	if (response == 'Not ready.')
-		{ return; }
+	if (response['status'] == 'Not ready.')
+	{
+		console.log("[" + stats_timerID + "]\t[" + response['id'] + "]\tChecking on stat job ... and its not ready");
+		return;
+	}
 	else
 	{
-		groupings = response;
-		console.log(response);
+		console.log("[" + stats_timerID + "]\t[" +  response['id'] + "]\tChecking on stat job  ... READY!");
 		clearInterval(stats_timerID);
+		stats_timerID = 0;
+		console.log("[" + stats_timerID + "]\t[" +  response['id'] + "]\tCleared stat timer ... ");
 		
-		var imageWidth = 30;
+		groupings = jQuery.parseJSON(response['data']);
+		var colors = { 'A':'#69d2e7', 'B':'#a7dbd8', 'C':'#e0e4cc', 'D':'#f38630', 'E':'#c02942', 'F':'#542437', 'G':'#53777a' };
+		//var fills = { 'A':'#C9E2E7', 'B':'#a7dbd8', 'C':'#e0e4cc', 'D':'#f38630', 'E':'#c02942', 'F':'#542437', 'G':'#53777a' };
+		
 		for (var i = 0; i < chart.series[0].data.length; i++)
 		{
-			var x = chart.plotLeft + chart.xAxis[0].translate(i, false) - imageWidth / 2;
-			var y = chart.plotTop - imageWidth / 2 + 25;
-			chart_groupings[i] = chart.renderer.text(response[i].toUpperCase(), x, y).attr({ zIndex: 100 }).add();
+			var x = chart.plotLeft + chart.xAxis[0].translate(i, false) -5;
+			var y = chart.yAxis[0].bottom -20;
+			chart_groupings['text'][i] = chart.renderer.text(groupings[i].toUpperCase(), x, y).attr(
+			{
+				zIndex: 100,
+			}).css(
+			{
+				color: colors[groupings[i].toUpperCase()],
+				fontSize: '18px',
+				//'text-shadow': '2px 2px 2px rgba(150, 150, 150, 1);',
+			}).add();
+			
+			/*
+			var box = chart_groupings['text'][i].getBBox();
+			chart_groupings['box'][i] = chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 5).attr(
+			{
+				fill: fills[groupings[i].toUpperCase()],
+				stroke: '#fff',
+				'stroke-width': 1,
+				zIndex: 4,
+			}).add();
+			*/
 		}
 	}
 
@@ -462,20 +523,17 @@ function check_stats(response)
 
 function adjust_groupings()
 {
-
 	if (typeof(chart) === "undefined" || typeof(groupings) === "undefined")
-		{ return; }
+			{ return; }
 
 	console.log("redrawing groupings");
-	var imageWidth = 30;
 	for (var i = 0; i < chart.series[0].data.length; i++)
 	{
-		var x = chart.plotLeft + chart.xAxis[0].translate(i, false) - imageWidth / 2;
-		var y = chart.plotTop - imageWidth / 2 + 25;
+		var x = chart.plotLeft + chart.xAxis[0].translate(i, false) -5;
+		var y = chart.yAxis[0].bottom -20;
 
-		chart_groupings[i].attr({ x: x, y: y});
+		chart_groupings['text'][i].attr({ x: x, y: y});
+		//var box = chart_groupings['text'][i].getBBox();
+		//chart_groupings['box'][i].attr({ x: box.x - 5, y: box.y - 5});
 	}
 };
-
-
-

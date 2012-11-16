@@ -38,10 +38,19 @@
 				<div class="row-fluid">
 					<h3> Age Selection:</h3>
 				</div>
-				<div class="row-fluid">
+				<div class="row-fluid" style="margin-bottom:20px">
 					<label for="ages">Mice Ages (days):</label>
 					<input type="text" id="ages" style="border: 0; color: #f6931f; font-weight: bold;" />
 					<div id="age-range"></div>
+				</div>
+				<div class="row-fluid">
+					<label for="code">-OR- Select by code:</label>
+					<select id="code">
+						<option></option>
+					<% @all_codes.each do |code| %>
+						<option><%= code %></option>
+					<% end %>
+					</select>
 				</div>
 			</div>
 		</div>

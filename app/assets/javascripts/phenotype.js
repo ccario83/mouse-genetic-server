@@ -1,9 +1,9 @@
 // Variables that change with queries and are repopulated with ajax
-var selected_strains = all_strains;
-var youngest = very_youngest;
-var oldest = very_oldest;
-var code = '';
-var sex = 'B';
+var SELECTED_STRAINS = all_strains;
+var YOUNGEST = very_youngest;
+var OLDEST = very_oldest;
+var CODE = '';
+var SEX = 'B';
 
 var stats_timerID = 0;
 var chart;
@@ -17,6 +17,7 @@ chart_groupings['text'] = [];
 var data;
 var grouped_by_strain;
 var severities;
+var poll_counter = 0;
 
 
 $(window).bind("load", function()
@@ -24,16 +25,18 @@ $(window).bind("load", function()
 	lookup();
 	$("#M_mouse").click(function() { change_sex_selection('M'); });
 	$("#F_mouse").click(function() { change_sex_selection('F'); });
+	// The age_range onClick is set by set_age_slider() on the initial lookup call; it doesn't work when it is set here
 	$("#code").change(function() { change_code(); });
 });
 
 function lookup()
 {
+	// Clear the timer and set the id to zero (prevents infinite polling)
 	clearInterval(stats_timerID);
 	stats_timerID = 0;
 	console.log("[---]\t[------]\tRequesting new filtered strain data...");
-	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
-	//var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + oldest + "&sex=" + sex + "&selected_strains=" + encodeURIComponent(selected_strains);
+	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + OLDEST + ' sex: ' + SEX); 
+	//var url = "/phenotypes/query?MPATH=" + mpath + "&MA=" + anat + "&youngest=" + youngest + "&oldest=" + OLDEST + "&sex=" + SEX + "&SELECTED_STRAINS=" + encodeURIComponent(SELECTED_STRAINS);
 	//
 	$.ajax(
 	{
@@ -42,7 +45,7 @@ function lookup()
 		type:'post',
 		url: '/phenotypes/query',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: {MPATH:mpath, MA:anat, youngest:youngest, oldest:oldest, code:code, sex:sex, selected_strains:selected_strains},
+		data: {MPATH:mpath, MA:anat, youngest:YOUNGEST, oldest:OLDEST, code:CODE, sex:SEX, selected_strains:SELECTED_STRAINS},
 		dataType:'json',
 		success: function(data) { process_data(data); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Status: " + textStatus); alert("Error: " + errorThrown);},
@@ -53,8 +56,8 @@ function process_data(data_)
 {
 	// set the data globally
 	data = data_;
-	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(selected_strains, item['strain']); }))
-	selected_strains = _.uniq(_.pluck(data,'strain'));
+	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(SELECTED_STRAINS, item['strain']); }))
+	SELECTED_STRAINS = _.uniq(_.pluck(data,'strain'));
 	selected_sexes = get_sexes(grouped_by_strain);
 
 	set_age_slider(get_age_range(grouped_by_strain));
@@ -90,7 +93,7 @@ function process_data(data_)
 	}
 	
 	var average_severities = new Array();
-	for (sex in severities)
+	for (var sex in severities)
 	{
 		for (strain in severities[sex])
 		{
@@ -102,7 +105,7 @@ function process_data(data_)
 		}
 	}
 
-	update_bar_chart(selected_strains, selected_sexes, average_severities, frequencies);
+	update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, frequencies);
 
 }
 
@@ -128,17 +131,17 @@ function update_table(grouped_by_strain)
 
 function set_age_slider(age_range)
 {
-	var youngest = age_range[0];
-	var oldest = age_range[1];
+	var YOUNGEST = age_range[0];
+	var OLDEST = age_range[1];
 	// Now set during initial page load
-	//very_youngest = (typeof(very_youngest) === "undefined") ? youngest : very_youngest;
-	//very_oldest = (typeof(very_oldest) === "undefined") ? oldest : very_oldest;
+	//very_youngest = (typeof(very_youngest) === "undefined") ? YOUNGEST : very_youngest;
+	//very_oldest = (typeof(very_oldest) === "undefined") ? OLDEST : very_oldest;
 	$("#age-range").slider(
 	{
 		range: true,
 		min: very_youngest,
 		max: very_oldest,
-		values: [ youngest, oldest ],
+		values: [ YOUNGEST, OLDEST ],
 		slide: function( event, ui )
 		{
 			$( "#ages" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
@@ -153,27 +156,28 @@ function set_age_slider(age_range)
 
 function get_age_range(grouped_by_strain)
 {
-	youngest = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
-	oldest = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
-	return [youngest, oldest];
+	YOUNGEST = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
+	OLDEST = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
+	return [YOUNGEST, OLDEST];
 }
 
 
 
 function change_age_slider()
 {
-	code = '';
-	youngest = $("#age-range").slider("option","values")[0];
-	oldest = $("#age-range").slider("option","values")[1];
+	CODE = '';
+	SEX = 'B';
+	YOUNGEST = $("#age-range").slider("option","values")[0];
+	OLDEST = $("#age-range").slider("option","values")[1];
 	lookup();
 }
 
 function change_code()
 {
-
-	youngest = very_youngest;
-	oldest = very_oldest;
-	code = $('#code').val();
+	SEX = 'B';
+	YOUNGEST = very_youngest;
+	OLDEST = very_oldest;
+	CODE = $('#code').val();
 	lookup();
 }
 
@@ -209,21 +213,21 @@ function change_sex_selection(clicked_sex)
 	if (!$("#M_mouse").hasClass('unselected') && (!$("#F_mouse").hasClass('unselected')))
 	{
 		$("#"+clicked_sex+"_mouse").addClass('unselected');
-		if (clicked_sex == 'M'){ sex = 'F' }
-		else {sex = 'M'}
+		if (clicked_sex == 'M'){ SEX = 'F' }
+		else {SEX = 'M'}
 	}
 	else if (((!$("#M_mouse").hasClass('unselected')) && $("#F_mouse").hasClass('unselected') && clicked_sex == 'F') || ((!$("#F_mouse").hasClass('unselected')) && $("#M_mouse").hasClass('unselected') && clicked_sex == 'M'))
 	{
 		$("#"+clicked_sex+"_mouse").removeClass('unselected');
-		sex = 'B'
+		SEX = 'B'
 	}
 	else
 	{
-		if (clicked_sex == 'M'){ sex = 'F' }
-		else {sex = 'M'}
+		if (clicked_sex == 'M'){ SEX = 'F' }
+		else {SEX = 'M'}
 
 		$("#"+clicked_sex+"_mouse").addClass('unselected');
-		$("#"+sex+"_mouse").removeClass('unselected');
+		$("#"+SEX+"_mouse").removeClass('unselected');
 	}
 	
 	lookup();
@@ -231,16 +235,16 @@ function change_sex_selection(clicked_sex)
 
 
 
-function update_bar_chart(selected_strains, selected_sexes, average_severities, frequencies)
+function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, frequencies)
 {
 
-	selected_strains = selected_strains.sort();
+	SELECTED_STRAINS = SELECTED_STRAINS.sort();
 	charted_data = [];
 	
 	// Generate the data
 	if (selected_sexes == 'B' || selected_sexes == 'M')
 	{
-		var freq_m = _.map(selected_strains, function(strain)
+		var freq_m = _.map(SELECTED_STRAINS, function(strain)
 		{
 			// Get the value if defined
 			var value = 0;
@@ -261,7 +265,7 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 			yAxis: 0,
 		});
 	
-		var sev_m = _.map(selected_strains, function(strain)
+		var sev_m = _.map(SELECTED_STRAINS, function(strain)
 		{
 			// Get the value if defined
 			var value = 0;
@@ -286,7 +290,7 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 	
 	if (selected_sexes == 'B' || selected_sexes == 'F')
 	{
-		var freq_f = _.map(selected_strains, function(strain)
+		var freq_f = _.map(SELECTED_STRAINS, function(strain)
 		{
 			// Get the value if defined
 			var value = 0;
@@ -307,7 +311,7 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 			yAxis: 0,
 		});
 
-		var sev_f = _.map(selected_strains, function(strain)
+		var sev_f = _.map(SELECTED_STRAINS, function(strain)
 		{
 			// Get the value if defined
 			var value = 0;
@@ -342,7 +346,7 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 		subtitle: { text: '' },
 		xAxis:
 		{
-			categories: selected_strains,
+			categories: SELECTED_STRAINS,
 			labels: 
 			{
 				rotation: 90,
@@ -399,6 +403,8 @@ function update_bar_chart(selected_strains, selected_sexes, average_severities, 
 
 function do_stats()
 {
+	stats_timerID = 0;
+	poll_counter = 0;
 	if (stats_timerID != 0)
 	{
 		console.log("[" + stats_timerID + "]\t[------]\tAttempting to clear previous timer... ");
@@ -409,7 +415,7 @@ function do_stats()
 	var strains = [];
 	var values = [];
 	
-	for (sex in severities)
+	for (var sex in severities)
 	{
 		severity = severities[sex]
 		for (str in severity)
@@ -426,7 +432,7 @@ function do_stats()
 		}
 	}
 	
-	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + youngest + ' oldest: ' + oldest + ' sex: ' + sex); 
+	//alert('mpath: ' + mpath  + ' anat: ' + anat + ' youngest: ' + YOUNGEST + ' oldest: ' + OLDEST + ' sex: ' + SEX); 
 	//var url = "/phenotypes/stats?values=" + encodeURIComponent(values) + "&strains=" + encodeURIComponent(strains);
 	//
 	console.log("[" + stats_timerID + "]\t[------]\tSending strain data to server via AJAX post...");
@@ -474,6 +480,15 @@ function poll_stats(id)
 
 function check_stats(response)
 {
+	poll_counter = poll_counter + 1;
+	if (poll_counter > 5)
+	{
+		console.log("[" + stats_timerID + "]\t[" + response['id'] + "]\tThis counter appears to be in an infinite loop; terminating ...");
+		poll_counter = 0;
+		clearInterval(stats_timerID);
+		stats_timerID = 0;
+		return;
+	}
 	// The server will return null if the job isn't done, otherwise it returns the letters
 	if (response['status'] == 'Not ready.')
 	{

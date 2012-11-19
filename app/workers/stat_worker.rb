@@ -1,21 +1,23 @@
 require('rinruby')
 
 class StatWorker
-
     include Sidekiq::Worker
-    sidekiq_options retry: false
-    
+    @@myr = {}
     def perform(id, values, strains)
-        R.eval 'library(agricolae)'
-        R.assign 'values', values
-        R.assign 'strains', strains
-        R.eval 'data = data.frame(values = values, strains = factor(strains))'
-        R.eval 'amod <- aov(data$values ~ data$strains ,data)'
-        R.eval 'results <- HSD.test(amod, "data$strains")'
-        R.eval 'letters <- as.vector(results$M)'
-        results = R.pull 'letters'
+        puts "Starting job for #{id}"
+        @@myr[id] = RinRuby.new(echo = false, interactive = false)
+        @@myr[id].eval 'library(agricolae)'
+        @@myr[id].assign 'values', values
+        @@myr[id].assign 'strains', strains
+        @@myr[id].eval 'data = data.frame(values = values, strains = factor(strains))'
+        @@myr[id].eval 'amod <- aov(data$values ~ data$strains ,data)'
+        @@myr[id].eval 'results <- HSD.test(amod, "data$strains")'
+        @@myr[id].eval 'letters <- as.vector(results$M)'
+        results = @@myr[id].pull 'letters'
         $redis.sadd("#{id}:letters",results.to_json)
         $redis.expire("#{id}:letters", 60)
         $redis.expire("#{id}", 60)
+        @@myr[id].quit
+        @@myr.delete(id)
     end
 end

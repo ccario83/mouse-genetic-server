@@ -1,34 +1,46 @@
-// Variables that change with queries and are repopulated with ajax
+// Variables that change with queries and are repopulated with ajax, GLOBAL because all functions use them and they have only one value at a time per page
 var SELECTED_STRAINS = all_strains;
 var YOUNGEST = very_youngest;
 var OLDEST = very_oldest;
 var CODE = '';
 var SEX = 'B';
 
+// Variables associated with the stat letter groupings and its polling timer
 var stats_timerID = 0;
-var chart;
-var groupings;
+var poll_counter = 0;
+var groupings; // Raw letter grouping response from server
 
+
+// The chart object and stat letter grouping objects
+var chart;
 var chart_groupings = [];
 chart_groupings['box'] = [];
 chart_groupings['text'] = [];
 
-// Global for debugging purposes
+
+// Temporarly global for debugging purposes
 var data;
 var grouped_by_strain;
 var severities;
-var poll_counter = 0;
 
 
+/* =============================================================================== */ 
+/* =     Set all on change events on page load                                   = */
+/* =============================================================================== */
 $(window).bind("load", function()
 {
 	lookup();
 	$("#M_mouse").click(function() { change_sex_selection('M'); });
 	$("#F_mouse").click(function() { change_sex_selection('F'); });
-	// The age_range onClick is set by set_age_slider() on the initial lookup call; it doesn't work when it is set here
+	// The age_range onClick is set by set_age_selection() on the initial lookup call; it doesn't work when it is set here
 	$("#code").change(function() { change_code(); });
 });
 
+
+
+/* =============================================================================== */ 
+/* =     Functions to lookup and process data requested by the interface         = */
+/* =============================================================================== */
 function lookup()
 {
 	// Clear the timer and set the id to zero (prevents infinite polling)
@@ -57,15 +69,17 @@ function process_data(data_)
 	// set the data globally
 	data = data_;
 	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(SELECTED_STRAINS, item['strain']); }))
+	// Update strains from retrieved data 
 	SELECTED_STRAINS = _.uniq(_.pluck(data,'strain'));
-	selected_sexes = get_sexes(grouped_by_strain);
+	// Update sexes from retrieved data
+	set_sex_selection(grouped_by_strain);
+	// Update age from retrieved data
+	set_age_selection(grouped_by_strain);
 
-	set_age_slider(get_age_range(grouped_by_strain));
-	set_sex_selection(selected_sexes);
 	
 	//update_table(grouped_by_strain);
 
-
+	// Calculate the Frequence and Average Severity values from the retrieved data
 	var frequencies = new Array();
 	severities = new Array();
 	for (idx in data)
@@ -104,35 +118,21 @@ function process_data(data_)
 			//console.log(average_severities[sex][strain]);
 		}
 	}
-
-	update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, frequencies);
+	
+	// Update the bar chart with the newly retrieved data
+	update_bar_chart(average_severities, frequencies);
 
 }
 
 
 
-function update_table(grouped_by_strain)
+/* =============================================================================== */ 
+/* =     Functions to update interface values from retrieved data                = */
+/* =============================================================================== */
+function set_age_selection(grouped_by_strain)
 {
-	var table = new Array(), i = 0;
-	table[i++] = '<tr><th>Strain</th><th>Number of Mice</th></tr>'
-	for (var group_num = 0; group_num < grouped_by_strain.length; group_num++)
-	{
-		table[i++] ='<tr><td>';
-		table[i++] = grouped_by_strain[group_num][0]['strain'];
-		table[i++] = '</td><td>';
-		table[i++] = grouped_by_strain[group_num].length;
-		table[i++] = '</td></tr>';
-
-	}
-	$('#selected_strains').empty().append(table.join(''));
-}
-
-
-
-function set_age_slider(age_range)
-{
-	var YOUNGEST = age_range[0];
-	var OLDEST = age_range[1];
+	var YOUNGEST = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
+	var OLDEST = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
 	// Now set during initial page load
 	//very_youngest = (typeof(very_youngest) === "undefined") ? YOUNGEST : very_youngest;
 	//very_oldest = (typeof(very_oldest) === "undefined") ? OLDEST : very_oldest;
@@ -152,64 +152,8 @@ function set_age_slider(age_range)
 	$("#age-range").slider("option", "stop", function() { change_age_slider() } );
 }
 
-
-
-function get_age_range(grouped_by_strain)
-{
-	YOUNGEST = _.min(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
-	OLDEST = _.max(_.map(_.flatten(grouped_by_strain), function(item){ return item.age; }));
-	return [YOUNGEST, OLDEST];
-}
-
-
-
-function change_age_slider()
-{
-	CODE = '';
-	SEX = 'B';
-	YOUNGEST = $("#age-range").slider("option","values")[0];
-	OLDEST = $("#age-range").slider("option","values")[1];
-	lookup();
-}
-
-function change_code()
-{
-	SEX = 'B';
-	YOUNGEST = very_youngest;
-	OLDEST = very_oldest;
-	CODE = $('#code').val();
-	lookup();
-}
-
-function set_sex_selection(sexes)
-{
-	$("#M_mouse").addClass('unselected');
-	$("#F_mouse").addClass('unselected');
-	if (sexes == 'B')
-	{
-		$("#M_mouse").removeClass('unselected');
-		$("#F_mouse").removeClass('unselected');
-	}
-	else { $("#"+sexes+"_mouse").removeClass('unselected'); }
-}
-
-
-
-function get_sexes(grouped_by_strain)
-{
-	var sexes = _.uniq(_.map(_.flatten(grouped_by_strain), function(item){ return item.sex; }))
-	if (sexes.length>1)
-	{return "B";}
-	else
-	{return sexes;}
-}
-
-
-
 function change_sex_selection(clicked_sex)
 {
-	
-	
 	if (!$("#M_mouse").hasClass('unselected') && (!$("#F_mouse").hasClass('unselected')))
 	{
 		$("#"+clicked_sex+"_mouse").addClass('unselected');
@@ -235,14 +179,99 @@ function change_sex_selection(clicked_sex)
 
 
 
-function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, frequencies)
+/* =============================================================================== */ 
+/* =     Functions to handle interface selection changes                         = */
+/* =============================================================================== */
+function change_age_slider()
 {
+	CODE = '';
+	$('#code').val('');
+	//SEX = 'B';
+	YOUNGEST = $("#age-range").slider("option","values")[0];
+	OLDEST = $("#age-range").slider("option","values")[1];
+	lookup();
+}
 
+function change_code()
+{
+	//SEX = 'B';
+	YOUNGEST = very_youngest;
+	OLDEST = very_oldest;
+	CODE = $('#code').val();
+	lookup();
+}
+
+function change_sex_selection(clicked_sex)
+{
+	if (!$("#M_mouse").hasClass('unselected') && (!$("#F_mouse").hasClass('unselected')))
+	{
+		$("#"+clicked_sex+"_mouse").addClass('unselected');
+		if (clicked_sex == 'M'){ SEX = 'F' }
+		else {SEX = 'M'}
+	}
+	else if (((!$("#M_mouse").hasClass('unselected')) && $("#F_mouse").hasClass('unselected') && clicked_sex == 'F') || ((!$("#F_mouse").hasClass('unselected')) && $("#M_mouse").hasClass('unselected') && clicked_sex == 'M'))
+	{
+		$("#"+clicked_sex+"_mouse").removeClass('unselected');
+		SEX = 'B'
+	}
+	else
+	{
+		if (clicked_sex == 'M'){ SEX = 'F' }
+		else {SEX = 'M'}
+
+		$("#"+clicked_sex+"_mouse").addClass('unselected');
+		$("#"+SEX+"_mouse").removeClass('unselected');
+	}
+	
+	lookup();
+}
+
+function set_sex_selection(gouped_by_strain)
+{
+	var sexes = _.uniq(_.map(_.flatten(grouped_by_strain), function(item){ return item.sex; }))
+	if (sexes.length>1)
+	{SEX = "B";}
+	else
+	{SEX = sexes;}
+
+	$("#M_mouse").addClass('unselected');
+	$("#F_mouse").addClass('unselected');
+	if (SEX == 'B')
+	{
+		$("#M_mouse").removeClass('unselected');
+		$("#F_mouse").removeClass('unselected');
+	}
+	else { $("#"+SEX+"_mouse").removeClass('unselected'); }
+}
+
+
+
+/* =============================================================================== */ 
+/* =     Functions to update displayed data                                      = */
+/* =============================================================================== */
+function update_table(grouped_by_strain)
+{
+	var table = new Array(), i = 0;
+	table[i++] = '<tr><th>Strain</th><th>Number of Mice</th></tr>'
+	for (var group_num = 0; group_num < grouped_by_strain.length; group_num++)
+	{
+		table[i++] ='<tr><td>';
+		table[i++] = grouped_by_strain[group_num][0]['strain'];
+		table[i++] = '</td><td>';
+		table[i++] = grouped_by_strain[group_num].length;
+		table[i++] = '</td></tr>';
+
+	}
+	$('#selected_strains').empty().append(table.join(''));
+}
+
+function update_bar_chart(average_severities, frequencies)
+{
 	SELECTED_STRAINS = SELECTED_STRAINS.sort();
 	charted_data = [];
 	
 	// Generate the data
-	if (selected_sexes == 'B' || selected_sexes == 'M')
+	if (SEX == 'B' || SEX == 'M')
 	{
 		var freq_m = _.map(SELECTED_STRAINS, function(strain)
 		{
@@ -288,7 +317,7 @@ function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, 
 	}
 	
 	
-	if (selected_sexes == 'B' || selected_sexes == 'F')
+	if (SEX == 'B' || SEX == 'F')
 	{
 		var freq_f = _.map(SELECTED_STRAINS, function(strain)
 		{
@@ -358,6 +387,7 @@ function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, 
 			{  // Frequency yAxis
 				min: 0,
 				title: { text: 'Frequency' },
+				labels: { formatter: function() { return this.value*100 + '%'; } },
 			},
 			{  // Severity yAxis
 				min: 0,
@@ -388,7 +418,7 @@ function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, 
 				borderWidth: 0, 
 				events:
 				{
-					legendItemClick: function() {setTimeout(adjust_groupings,1500);},
+					legendItemClick: function() {setTimeout(adjust_groupings,200);},
 				}
 			}
 		},
@@ -401,6 +431,10 @@ function update_bar_chart(SELECTED_STRAINS, selected_sexes, average_severities, 
 };
 
 
+
+/* =============================================================================== */ 
+/* =     Functions to handle stats and associated ajax calls                     = */
+/* =============================================================================== */
 function do_stats()
 {
 	stats_timerID = 0;
@@ -503,12 +537,13 @@ function check_stats(response)
 		console.log("[" + stats_timerID + "]\t[" +  response['id'] + "]\tCleared stat timer ... ");
 		
 		groupings = jQuery.parseJSON(response['data']);
-		var colors = { 'A':'#69d2e7', 'B':'#a7dbd8', 'C':'#e0e4cc', 'D':'#f38630', 'E':'#c02942', 'F':'#542437', 'G':'#53777a' };
+		// Create some colors for common groupings
+		var colors = { 'A':'#d1f2a5', 'AB':'#effab4', 'B':'#ffc48c', 'ABC':'#ff9f80', 'BC':'#594f4f', 'C':'#edc951', 'D':'#031634' };
 		//var fills = { 'A':'#C9E2E7', 'B':'#a7dbd8', 'C':'#e0e4cc', 'D':'#f38630', 'E':'#c02942', 'F':'#542437', 'G':'#53777a' };
 		
 		for (var i = 0; i < chart.series[0].data.length; i++)
 		{
-			var x = chart.plotLeft + chart.xAxis[0].translate(i, false) -5;
+			var x = chart.plotLeft + chart.xAxis[0].translate(i, false) - 8;
 			var y = chart.yAxis[0].bottom -20;
 			chart_groupings['text'][i] = chart.renderer.text(groupings[i].toUpperCase(), x, y).attr(
 			{
@@ -517,7 +552,8 @@ function check_stats(response)
 			{
 				color: colors[groupings[i].toUpperCase()],
 				fontSize: '18px',
-				//'text-shadow': '2px 2px 2px rgba(150, 150, 150, 1);',
+				fontWeight: 'bold',
+				'text-shadow': '-1px -1px 0 #ccc, 1px -1px 0 #ccc, -1px 1px 0 #999, 1px 1px 0 #999;',
 			}).add();
 			
 			/*
@@ -535,7 +571,6 @@ function check_stats(response)
 
 };
 
-
 function adjust_groupings()
 {
 	if (typeof(chart) === "undefined" || typeof(groupings) === "undefined")
@@ -544,7 +579,7 @@ function adjust_groupings()
 	console.log("redrawing groupings");
 	for (var i = 0; i < chart.series[0].data.length; i++)
 	{
-		var x = chart.plotLeft + chart.xAxis[0].translate(i, false) -5;
+		var x = chart.plotLeft + chart.xAxis[0].translate(i, false)  - 8;
 		var y = chart.yAxis[0].bottom -20;
 
 		chart_groupings['text'][i].attr({ x: x, y: y});

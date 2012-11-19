@@ -71,6 +71,7 @@ function process_data(data_)
 	grouped_by_strain = _.toArray(_.groupBy(data, function(item){ return _.indexOf(SELECTED_STRAINS, item['strain']); }))
 	// Update strains from retrieved data 
 	SELECTED_STRAINS = _.uniq(_.pluck(data,'strain'));
+	SELECTED_STRAINS = SELECTED_STRAINS.sort();
 	// Update sexes from retrieved data
 	set_sex_selection(grouped_by_strain);
 	// Update age from retrieved data
@@ -267,7 +268,6 @@ function update_table(grouped_by_strain)
 
 function update_bar_chart(average_severities, frequencies)
 {
-	SELECTED_STRAINS = SELECTED_STRAINS.sort();
 	charted_data = [];
 	
 	// Generate the data
@@ -515,7 +515,7 @@ function poll_stats(id)
 function check_stats(response)
 {
 	poll_counter = poll_counter + 1;
-	if (poll_counter > 5)
+	if (poll_counter > 10)
 	{
 		console.log("[" + stats_timerID + "]\t[" + response['id'] + "]\tThis counter appears to be in an infinite loop; terminating ...");
 		poll_counter = 0;

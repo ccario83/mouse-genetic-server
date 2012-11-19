@@ -76,7 +76,6 @@ class PhenotypesController < ApplicationController
         render :json => { :status => 'Not ready.', :data => '', :id => @id}.to_json
     else
         @data = $redis.smembers("#{@id}:letters")[0]
-        puts @data
         render :json => { :status => 'Ready.', :data => @data, :id => @id}.to_json
     end
   end

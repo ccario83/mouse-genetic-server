@@ -7,7 +7,7 @@ class PhenotypesController < ApplicationController
   def test
     @mpath_id = 343;
     @anat_id = 2434;
-    @all_strains = ["AKR/J", "SJL/J", "C57BLKS/J", "BALB/cByJ", "C57L/J", "129S1/SvImJ", "LP/J", "P/J", "C57BL/6J", "NZO/H1LtJ", "SM/J", "BUB/BnJ", "C57BL/10J", "PWD/PhJ", "SWR/J", "NON/ShiLtJ", "NOD.B10Sn-H2<b>/J", "PL/J", "C57BR/cdJ", "A/J", "MRL/MpJ", "FVB/NJ", "CBA/J", "DBA/2J", "NZW/LacJ", "BTBR T<+> tf/J", "KK/HlJ", "WSB/EiJ"];
+    @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
     @very_youngest = 201;
     @very_oldest = 1016;
   end
@@ -15,50 +15,83 @@ class PhenotypesController < ApplicationController
   def show
     @mpath_id = params['MPATH'].to_i
     @anat_id =  params['MA'].to_i
-    
-    @results = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
-    @mice = @results.joins(:mouse => :strain).select('strains.name AS strain, age, code')
-    @all_strains = []
-    @all_ages = []
-    @all_codes = []
-    @mice.each do |mouse|
-        @all_strains.push(mouse.strain)
-        @all_ages.push(mouse.age)
-        @all_codes.push(mouse.code)
-    end
-    @all_strains.uniq!
-    @very_youngest = @all_ages.min
-    @very_oldest = @all_ages.max
-    @all_codes.uniq!
+
+    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+    @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
+    @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
+    @very_youngest = @mice.minimum(:age)
+    @very_oldest = @mice.maximum(:age)
+    @all_codes = @mice.select(:code).map(&:code).uniq!
+
   end
 
 
   def query
-    @mpath_id = params['MPATH'].to_i
-    @anat_id =  params['MA'].to_i
-    
-    @youngest = params['youngest'].to_i
-    @oldest = params['oldest'].to_i
-    @code = params['code']
-    @sex = params['sex']
-    @strains = params['selected_strains'].split(",")
-    
-    @results = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
-    @results = @results.joins(:mouse => :strain).select('mouse_id, strains.name AS strain, age, sex, score')
-    # Filter by age if required
-    if (@code != '')
-        @results = @results.where("code = :code", :code => @code)
+    # Get the requested filters
+    @mpath_id           = params['mpath'].to_i
+    @anat_id            = params['anat'].to_i
+    @selelected_strains = params['selected_strains']
+    @youngest           = params['youngest'].to_i
+    @oldest             = params['oldest'].to_i
+    @code               = params['code']
+    @sex                = params['sex']
+
+    @mice = Mouse.new
+    # Filter mice first by age
+    if (@code == '')
+        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
     else
-        @results = @results.where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
+        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex, :code]).where(:code => @code)
     end
-    # Filter by sex, if required
-    if not @sex == "B"
-        @results = @results.where("sex = :sex", :sex => @sex)
+
+    # Then by sex
+    if not @sex == 'B'
+        @mice = @mice.where(:sex => @sex)
     end
     
-    # Do filtering by strain here if this is ever required (also required implementation on the javascript layer)
+    # Eventually filter by strain
     
-    render :json => @results.to_json
+    
+    # Update the filters based on results (code never changes)
+    @strains = @mice.select(:name).map(&:name).sort
+    @youngest = @mice.minimum(:age)
+    @oldest = @mice.maximum(:age)
+    if @mice.map(&:sex).uniq.length == 2
+        @sex = 'B'
+    end
+
+    @severities = {}
+    @frequencies = {}
+    @mice.map(&:sex).uniq.each do |sex|
+        # Get the mice ids for this sex
+        @sexed_mice = @mice.where(:sex => sex)
+        @sexed_strains = @sexed_mice.select(:name).map(&:name).sort
+        @ids = @sexed_mice.map(&:id)
+        
+        # Get the scores for these mice after filtering by mpath/anat ids, 
+        @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+        @scores.where(:mouse_id => @ids)
+        # Make a hash mapping mouse id to score
+        @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
+        
+        # Make a list of strain names pointing to empty lists
+        @results = Hash[@sexed_strains.uniq.zip(@sexed_strains.uniq.map { |v| [] })]
+
+        # This could maybe be done more efficiently
+        # For each mouse falling in this age/sex selection, get the mpath/anat score or use 0
+        @sexed_mice.each do |mouse|
+            # Get this mouse's score
+            @results[mouse.name].push(@scores[mouse.id].to_i)
+        end
+        
+        # Generate severity and frequency values
+        @severities[sex] = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
+        @frequencies[sex] = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
+    end
+
+    # Return the data to the client
+    render :json => {:strains => @strains, :youngest => @youngest, :oldest => @oldest, :sex => @sex, :severities => @severities, :frequencies => @frequencies }.to_json
+
   end
   
   

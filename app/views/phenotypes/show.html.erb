@@ -1,10 +1,10 @@
 <% content_for :page_js do %>
 <script>
-			var mpath = <%= @mpath_id %>;
-			var anat = <%= @anat_id %>;
-			var all_strains = <%=raw @all_strains %>;
-			var very_youngest = <%= @very_youngest %>;
-			var very_oldest = <%= @very_oldest %>;
+			var MPATH = <%= @mpath_id %>;
+			var ANAT = <%= @anat_id %>;
+			var ALL_STRAINS = <%=raw @all_strains %>;
+			var VERY_YOUNGEST = <%= @very_youngest %>;
+			var VERY_OLDEST = <%= @very_oldest %>;
 		</script>
 		<%= javascript_include_tag('underscore') %>
 		<%= javascript_include_tag('highcharts/highcharts') %>

@@ -13,14 +13,18 @@ $(window).bind("load", function()
 	$("#F_mouse").click(function() { change_sexes('F'); });
 	// The age_range on change is set by set_age_selection() on the initial lookup call; it doesn't work when it is set here
 	$("#code").change(function() { change_code(); });
+	
+	
+	var youngest = get_age_range()[0];
+	var oldest = get_age_range()[1];
+	$('#submit-right').click(function () { post_to_url('/phenotypes/submit', {mpath:MPATH, anat:ANAT, selected_strains:ALL_STRAINS, youngest:youngest, oldest:oldest, code:get_code(), sex:get_sexes()}); });
 });
-
 
 
 /* =============================================================================== */ 
 /* =     Functions to lookup and process data requested by the interface         = */
 /* =============================================================================== */
-function lookup(mpath, anat, selected_strains, youngest, oldest, code, sex )
+function lookup(mpath, anat, selected_strains, youngest, oldest, code, sex)
 {
 
 	console.log("AJAX: Requesting new filtered strain data...");
@@ -39,6 +43,7 @@ function lookup(mpath, anat, selected_strains, youngest, oldest, code, sex )
 	});
 }
 
+
 function process_data(response)
 {
 	// set the data globally for debugging
@@ -56,7 +61,10 @@ function process_data(response)
 	set_sexes(sex);
 	set_age_range(youngest, oldest);
 
-	update_bar_chart(ALL_STRAINS, sex, response['severities'], response['frequencies']);
+	if ((typeof(data.severities['M']) === 'undefined') && (typeof(data.severities['F']) === 'undefined'))
+		{ $('#no-results').css('display','block'); }
+	else 
+		{ update_bar_chart(ALL_STRAINS, sex, response['severities'], response['frequencies']); }
 
 }
 
@@ -181,7 +189,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	if (sex == 'B' || sex == 'M')
 	{
 		var freq_m = frequencies['M'];
-		freq_m =  _.map(selected_strains, function(strain){ return typeof(freq_m[strain])==='undefined'? 0:freq_m[strain]; });
+		freq_m =  _.map(selected_strains, function(strain){ return typeof(freq_m[strain])==='undefined'? 0:parseFloat(freq_m[strain].toFixed(2)); });
 		
 		charted_data.push(
 		{
@@ -193,7 +201,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 		// Convert to a list respective to selected_strains strain order
 		
 		var sev_m = severities['M'];
-		sev_m =  _.map(selected_strains, function(strain){ return typeof(sev_m[strain])==='undefined'? 0:sev_m[strain]; });
+		sev_m =  _.map(selected_strains, function(strain){ return typeof(sev_m[strain])==='undefined'? 0:parseFloat(sev_m[strain].toFixed(2)); });
 		
 		charted_data.push(
 		{
@@ -208,7 +216,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	if (sex == 'B' || sex == 'F')
 	{
 		var freq_f = frequencies['F'];
-		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:freq_f[strain]; });
+		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:parseFloat(freq_f[strain].toFixed(2)); });
 		
 		charted_data.push(
 		{
@@ -219,7 +227,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 		});
 		
 		var sev_f = severities['F'];
-		sev_f =  _.map(selected_strains, function(strain){ return typeof(sev_f[strain])==='undefined'? 0:sev_f[strain]; });
+		sev_f =  _.map(selected_strains, function(strain){ return typeof(sev_f[strain])==='undefined'? 0:parseFloat(sev_f[strain].toFixed(2)); });
 		
 		charted_data.push(
 		{
@@ -291,4 +299,30 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 };
 
 
+/* =============================================================================== */ 
+/* =     Function to post data for stat processing  (thanks stackoverflow!)      = */
+/* =============================================================================== */
+function post_to_url(path, params, method)
+{
+	method = method || "post";
 
+	var form = document.createElement("form");
+	form.setAttribute("method", method);
+	form.setAttribute("action", path);
+
+	for(var key in params)
+	{
+		if(params.hasOwnProperty(key))
+		{
+			var hiddenField = document.createElement("input");
+			hiddenField.setAttribute("type", "hidden");
+			hiddenField.setAttribute("name", key);
+			hiddenField.setAttribute("value", params[key]);
+
+			form.appendChild(hiddenField);
+		}
+	}
+
+	document.body.appendChild(form);
+	form.submit();
+}

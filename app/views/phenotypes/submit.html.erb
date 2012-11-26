@@ -1,0 +1,72 @@
+<% content_for :page_css do %>
+
+<% end %>
+<% content_for :page_js do %>
+<script>
+			var MPATH = <%= @mpath_id %>;
+			var ANAT = <%= @anat_id %>;
+			var STRAINS = [<%= raw @selelected_strains %>];
+			var YOUNGEST = <%= @youngest.nil? ? "null":@youngest %>;
+			var OLDEST = <%= @oldest.nil? ? "null":@oldest %>;
+			var CODE = '<%= @code.nil? ? "":@code %>';
+			var SEX = '<%= @sex.nil? ? "B":@sex %>';
+		</script>
+		<%= javascript_include_tag('main') %>
+		<%= javascript_include_tag('underscore') %>
+		<%= javascript_include_tag('phenotype_submit') %>
+<% end %>
+
+<style type="text/css">
+#submit-right
+{
+	position: fixed;
+	top: 50%;
+	right: 0%;
+	z-index: 100;
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+	background: #888;
+	opacity: .25;
+
+}
+#submit-right img
+{
+	height: 50px;
+}
+#submit-left
+{
+	position: fixed;
+	top: 50%;
+	left: 0%;
+	z-index: 100;
+	border-top-right-radius: 7px;
+	border-bottom-right-radius: 7px;
+	background: #888;
+	opacity: .25;
+
+}
+#submit-left img
+{
+	height: 50px;
+}
+</style>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span6">
+			<table id="strains" class = "table table-striped"></table>
+		</div>
+	</div>
+</div> <!-- /container -->
+
+<div id="submit-left" onClick="window.history.back();">
+	<span id="submit-left-tooltip" rel="tooltip" data-placement="right" data-original-title="Reselect Phenotype" >
+		<img src="/assets/go-left.png"></img>
+	</span>
+</div>
+<div id="submit-right">
+	<a href="#" id="submit-right-tooltip" rel="tooltip" data-placement="left" data-original-title="Use This Data">
+		<img src="/assets/go-right.png"></img>
+	</a>
+</div>
+

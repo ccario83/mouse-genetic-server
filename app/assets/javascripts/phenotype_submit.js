@@ -11,7 +11,8 @@ $(window).bind("load", function()
 {
 	$('#please-wait').modal('show');
 	poll_stats(ID);
-	
+	$('#submit-right').click(function () { $('#choice-modal').modal('show'); });
+	$('#choice-submit').click(function () { post_to_url('/phenotypes/analyze', {measure: $('input:radio[name=measure]:checked').val(), mpath:MPATH, anat:ANAT, selected_strains:JSON.stringify(STRAINS), youngest:YOUNGEST, oldest:OLDEST, code:CODE, sex:SEX}); });
 });
 
 
@@ -100,3 +101,32 @@ function check_stats(response)
 	}
 
 };
+
+
+/* =============================================================================== */ 
+/* =     Function to post data for stat processing  (thanks stackoverflow!)      = */
+/* =============================================================================== */
+function post_to_url(path, params, method)
+{
+	method = method || "post";
+
+	var form = document.createElement("form");
+	form.setAttribute("method", method);
+	form.setAttribute("action", path);
+
+	for(var key in params)
+	{
+		if(params.hasOwnProperty(key))
+		{
+			var hiddenField = document.createElement("input");
+			hiddenField.setAttribute("type", "hidden");
+			hiddenField.setAttribute("name", key);
+			hiddenField.setAttribute("value", params[key]);
+
+			form.appendChild(hiddenField);
+		}
+	}
+
+	document.body.appendChild(form);
+	form.submit();
+}

@@ -5,7 +5,7 @@
 <script>
 			var MPATH = <%= @mpath_id %>;
 			var ANAT = <%= @anat_id %>;
-			var STRAINS = [<%= raw @selelected_strains %>];
+			var STRAINS = <%= raw @selelected_strains %>;
 			var YOUNGEST = <%= @youngest.nil? ? "null":@youngest %>;
 			var OLDEST = <%= @oldest.nil? ? "null":@oldest %>;
 			var CODE = '<%= @code.nil? ? "":@code %>';
@@ -116,7 +116,7 @@
 
 
 <div id="submit-left" onClick="window.history.back();">
-	<span id="submit-left-tooltip" rel="tooltip" data-placement="right" data-original-title="Reselect Phenotype" >
+	<span id="submit-left-tooltip" rel="tooltip" data-placement="right" data-original-title="Reselect Phenotypes" >
 		<img src="/assets/go-left.png"></img>
 	</span>
 </div>
@@ -126,12 +126,88 @@
 	</a>
 </div>
 
-<div id="please-wait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div id="please-wait" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="please-wait-label">
 	<div class="modal-header">
-		<h4 id="myModalLabel">Generating Statistics</h4>
+		<h4 id="please-wait-label">Generating Statistics</h4>
 	</div>
 	<div class="modal-body">
 		<p>Severity statistics are being generated, please wait a few seconds...</p>
 	</div>
 </div>
 
+<div id="choice-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="choose-type-label" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="choose-type-label">Severity or Frequency</h3>
+	</div>
+	<div class="modal-body">
+		<p> The Genotype association algorithms can only analyze one set of phenotype values at a time. Would you prefer to analyze severity or frequency values?</p>
+		<form id="choice-form">
+			<fieldset>
+				<div class="control-group select optional">
+					<label class="radio">
+					<input type="radio" name="measure" id="severity" value="severity" checked>Severity</label>
+					<label class="radio">
+					<input type="radio" name="measure" id="frequency" value="frequency">Frequency</label>
+				</div>
+				<!--
+				<div class="control-group select optional">
+					<label class="select optional control-label" for="uwf_submit_emma_type">GWA Algorithm</label>
+					<div class="controls">
+						<select class="select optional" id="uwf_submit_emma_type" name="uwf_submit[emma_type]">
+							<option value="emma">emma</option>
+							<option value="emmax" selected="selected">emmax</option>
+							<option value="gemma">gemma</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group select optional">
+					<label class="select optional control-label" for="uwf_submit_snp_set">SNP Dataset</label>
+					<div class="controls">
+						<select class="select optional" id="uwf_submit_snp_set" name="uwf_submit[snp_set]">
+							<option value="4M" selected="selected">4M</option>
+							<option value="65M">65M</option>
+						</select>
+					</div>
+				</div>
+				-->
+			</fieldset>
+		</form>
+	</div>
+	
+	<div class="modal-footer">
+		<button id="choice-submit" class="btn btn-primary">Submit</button>
+		<!--<a href="#description" role="button" class="btn" data-toggle="modal">Help</a>-->
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
+
+
+<div class="modal hide fade in" id="description" tabindex="-1" role="dialog" aria-labelledby="descriptionLabel" aria-hidden="true">
+	<div class="modal-header"> 
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+		<h3 id = "descriptionLabel"> Description </h3> 
+	</div>
+	<div class="modal-body">
+		This tool runs the <a style="text-decoration:underline;" href="http://mouse.cs.ucla.edu/emma/">UCLA EMMA</a>,  
+		<a style="text-decoration:underline;" href="http://genetics.cs.ucla.edu/emmax/">UCLA EMMAX</a>, or <a style="text-decoration:underline;" href="http://stephenslab.uchicago.edu/software.html">
+		University of Chicago GEMMA </a> algorithm on our Local Server with phenotype data from multiple mouse strains. EMMA, EMMAX, and GEMMA are efficient mixed model algorithms that determine the 
+		strength of associations between SNP genotypes and phenotype variations across different strains. The EMMAX algorithm approximates EMMA but is much faster and can handle larger SNP datasets. 
+		GEMMA produces results as accurate as EMMA but as quickly as EMMAX and can also handle larger SNP datasets. Please refer to the algorithm developer's publications and 
+		<a style="text-decoration:underline;" href="/research/links">websites</a> for more infomation. A guide to citing can be found <a style="text-decoration:underline;" href="/citing">here</a>.<br/><br/>
+
+		<b> Instructions </b><br />
+		Please format your tab-delimited phenotype file with the follwing columns: 'Strain', 'Animal_Id', 'Sex' ('Male', 'Female', or 'NA'), and a fourth column 
+		including your phenotype. Rows can be individual animal data or strain means. As guidance please see a template file 
+		<a style="text-decoration:underline;" href="/media/Sample_EMMA.xls">here</a>. <i>Recommended:</i> Fill out this template, save it as a tab-delimited file,
+		and upload it to this form. A list of available strains and their spellings can be found 
+		<a style="text-decoration:underline;" href="/media/strain_names.xls">here</a>.<br /><br />
+		<i>Phenotype File:</i> Upload the phenotype file. Note: Use format as described above. <br />
+		<i>GWA Algorithm:</i> Choose the desired algorithm. <br />
+		<i>SNP Dataset:</i> Choose from several SNP panels.
+		<hr/><br/>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>

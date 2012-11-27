@@ -91,15 +91,15 @@ class PhenotypesController < ApplicationController
 
     # Return the data to the client
     render :json => {:strains => @strains, :youngest => @youngest, :oldest => @oldest, :sex => @sex, :severities => @severities, :frequencies => @frequencies }.to_json
-
   end
-  
-  def submit
 
+
+
+  def submit
     # Get the requested filters
     @mpath_id           = params['mpath'].to_i
     @anat_id            = params['anat'].to_i
-    @selelected_strains = params['selected_strains'].to_json
+    @selelected_strains = JSON.parse(params['selected_strains'])
     @youngest           = params['youngest'].to_i
     @oldest             = params['oldest'].to_i
     @code               = params['code']
@@ -162,8 +162,8 @@ class PhenotypesController < ApplicationController
     @ns = Hash[@results.map { |k,v| [k, v.length] }]
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @sex_long = {'B'=>'Male & Female', 'M' => 'Male', 'F' => 'Female' }
-
   end
+
 
 
   def check_stats
@@ -177,6 +177,78 @@ class PhenotypesController < ApplicationController
         @letters = JSON.parse($redis.smembers("#{@id}:letters")[0])
         render :json => { :status => 'Ready.', :strains => @strains, :means => @means, :stderrs => @stderrs, :letters => @letters, :id => @id}.to_json
     end
+  end
+
+
+
+  def analyze
+    # Get the requested filters
+    @mpath_id           = params['mpath'].to_i
+    @anat_id            = params['anat'].to_i
+    @selected_strains   = params['selected_strains']
+    @youngest           = params['youngest'].to_i
+    @oldest             = params['oldest'].to_i
+    @code               = params['code']
+    @sex                = params['sex']
+    @measure            = params['measure']
+    
+    @selected_strains = JSON.parse(@selected_strains)
+    
+    @mice = Mouse.new
+    # Filter mice first by age
+    if (@code == '')
+        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
+    else
+        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex, :code]).where(:code => @code)
+    end
+
+    # Then by sex
+    if not @sex == 'B'
+        @mice = @mice.where(:sex => @sex)
+    end
+    
+    @results = Hash[@selected_strains.zip(@selected_strains.map { |v| [] })]
+    # Get the mice ids for this sex
+    @ids = @mice.map(&:id)
+    # Get the scores for these mice after filtering by mpath/anat ids, 
+    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+    @scores.where(:mouse_id => @ids)
+    # Make a hash mapping mouse id to score
+    @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
+    # Populate the results
+    @mice.each do |mouse|
+        # Get this mouse's score
+        @results[mouse.name].push(@scores[mouse.id].to_i)
+    end
+    @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
+    @severities = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
+
+    # Start a new UFW job using Jobber
+    #job = Job.new('UWF')
+    sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'N/A' }
+    File.open('/tmp/test_pheno.txt', 'w') do |pheno_file|
+        if @measure == 'severity'
+            pheno_file.printf "Strain\tAnimal_Id\tSex\tSeverity\n"
+            # To do individual mice instead of averages
+            #@mice.each do |mouse|
+            #    pheno_file.printf "%s\t%d\t%s\t%.2f\n", mouse.name, mouse.id, sex_long[mouse.sex], @scores[mouse.id]
+            #end
+            @fake_id = 1
+            @severities.each do |strain, value|
+                pheno_file.printf "%s\t%d\t%s\t%.2f\n", strain, @fake_id, sex_long[@sex], value
+                @fake_id = @fake_id + 1
+            end
+        else
+            pheno_file.printf "Strain\tAnimal_Id\tSex\tFrequency\n"
+            @fake_id = 1
+            @frequencies.each do |strain, value|
+                pheno_file.printf "%s\t%d\t%s\t%.2f\n", strain, @fake_id, sex_long[@sex], value
+                @fake_id = @fake_id + 1
+            end
+        end    
+    end
+  
+  render :text => "The phenotype file is generated. Have it put in a job directory, modify uwf to accept input, and then connect the two!"
   end
   
 end

@@ -17,7 +17,7 @@ $(window).bind("load", function()
 	
 	var youngest = get_age_range()[0];
 	var oldest = get_age_range()[1];
-	$('#submit-right').click(function () { post_to_url('/phenotypes/submit', {mpath:MPATH, anat:ANAT, selected_strains:ALL_STRAINS, youngest:youngest, oldest:oldest, code:get_code(), sex:get_sexes()}); });
+	$('#submit-right').click(function () { post_to_url('/phenotypes/submit', {mpath:MPATH, anat:ANAT, selected_strains:JSON.stringify(ALL_STRAINS), youngest:youngest, oldest:oldest, code:get_code(), sex:get_sexes()}); });
 });
 
 
@@ -54,15 +54,13 @@ function process_data(response)
 	var youngest = response['youngest'];
 	var oldest = response['oldest'];
 	var sex = response['sex'];
-	//var
-	//var response['severities']
 
 	// Update page elements
 	set_sexes(sex);
 	set_age_range(youngest, oldest);
 
 	if ((typeof(data.severities['M']) === 'undefined') && (typeof(data.severities['F']) === 'undefined'))
-		{ $('#no-results').css('display','block'); }
+		{ $('#no-results').css('display','block'); $('#submit-right').css('display','none'); }
 	else 
 		{ update_bar_chart(ALL_STRAINS, sex, response['severities'], response['frequencies']); }
 

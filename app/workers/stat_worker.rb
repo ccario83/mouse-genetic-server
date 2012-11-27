@@ -42,7 +42,7 @@ class StatWorker
 
         $redis.expire("#{id}:strains", 60)
         $redis.expire("#{id}:means", 60)
-        $redis.expire("#{id}:stedrrs", 60)
+        $redis.expire("#{id}:stderrs", 60)
         $redis.expire("#{id}:letters", 60)
         $redis.expire("#{id}", 65)
         

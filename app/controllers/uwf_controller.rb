@@ -2,7 +2,9 @@ require 'jobber'
 
 class UwfController < ApplicationController
 
-  def new
+  def index
+    @new_job = true
+    @job_name = "Enter a job name"
     render('index')
   end
 
@@ -11,15 +13,22 @@ class UwfController < ApplicationController
     @pheno_file = params['uwf_submit']['pheno_file']
     @emma_type = params['uwf_submit']['emma_type']
     @snp_set = params['uwf_submit']['snp_set']
+    @job_id = params['uwf_submit']['job_id']
 
-    # Start a new UFW job using Jobber
-    @job = Job.new('UWF')
-    
-    # Process the uploaded file and get it's path
-    @pheno_file = @job.process_uploaded_file(@pheno_file)
-    
-    # Save the variables into a serialized file in the job directory with Jobber
-    @job.track_var('@pheno_file', binding)
+    # If a job ID has been embedded on the page, the phenotype exporer was used to generate a phenotype file, use this file instead of one from the user
+    @job = nil
+    if @job_id.is_a? NilClass
+        # Start a new UFW job using Jobber
+        @job = Job.new('UWF')
+        # Process the uploaded file and get it's path
+        @pheno_file = @job.process_uploaded_file(@pheno_file)
+        # Save the variables into a serialized file in the job directory with Jobber
+        @job.track_var('@pheno_file', binding)
+    else
+        @job = restore_job(@job_id)
+        @pheno_file = @job.tracked_vars['@pheno_file']
+    end
+
     @job.track_var('@emma_type', binding)
     @job.track_var('@snp_set', binding)
     @job.save()

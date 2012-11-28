@@ -27,6 +27,7 @@
 #  2012 07 31 --    Added support to run from the command line with a config file
 #  2012 08 30 --    Added redis support for logging
 #  2012 08 30 --    Removed BEerror, replaced with write_error and sys.exit(1)
+#  2012 11 28 --    Modified write_error to also echo to command line for easier debugging.
 #===============================================================================
 
 import sys              # for various system functions
@@ -131,6 +132,7 @@ class EmmaRunner(object):
                 error_ofh.close()
             if not self._redis_error is None:
                 self._redis_channel.sadd(self._redis_error, entry)
+                print entry
             if self._error_file is None and self._redis_error is None:
                 print entry
         except:
@@ -270,7 +272,7 @@ class EmmaRunner(object):
             fh = open(infile, 'rU')
             dr = csv.DictReader(fh, delimiter='\t')
         except:
-            self.write_error("There was a problem reading your phenotype file, please see the example and resubmit!")
+            self.write_error("There was a problem reading your phenotype file: '" + infile + "', please see the example and resubmit!")
             sys.exit(1)
         try:
             header = dr.fieldnames
@@ -1219,21 +1221,22 @@ class EmmaRunner(object):
 
 # Code for this being run as standalone
 if __name__ == "__main__":
+    print "Running BerndtEmma as standalone script..."
     import subprocess
     import ConfigParser
     import argparse
     import ordereddict
-
+    
     # Add this scripts location to path so executables can be found
     script_dir = os.path.dirname(os.path.realpath(__file__))
     os.chdir(script_dir)
     sys.path.append(script_dir)
-
+    
     # Get the command line arguments
     parser = argparse.ArgumentParser(description='This script abstracts most of the G/EMMA/X functionality')
     parser.add_argument('-c', '--config_file',          action='store',         default='emma.conf',                dest='emma_conf',   help='The location of the emma config file')
     parser.add_argument('-p', '--project_dir',          action='store',         default=None,                       dest='project_dir', help='The location to store the results')
-
+    
     args = parser.parse_args()
     args.project_dir += '/' # Adding trailing slash is good for appending file to path, but doesn't hurt if it is already there
     
@@ -1244,7 +1247,7 @@ if __name__ == "__main__":
     except:
         print "There was a problem opening your emma config file. Please check the path and try again."
         exit()
-
+    
     def try_and_load(section, var, default):
         try:
             #print "Using the value of [%s] for [%s]"%(conf.get(section, var), var)
@@ -1257,23 +1260,24 @@ if __name__ == "__main__":
                 #print "Using the default value of [%s] for [%s]"%(default, var)
                 return default
     
-    
     snp_set = try_and_load('general', 'snp_set', None)
     pheno_file = try_and_load('general', 'pheno_file', None)
     emma_type =try_and_load('general', 'emma_type', None)
     snp_dir = try_and_load('general', 'snp_dir', '/raid/Genotype Data/')
-
+    
     EmmaRunner.emma_code_dir = try_and_load('general', 'emma_code_dir', '/raid/WWW/ror_website/lib/EMMA/')
     EmmaRunner.emmax_code_dir = try_and_load('general', 'emmax_code_dir', '/raid/WWW/ror_website/lib/EMMA/')
     EmmaRunner.gemma_code_dir = try_and_load('general', 'gemma_code_dir', '/raid/WWW/ror_website/lib/EMMA/')
     EmmaRunner.strain_names_dir = try_and_load('general', 'strain_names_dir', '/raid/WWW/ror_website/lib/EMMA/')
     EmmaRunner.official_names_dir = try_and_load('general', 'official_names_dir', '/raid/WWW/ror_website/lib/EMMA/')
-
-    obj = EmmaRunner()
     
+    obj = EmmaRunner()
     obj.set_redis_log(os.path.split(os.path.dirname(args.project_dir))[1])
     obj.set_redis_error(os.path.split(os.path.dirname(args.project_dir))[1])
     obj.load_phenotypes(pheno_file)
     obj.process_phenotypes(snp_set)
     obj.generate_phenotype_files(args.project_dir)
     obj.run(snp_set=snp_set, emma_type=emma_type, geno_indir=snp_dir + "/" + snp_set + "/", phenos_indir=args.project_dir, outdir=args.project_dir)
+
+
+

@@ -13,6 +13,7 @@ $(window).bind("load", function()
 	poll_stats(ID);
 	$('#submit-right').click(function () { $('#choice-modal').modal('show'); });
 	$('#choice-submit').click(function () { post_to_url('/phenotypes/analyze', {measure: $('input:radio[name=measure]:checked').val(), mpath:MPATH, anat:ANAT, selected_strains:JSON.stringify(STRAINS), youngest:YOUNGEST, oldest:OLDEST, code:CODE, sex:SEX}); });
+
 });
 
 
@@ -38,6 +39,10 @@ function update_table(strains, means, stderrs, letters)
 		}
 	});
 	$('#please-wait').modal('hide');
+	// Enable the tablesorter plugin
+	$("#stat-table").tablesorter(); 
+	// Enable the Significant grouping tooltip
+	$('#sig-grouping-tooltip').tooltip();
 }
 
 

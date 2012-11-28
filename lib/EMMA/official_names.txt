@@ -67,6 +67,7 @@ multiple	BTBR T<+> tf/J	BTBRT+tf/J
 multiple	NOD/LtJ	NOD/ShiLtJ
 multiple	NON/LtJ	NON/ShiLtJ
 multiple	PWD/Ph	PWD/PhJ
+phenoDB	NZO/H1LtJ	NZO/HlLtJ
 official	129P1/ReJ	129P1/ReJ
 official	129P2/OlaHsD	129P2/OlaHsD
 official	129P3/J	129P3/J
@@ -161,6 +162,7 @@ official	MOLG/DN	MOLG/DnJ
 official	MRL/MpJ	MRL/MpJ
 official	MSM/Ms	MSM/Ms
 official	NOD/ShiLtJ	NOD/ShiLtJ
+official	NOD.B10Sn-H2<b>/J	NOD.B10Sn-H2<b>/J
 official	NON/ShiLtJ	NON/ShiLtJ
 official	NONcNZO10/LtJ	NONcNZO10/LtJ
 official	NONcNZO5/LtJ	NONcNZO5/LtJ

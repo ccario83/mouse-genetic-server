@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 {
 	if (argc != 7)
 	{
-		printf("\nusage: binsize(int) chromosome[use -1 for all] start_pos[use -1 for none] stop_pos[use -1 for none] infile outfile\n");
+		printf("\ncircos_SNP_track usage: binsize(int) chromosome[use -1 for all] start_pos[use -1 for none] stop_pos[use -1 for none] infile outfile\n");
 		return -1;
 	}
 
@@ -86,7 +86,8 @@ int main(int argc, char *argv[])
 	fhIn = fopen(infile, "r");
 	if (fhIn == NULL) 
 	{
-		perror("Failed to open input file");
+		printf("circos_SNP_track: failed to open the input file: %s\n", (char *) infile);
+		perror("");
 		return -1;
 	}
 	// Open the output file for writing
@@ -94,7 +95,8 @@ int main(int argc, char *argv[])
 	fhOut = fopen(outfile, "w");
 	if (fhOut == NULL)
 	{
-		perror("Failed to open output file");
+		printf("circos_SNP_track: failed to open the output file: %s\n", (char *) outfile);
+		perror("");
 		return -1;
 	}
 

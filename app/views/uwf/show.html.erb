@@ -5,12 +5,12 @@
 <% end %>
 <span id="job_ID" style="display:none;"><%= @job_ID %></span>
 				<!-- Left Panel -->
-				<div class="span2 offset1 job-panel">
+				<!--<div class="span2 offset1 job-panel">
 					<%= render(:partial => "jobs_panel") %>
-				</div>
+				</div>-->
 				
 				<!-- Center Panel-->
-				<div class="span6 main-panel">
+				<div class="span8 offset2 main-panel">
 				<% if @ready %>
 					<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
 					This causes the check_progress() JS function to stop the timer as an error function
@@ -85,7 +85,7 @@
 				</div>
 
 				<!-- Right Panel -->
-				<div class="span2 user-panel">
+				<!--<div class="span2 user-panel">
 					<%= render(:partial => "user_panel") %>
-				</div>
+				</div>-->
 

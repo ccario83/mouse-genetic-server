@@ -23,9 +23,11 @@ class UwfWorker
 
         # Signal to redis that an EMMA algorighm analysis has begun for this job and run it
         $redis.sadd("#{job_ID}:progress:log",'run-emma')
-        #cmd = "python #{EMMA_path}BerndtEmma.py -c #{config_file} -p #{job_location}"
-        #system(cmd)
-        FileUtils.cp('/raid/WWW/data/e38ff5/emmax_results.txt',job_location)
+        cmd = "python #{EMMA_path}BerndtEmma.py -c #{config_file} -p #{job_location}"
+        puts cmd
+        system(cmd)
+        # Comment out the line above and uncomment the line below to simulate an EMMA job run by just copying the results from another
+        #FileUtils.cp('/raid/WWW/data/e38ff5/emmax_results.txt',job_location)
         ## ---------------------------------
         
         
@@ -50,6 +52,7 @@ class UwfWorker
         # Signal to redis that the full genome Circos plot generation has begun, and run it
         $redis.sadd("#{job_ID}:progress:log",'run-circos')
         cmd = "python #{CIRCOS_path}circos_generator.py -p #{job_location}"
+        puts cmd
         system(cmd)
         
         # Signal to redis we are now all done!

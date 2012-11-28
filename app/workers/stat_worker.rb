@@ -40,11 +40,11 @@ class StatWorker
         $redis.sadd("#{id}:stderrs",@stderrs.to_json)
         $redis.sadd("#{id}:letters",@letters.to_json)
 
-        $redis.expire("#{id}:strains", 60)
-        $redis.expire("#{id}:means", 60)
-        $redis.expire("#{id}:stderrs", 60)
-        $redis.expire("#{id}:letters", 60)
-        $redis.expire("#{id}", 65)
+        $redis.expire("#{id}:strains", 600)
+        $redis.expire("#{id}:means", 600)
+        $redis.expire("#{id}:stderrs", 600)
+        $redis.expire("#{id}:letters", 600)
+        $redis.expire("#{id}", 650)
         
         @@myr[id].quit
         @@myr.delete(id)

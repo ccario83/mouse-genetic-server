@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'jobber'
 
 class PhenotypesController < ApplicationController
   def index
@@ -15,6 +16,10 @@ class PhenotypesController < ApplicationController
   def show
     @mpath_id = params['MPATH'].to_i
     @anat_id =  params['MA'].to_i
+
+    if @mpath_id == 0
+        @mapth_id = 458
+    end
 
     @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
@@ -207,6 +212,13 @@ class PhenotypesController < ApplicationController
         @mice = @mice.where(:sex => @sex)
     end
     
+    # Eventually filter by strain
+    
+    
+    # Update the filters based on actual results
+    @selected_strains = @mice.select(:name).map(&:name).uniq.sort
+    
+    
     @results = Hash[@selected_strains.zip(@selected_strains.map { |v| [] })]
     # Get the mice ids for this sex
     @ids = @mice.map(&:id)
@@ -223,10 +235,12 @@ class PhenotypesController < ApplicationController
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @severities = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
 
+
     # Start a new UFW job using Jobber
-    #job = Job.new('UWF')
-    sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'N/A' }
-    File.open('/tmp/test_pheno.txt', 'w') do |pheno_file|
+    @job = Job.new('UWF')
+    sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
+    @pheno_file = @job.location + '/pheno.txt'
+    File.open(@pheno_file, 'w') do |pheno_file|
         if @measure == 'severity'
             pheno_file.printf "Strain\tAnimal_Id\tSex\tSeverity\n"
             # To do individual mice instead of averages
@@ -247,8 +261,18 @@ class PhenotypesController < ApplicationController
             end
         end    
     end
-  
-  render :text => "The phenotype file is generated. Have it put in a job directory, modify uwf to accept input, and then connect the two!"
+    # Save the variables into a serialized file in the job directory with Jobber
+    @job.track_var('@pheno_file', binding)
+    @job.save()
+
+    # Set some parameters for the UWF view
+    @new_job = false
+    @job_name = PathBaseTerm.find(@mpath_id).term + " " + MouseAnatomyTerm.find(@anat_id).term + " " + @measure
+    @job_id = @job.ID
+    render :template => "uwf/index"
   end
   
+  def create
+    redirect_to "uwf/create"
+  end
 end

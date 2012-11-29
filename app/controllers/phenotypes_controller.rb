@@ -4,7 +4,8 @@ require 'jobber'
 class PhenotypesController < ApplicationController
   def index
   end
-
+    
+  # Simply returns data to test form layout
   def test
     @mpath_id = 343;
     @anat_id = 2434;
@@ -12,17 +13,21 @@ class PhenotypesController < ApplicationController
     @very_youngest = 201;
     @very_oldest = 1016;
   end
-
+  
+  # The landing page after the phnotypes are selected
   def show
     @mpath_id = params['MPATH'].to_i
     @anat_id =  params['MA'].to_i
 
+    # Set the mpath to a better default value if neccessary
     if @mpath_id == 0
         @mapth_id = 458
     end
 
+    # Select the Diagnoses with this mpath/manat combination, join the mice strain names, ages, and codes
     @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
+    # Get all the strain names, the minimum/maximum ages and all codes
     @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
     @very_youngest = @mice.minimum(:age)
     @very_oldest = @mice.maximum(:age)
@@ -30,7 +35,7 @@ class PhenotypesController < ApplicationController
 
   end
 
-
+  # This is an AJAX JSON action to update page data when the user changes selections
   def query
     # Get the requested filters
     @mpath_id           = params['mpath'].to_i
@@ -41,23 +46,24 @@ class PhenotypesController < ApplicationController
     @code               = params['code']
     @sex                = params['sex']
 
+
+    # Filter mice first by age or code, if a code was selected
     @mice = Mouse.new
-    # Filter mice first by age
     if (@code == '')
         @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
     else
         @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex, :code]).where(:code => @code)
     end
 
-    # Then by sex
+    # Then filter by sex
     if not @sex == 'B'
         @mice = @mice.where(:sex => @sex)
     end
     
-    # Eventually filter by strain
+    # Eventually filter by strain??
     
     
-    # Update the filters based on results (code never changes)
+    # Update the filters based on the actual results
     @strains = @mice.select(:name).map(&:name).sort
     @youngest = @mice.minimum(:age)
     @oldest = @mice.maximum(:age)
@@ -65,8 +71,10 @@ class PhenotypesController < ApplicationController
         @sex = 'B'
     end
 
+    # Prepare severity and frequency arrays
     @severities = {}
     @frequencies = {}
+    # For each sex
     @mice.map(&:sex).uniq.each do |sex|
         # Get the mice ids for this sex
         @sexed_mice = @mice.where(:sex => sex)
@@ -82,7 +90,6 @@ class PhenotypesController < ApplicationController
         # Make a list of strain names pointing to empty lists
         @results = Hash[@sexed_strains.uniq.zip(@sexed_strains.uniq.map { |v| [] })]
 
-        # This could maybe be done more efficiently
         # For each mouse falling in this age/sex selection, get the mpath/anat score or use 0
         @sexed_mice.each do |mouse|
             # Get this mouse's score
@@ -99,7 +106,7 @@ class PhenotypesController < ApplicationController
   end
 
 
-
+  # This action is triggered when the user submits the phenotype selections
   def submit
     # Get the requested filters
     @mpath_id           = params['mpath'].to_i
@@ -110,8 +117,8 @@ class PhenotypesController < ApplicationController
     @code               = params['code']
     @sex                = params['sex']
 
-    @mice = Mouse.new
     # Filter mice first by age
+    @mice = Mouse.new
     if (@code == '')
         @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
     else
@@ -123,7 +130,7 @@ class PhenotypesController < ApplicationController
         @mice = @mice.where(:sex => @sex)
     end
     
-    # Eventually filter by strain
+    # Eventually filter by strain??
 
 
     # Update the filters based on actual results
@@ -134,9 +141,10 @@ class PhenotypesController < ApplicationController
     #    @sex = 'B'
     #end
 
+    # Make a mapping of strain names to results (empty at the moment)
     @results = Hash[@selected_strains.zip(@selected_strains.map { |v| [] })]
 
-    # Get the mice ids for this sex
+    # Get the mice ids
     @ids = @mice.map(&:id)
     # Get the scores for these mice after filtering by mpath/anat ids, 
     @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
@@ -170,7 +178,7 @@ class PhenotypesController < ApplicationController
   end
 
 
-
+  # This is an AJAX JSON action just checks if the stat worker is done and returns the values if it is
   def check_stats
     @id = params['id']
     if !($redis.exists("#{@id}:letters"))
@@ -185,7 +193,7 @@ class PhenotypesController < ApplicationController
   end
 
 
-
+  # This action is triggered when the user accepts data on the stat page
   def analyze
     # Get the requested filters
     @mpath_id           = params['mpath'].to_i
@@ -196,31 +204,31 @@ class PhenotypesController < ApplicationController
     @code               = params['code']
     @sex                = params['sex']
     @measure            = params['measure']
-    
+    # Parse the list of selected strains
     @selected_strains = JSON.parse(@selected_strains)
     
-    @mice = Mouse.new
     # Filter mice first by age
+    @mice = Mouse.new
     if (@code == '')
         @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
     else
         @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex, :code]).where(:code => @code)
     end
 
-    # Then by sex
+    # Then filter by sex
     if not @sex == 'B'
         @mice = @mice.where(:sex => @sex)
     end
     
-    # Eventually filter by strain
+    # Eventually filter by strain??
     
     
     # Update the filters based on actual results
     @selected_strains = @mice.select(:name).map(&:name).uniq.sort
     
-    
+    # Make a mapping of strain names to results (empty at the moment)
     @results = Hash[@selected_strains.zip(@selected_strains.map { |v| [] })]
-    # Get the mice ids for this sex
+    # Get the mice ids
     @ids = @mice.map(&:id)
     # Get the scores for these mice after filtering by mpath/anat ids, 
     @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
@@ -239,6 +247,7 @@ class PhenotypesController < ApplicationController
     # Start a new UFW job using Jobber
     @job = Job.new('UWF')
     sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
+    # Create a phenotype file called pheno.txt in the new job directory and populate it with the database data
     @pheno_file = @job.location + '/pheno.txt'
     File.open(@pheno_file, 'w') do |pheno_file|
         if @measure == 'severity'
@@ -272,6 +281,7 @@ class PhenotypesController < ApplicationController
     render :template => "uwf/index"
   end
   
+  # Redirect UWF jobs generated by the phenotype explorer to the UWF create page
   def create
     redirect_to "uwf/create"
   end

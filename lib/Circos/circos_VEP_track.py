@@ -10,7 +10,7 @@
 #  2012 07 20 --    First version completed
 #  2012 07 26 --    Modified SQL query for 3x speed improvement across entire genome
 #===============================================================================
-
+# Load Libraries
 import MySQLdb          # 
 import MySQLdb.cursors  # MySQL interface, for CGD
 import sys              # General system functions
@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore", "Unknown table.*")
 #SNP_SUBMIT_MAX = 475000
 SNP_SUBMIT_MAX = 10000
 
+# Get command line arguments and parse them
 parser = argparse.ArgumentParser(description='This script will update or populate Ensembl VEP information to our local database')
 
 parser.add_argument('-H', '--host',                 action='store',         default='localhost',                dest='host',        help='mysql --host')
@@ -40,7 +41,7 @@ parser.add_argument('-o', '--outfile',              action='store',         defa
 
 args = parser.parse_args()
 
-
+# A function to find unique items in a list
 def uniq(inlist):
     # order preserving
     uniques = []
@@ -51,12 +52,13 @@ def uniq(inlist):
 
 '''
 # ==== DEBUG ==== 
-connection = MySQLdb.connect(host='www.berndtlab.pitt.edu', user='clinto', passwd='m1ckeym0use', db='4M_production')
+connection = MySQLdb.connect(host='www.berndtlab.pitt.edu', user='ror', passwd='******', db='4M_production')
 snp_ifh = open('/home/clinto/Desktop/AED697/Circos/MHP_track.txt', 'r')
 circos_ofh = open('/home/clinto/Desktop/AED697/Circos/VEP_track.txt', 'w')
 # ================
 '''
 
+# Some classes and their equivalent numeric encoding 
 coded_classes =  {  'Intergenic':1,
                     'miRNA':2,
                     'Intronic':3,
@@ -86,11 +88,11 @@ SNPs = [ {'Chr':line[0], 'Pos':line[1]} for line in snp_dr ]
 
 # Open the database connection
 #print '\nEstablishing MySQL database connection HOST: %s, USER: %s, PASS: ****, DB: %s, PORT: %s' % (args.host, args.user, args.database, args.port)
-
 connection = MySQLdb.connect(host=args.host, user=args.user, passwd=args.password, db=args.database, port=int(args.port))
 cursor = connection.cursor()
 snp = SNPs[0]
 
+# For each SNP in the list of SNPs, select its chromosome and position. Then fetch the classification using an INNER JOIN
 SNP_IDs = []
 for snp in SNPs:
     #print "\n%s %s:"%(snp['Chr'], snp['Pos']),
@@ -100,6 +102,7 @@ for snp in SNPs:
         SNP_IDs.append(snp_id[0])
 cursor.execute('SELECT chromosome, position, classification FROM snp_positions snp INNER JOIN vep_consequences vep ON snp.id = vep.snp_position_id WHERE snp.id IN (%s) GROUP BY snp.id'%','.join(map(lambda k: str(k), SNP_IDs)))
 classifications = cursor.fetchall()
+# Write the results to an output file
 circos_w.writerows([[snp[0], snp[1], snp[1], coded_classes[snp[2]]] for snp in classifications])
 
 '''

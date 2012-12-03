@@ -184,10 +184,10 @@ class PhenotypesController < ApplicationController
     if !($redis.exists("#{@id}:letters"))
         render :json => { :status => 'Not ready.', :id => @id}.to_json
     else
-        @strains = JSON.parse($redis.smembers("#{@id}:strains")[0]).map{ |x| x.rstrip! }
-        @means   = JSON.parse($redis.smembers("#{@id}:means")[0])
-        @stderrs = JSON.parse($redis.smembers("#{@id}:stderrs")[0])
-        @letters = JSON.parse($redis.smembers("#{@id}:letters")[0])
+        @strains = $redis.smembers("#{@id}:strains")[0]
+        @means   = $redis.smembers("#{@id}:means")[0]
+        @stderrs = $redis.smembers("#{@id}:stderrs")[0]
+        @letters = $redis.smembers("#{@id}:letters")[0]
         render :json => { :status => 'Ready.', :strains => @strains, :means => @means, :stderrs => @stderrs, :letters => @letters, :id => @id}.to_json
     end
   end

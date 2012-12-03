@@ -102,7 +102,7 @@ function check_stats(response)
 		stats_timerID = 0;
 		console.log("[" + stats_timerID + "]\t[" +  response['id'] + "]\tCleared stat timer ... ");
 
-		update_table(response['strains'], response['means'], response['stderrs'], response['letters'])
+		update_table(jQuery.parseJSON(response['strains']), jQuery.parseJSON(response['means']), jQuery.parseJSON(response['stderrs']), jQuery.parseJSON(response['letters']))
 	}
 
 };

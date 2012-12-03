@@ -28,6 +28,7 @@ class StatWorker
 
         # Bring these results back into ruby
         @returned_strains = @@myr[id].pull 'strains'
+        @returned_strains.map! { |x| x.rstrip() }
         @unsorted_means = @@myr[id].pull 'means'
         @unsorted_stderrs = @@myr[id].pull 'stderrs'
         @unsorted_letters = @@myr[id].pull 'letters'
@@ -42,7 +43,7 @@ class StatWorker
         @strains.each do |strain|
             idx = @returned_strains.index strain
             @means.push @unsorted_means[idx]
-            @stderrs.push @unsorted_stderrs[idx]
+            @stderrs.push @unsorted_stderrs[idx].nan?? 0.0 : @unsorted_stderrs[idx]
             @letters.push @unsorted_letters[idx]
         end
         

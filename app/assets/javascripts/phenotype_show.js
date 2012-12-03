@@ -184,7 +184,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	charted_data = [];
 	
 	// Generate the data
-	if (sex == 'B' || sex == 'M')
+	if ((sex == 'B' || sex == 'M') && !(typeof(frequencies['M']) === "undefined"))
 	{
 		var freq_m = frequencies['M'];
 		freq_m =  _.map(selected_strains, function(strain){ return typeof(freq_m[strain])==='undefined'? 0:parseFloat(freq_m[strain].toFixed(2)); });
@@ -211,7 +211,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	}
 	
 	
-	if (sex == 'B' || sex == 'F')
+	if ((sex == 'B' || sex == 'M') && !(typeof(frequencies['F']) === "undefined"))
 	{
 		var freq_f = frequencies['F'];
 		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:parseFloat(freq_f[strain].toFixed(2)); });
@@ -282,7 +282,17 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 		},
 		tooltip:
 		{
-			formatter: function() { return ''+ this.x +': '+ this.y; }
+			formatter: function()
+			{
+				var sex = (this.series.name == 'Frequency M' || this.series.name=='Severity M')? 'M' : 'F';
+				var measure = (this.series.name == 'Frequency M' || this.series.name=='Frequency F')? 'frequencies' : 'severities';
+				var n = data['ns'][sex][this.key];
+				if (measure == 'frequencies')
+					{ return this.x + ': ' + (this.y*100).toFixed(0) + '%, n = ' + n }
+				else
+					{ return this.x +': '+ this.y.toFixed(2) + ', n = ' + n; }
+				
+			}
 		},
 		plotOptions:
 		{

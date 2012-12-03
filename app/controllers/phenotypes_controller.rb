@@ -117,6 +117,7 @@ class PhenotypesController < ApplicationController
     end
 
     # Prepare severity and frequency arrays
+    @ns = {}
     @severities = {}
     @frequencies = {}
     # For each sex
@@ -142,12 +143,13 @@ class PhenotypesController < ApplicationController
         end
         
         # Generate severity and frequency values
+        @ns[sex] = Hash[@results.map { |k,v| [k, v.length] }]
         @severities[sex] = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
         @frequencies[sex] = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     end
 
     # Return the data to the client
-    render :json => {:strains => @strains, :youngest => @youngest, :oldest => @oldest, :sex => @sex, :severities => @severities, :frequencies => @frequencies }.to_json
+    render :json => {:strains => @strains, :youngest => @youngest, :oldest => @oldest, :sex => @sex, :severities => @severities, :frequencies => @frequencies, :ns => @ns }.to_json
   end
 
 

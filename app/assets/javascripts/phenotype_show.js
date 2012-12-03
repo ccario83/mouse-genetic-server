@@ -8,7 +8,7 @@ $(window).bind("load", function()
 {
 	// Initialize the age range slider
 	set_age_range(VERY_YOUNGEST, VERY_OLDEST);
-	lookup(MPATH, ANAT, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, '', 'B');
+	lookup(MPATH_ID_LIST, ANAT_ID_LIST, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, '', 'B');
 	$("#M_mouse").click(function() { change_sexes('M'); });
 	$("#F_mouse").click(function() { change_sexes('F'); });
 	// The age_range on change is set by set_age_selection() on the initial lookup call; it doesn't work when it is set here
@@ -17,14 +17,14 @@ $(window).bind("load", function()
 	
 	var youngest = get_age_range()[0];
 	var oldest = get_age_range()[1];
-	$('#submit-right').click(function () { post_to_url('/phenotypes/submit', {mpath:MPATH, anat:ANAT, selected_strains:JSON.stringify(ALL_STRAINS), youngest:youngest, oldest:oldest, code:get_code(), sex:get_sexes()}); });
+	$('#submit-right').click(function () { post_to_url('/phenotypes/submit', {mpath_id_list:JSON.stringify(MPATH_ID_LIST), anat_id_list:JSON.stringify(ANAT_ID_LIST), selected_strains:JSON.stringify(ALL_STRAINS), youngest:youngest, oldest:oldest, code:get_code(), sex:get_sexes()}); });
 });
 
 
 /* =============================================================================== */ 
 /* =     Functions to lookup and process data requested by the interface         = */
 /* =============================================================================== */
-function lookup(mpath, anat, selected_strains, youngest, oldest, code, sex)
+function lookup(mpath_id_list, anat_id_list, selected_strains, youngest, oldest, code, sex)
 {
 
 	console.log("AJAX: Requesting new filtered strain data...");
@@ -36,7 +36,7 @@ function lookup(mpath, anat, selected_strains, youngest, oldest, code, sex)
 		type:'post',
 		url: '/phenotypes/query',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: {mpath:mpath, anat:anat, selected_strains:selected_strains, youngest:youngest, oldest:oldest, code:code, sex:sex},
+		data: {mpath_id_list:mpath_id_list, anat_id_list:anat_id_list, selected_strains:selected_strains, youngest:youngest, oldest:oldest, code:code, sex:sex},
 		dataType:'json',
 		success: function(response) {process_data(response)},
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
@@ -136,13 +136,13 @@ function change_age_range()
 	set_code('');
 	var youngest = get_age_range()[0];
 	var oldest = get_age_range()[1];
-	lookup(MPATH, ANAT, ALL_STRAINS, youngest, oldest, get_code(), get_sexes());
+	lookup(MPATH_ID_LIST, ANAT_ID_LIST, ALL_STRAINS, youngest, oldest, get_code(), get_sexes());
 }
 
 function change_code()
 {
 	// Age slider will update when the lookup function returns
-	lookup(MPATH, ANAT, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, get_code(), get_sexes());
+	lookup(MPATH_ID_LIST, ANAT_ID_LIST, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, get_code(), get_sexes());
 }
 
 function change_sexes(clicked_sex)
@@ -171,7 +171,7 @@ function change_sexes(clicked_sex)
 	}
 	var youngest = get_age_range()[0];
 	var oldest = get_age_range()[1];
-	lookup(MPATH, ANAT, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, get_code(), get_sexes());
+	lookup(MPATH_ID_LIST, ANAT_ID_LIST, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, get_code(), get_sexes());
 }
 
 
@@ -316,11 +316,17 @@ function post_to_url(path, params, method)
 			hiddenField.setAttribute("type", "hidden");
 			hiddenField.setAttribute("name", key);
 			hiddenField.setAttribute("value", params[key]);
-
 			form.appendChild(hiddenField);
 		}
 	}
-
+	
+	// Set CSRF token
+	var hiddenField = document.createElement("input");
+	hiddenField.setAttribute("type", "hidden");
+	hiddenField.setAttribute("name", "authenticity_token");
+	hiddenField.setAttribute("value", $('meta[name="csrf-token"]').attr('content'));
+	form.appendChild(hiddenField);
+	
 	document.body.appendChild(form);
 	form.submit();
 }

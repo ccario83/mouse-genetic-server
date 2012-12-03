@@ -12,7 +12,7 @@ $(window).bind("load", function()
 	$('#please-wait').modal('show');
 	poll_stats(ID);
 	$('#submit-right').click(function () { $('#choice-modal').modal('show'); });
-	$('#choice-submit').click(function () { post_to_url('/phenotypes/analyze', {measure: $('input:radio[name=measure]:checked').val(), mpath:MPATH, anat:ANAT, selected_strains:JSON.stringify(STRAINS), youngest:YOUNGEST, oldest:OLDEST, code:CODE, sex:SEX}); });
+	$('#choice-submit').click(function () { post_to_url('/phenotypes/analyze', { measure: $('input:radio[name=measure]:checked').val(), mpath_id_list:JSON.stringify(MPATH_ID_LIST), anat_id_list:JSON.stringify(ANAT_ID_LIST), selected_strains:JSON.stringify(STRAINS), youngest:YOUNGEST, oldest:OLDEST, code:CODE, sex:SEX}); });
 
 });
 
@@ -127,11 +127,17 @@ function post_to_url(path, params, method)
 			hiddenField.setAttribute("type", "hidden");
 			hiddenField.setAttribute("name", key);
 			hiddenField.setAttribute("value", params[key]);
-
 			form.appendChild(hiddenField);
 		}
 	}
-
+	
+	// Set CSRF token
+	var hiddenField = document.createElement("input");
+	hiddenField.setAttribute("type", "hidden");
+	hiddenField.setAttribute("name", "authenticity_token");
+	hiddenField.setAttribute("value", $('meta[name="csrf-token"]').attr('content'));
+	form.appendChild(hiddenField);
+	
 	document.body.appendChild(form);
 	form.submit();
 }

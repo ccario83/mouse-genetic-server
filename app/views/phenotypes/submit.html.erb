@@ -3,8 +3,8 @@
 <% end %>
 <% content_for :page_js do %>
 <script>
-			var MPATH = <%= @mpath_id %>;
-			var ANAT = <%= @anat_id %>;
+			var MPATH_ID_LIST = <%=raw @mpath_id_list %>;
+			var ANAT_ID_LIST = <%= @anat_id_list %>;
 			var STRAINS = <%= raw @selelected_strains %>;
 			var YOUNGEST = <%= @youngest.nil? ? "null":@youngest %>;
 			var OLDEST = <%= @oldest.nil? ? "null":@oldest %>;

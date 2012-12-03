@@ -1,12 +1,14 @@
 #!/usr/bin/python
 #===============================================================================
 # Programmer:   Clinton Cario
-# Purpose:      This script will populate the MPATH database tables using an OBO file
+# Purpose:      This script will populate a database (phenotype) with mpath/anat heirarchy tables using a given OBO file
 #
 # Input:	1) See command line arguments below
 # Output:	1) Populated entries in the several tables
 #
-# Modification History:
+# Modification History
+# 2012 09 29  --  Initial file creation
+# 2012 12 03  --  Modified table structure a bit to play nicely with RoR
 #===============================================================================
 
 import MySQLdb          # 
@@ -18,22 +20,22 @@ import warnings
 warnings.filterwarnings("ignore", "Unknown table.*")
 
 
-parser = argparse.ArgumentParser(description='This script will populate the MPATH database tables using an OBO file')
+parser = argparse.ArgumentParser(description='This script will populate a database (phenotype) with mpath/anat heirarchy tables using a given OBO file')
 
 parser.add_argument('-i', '--infile',               action='store',         default=None,                       dest='obo_if',      help='The location of the OBO file')
 parser.add_argument('-H', '--host',                 action='store',         default='localhost',                dest='host',        help='mysql --host')
 parser.add_argument('-u', '--user',                 action='store',         default='',                         dest='user',        help='mysql --user')
 parser.add_argument('-p', '--password',             action='store',         default='',                         dest='password',    help='mysql --password')
 parser.add_argument('-P', '--port',                 action='store',         default=3306,                       dest='port',        help='mysql --port')
-parser.add_argument('-d', '--database',             action='store',         default='MPATH',                    dest='database',    help='The database to update or regenerate tables for. Defaults to MPATH')
-parser.add_argument('-t', '--table_prefix',         action='store',         default='test_',                    dest='table_prefix',help='The table prefix"')
+parser.add_argument('-d', '--database',             action='store',         default='TEST',                     dest='database',    help='The database to update or regenerate tables for. Defaults to TEST')
+parser.add_argument('-t', '--table_prefix',         action='store',         default='test_',                    dest='table_prefix',help='The table prefix, defaults to TEST"')
 parser.add_argument('-r', '--regenerate',           action='store_true',    default=False,                      dest='regen',       help='Regenerate the VEP tables, dropping all table information first')
 
 args = parser.parse_args()
 
 # Open the database connection
 print '\nEstablishing MySQL database connection HOST: %s, USER: %s, PASS: ****, DB: %s, PORT: %s' % (args.host, args.user, args.database, args.port)
-#connection = MySQLdb.connect(host='www.berndtlab.pitt.edu', user='clinto', passwd='', db='65M_development')
+#connection = MySQLdb.connect(host='www.berndtlab.pitt.edu', user='clinto', passwd='', db='TEST')
 connection = MySQLdb.connect(host=args.host, user=args.user, passwd=args.password, db=args.database, port=args.port)
 cursor = connection.cursor()
 
@@ -45,11 +47,12 @@ obo_if = args.obo_if
 ####################### DEBUG ###########################
 #table_prefix = "test_"
 #regen = True
-#obo_if = "/home/clinto/Desktop/OBO/adult_mouse_anatomy.obo"
-#python OBO_populator.py -u root -p **** -i OBO_poptest.obo -r
+#obo_if = "/home/clinto/Desktop/OBO/mpath.obo"
+#
+# python OBO_populator.py -H www.berndtlab.pitt.edu -u clinto -p **** -i mpath.obo -r
 ## FOR PRODUCTION
-# python OBO_populator.py -H www.berndtlab.pitt.edu -t mpath_ -d phenotypes -u clinto -p **** -i mpath.obo -r
-# python OBO_populator.py -H www.berndtlab.pitt.edu -t anat_ -d phenotypes -u clinto -p **** -i adult_mouse_anatomy.obo -r
+# python OBO_populator.py -H www.berndtlab.pitt.edu -t mpath_ -d phenotypes -u ror -p **** -i mpath.obo -r
+# python OBO_populator.py -H www.berndtlab.pitt.edu -t anat_ -d phenotypes -u ror -p **** -i adult_mouse_anatomy.obo -r
 #########################################################
 
 
@@ -69,46 +72,55 @@ if regen:
         cursor.execute('DROP TABLE IF EXISTS %salts;' % table_prefix)
     
         cursor.execute('CREATE TABLE %sterms ( id INT(11) PRIMARY KEY NOT NULL, term VARCHAR(16), name VARCHAR(128), def TEXT, tag TEXT, comment TEXT, is_obsolete BIT, created_by VARCHAR(64), created_on DATE, xref TEXT );' % table_prefix)
-        cursor.execute('CREATE TABLE %ssynonyms ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sid INT(11), name VARCHAR(128), type VARCHAR(16), tag TEXT );' % (table_prefix, table_prefix))
-        cursor.execute('CREATE TABLE %sis_as ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sid INT(11), is_a VARCHAR(16) );' % (table_prefix, table_prefix))
-        cursor.execute('CREATE TABLE %srelationships ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sid INT(11), type VARCHAR(16), relationship VARCHAR(16) );' % (table_prefix, table_prefix))
-        cursor.execute('CREATE TABLE %salts ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sid INT(11), alt VARCHAR(16) );' % (table_prefix, table_prefix)
+        cursor.execute('CREATE TABLE %ssynonyms ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), name VARCHAR(128), type VARCHAR(16), tag TEXT );' % (table_prefix, table_prefix))
+        cursor.execute('CREATE TABLE %sis_as ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), is_a INT(11) );' % (table_prefix, table_prefix))
+        cursor.execute('CREATE TABLE %srelationships ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), type VARCHAR(16), relationship INT(11) );' % (table_prefix, table_prefix))
+        cursor.execute('CREATE TABLE %salts ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), alt INT(11) );' % (table_prefix, table_prefix))
 
 
 # Regular expression definitions for all line types
-term_section    = re.compile("^\[Term\][\n\r]+")
-blank_line      = re.compile("^\s+$")
-id_line         = re.compile(r"^id: (?P<id>.*)[\n\r]+")
-name_line       = re.compile(r"^name: (?P<name>.*)[\n\r]+")
-def_line        = re.compile(r'^def: "(?P<def>.*)"\s*\[?(?P<tag>.*)\][\n\r]+')
-is_a_line       = re.compile(r"^is_a: (?P<is_a>.*) ! .*[\n\r]+")
-synonym_line    = re.compile(r'^synonym: "(?P<synonym>.*)"\s*(?P<type>\w*)\s+\[?(?P<tag>.*)\][\n\r]+')
-creator_line    = re.compile(r"^created_by: (?P<by>.*)[\n\r]*")
-creation_line   = re.compile(r"^creation_date: (?P<date>\d{4}-\d{2}-\d{2})T\d{2}:\d{2}:\d{2}Z[\n\r]+")
-obsolete_line   = re.compile(r"^is_obsolete: true[\n\r]+")
-comment_line    = re.compile(r"^comment: (?P<comment>.*)[\n\r]+")
-xref_line       = re.compile(r"^xref: URL:\s?(?P<xref>.*)[\n\r]*")
-relation_line   = re.compile(r"^relationship: (?P<type>.*) (?P<relationship>.*) ! .*[\n\r]+")
-alt_line        = re.compile(r"^alt_id: (?P<alt>.*)[\n\r]+")
+term_section    = re.compile("^\[Term\]")
+blank_line      = re.compile("^\s*$")
+id_line         = re.compile(r"^id: (?P<db>\w+):(?P<id>\d+)")
+name_line       = re.compile(r"^name: (?P<name>.*)")
+def_line        = re.compile(r'^def: "(?P<def>.*)"\s*\[?(?P<tag>.*)\]')
+is_a_line       = re.compile(r"^is_a: \w+:(?P<is_a>\d+) ! .*")
+synonym_line    = re.compile(r'^synonym: "(?P<synonym>.*)"\s*(?P<type>\w*)\s+\[?(?P<tag>.*)\]')
+creator_line    = re.compile(r"^created_by: (?P<by>.*)")
+creation_line   = re.compile(r"^creation_date: (?P<date>\d{4}-\d{2}-\d{2})T\d{2}:\d{2}:\d{2}Z")
+obsolete_line   = re.compile(r"^is_obsolete: true")
+comment_line    = re.compile(r"^comment: (?P<comment>.*)")
+xref_line       = re.compile(r"^xref: URL:\s?(?P<xref>.*)")
+relation_line   = re.compile(r"^relationship: (?P<type>.*) \w+:(?P<relationship>\d+) ! .*")
+alt_line        = re.compile(r"^alt_id: \w+:(?P<alt>\d+)")
 
 obo_ifh = open(obo_if, 'r')
 
-
-line = obo_ifh.readline()
+line_no = 1
+line = obo_ifh.readline().rstrip()
 match = term_section.match(line)
 while not match:
-    line = obo_ifh.readline()
+    line = obo_ifh.readline().rstrip()
     match = term_section.match(line)
+    line_no = line_no + 1 
 
 id_ = None
+in_term_sec = False
 for line in obo_ifh:
+    line = line.rstrip()
+    line_no = line_no + 1 
+    
     did_match = False
     obselete = False
-    
+        
     match = term_section.match(line)
     if match:
         did_match = True
+        in_term_sec = True
         #print "<<<"
+    
+    if not in_term_sec:
+        continue;
     
     # If a blank line is detected, reset the id JIK the file isn't formated correctly
     match = blank_line.match(line)
@@ -116,36 +128,39 @@ for line in obo_ifh:
         did_match = True
         id_ = None
         #print ">>>"
+        in_term_sec = False
+    
     
     match = id_line.match(line)
     if match:
         did_match = True
-        id_ = match.group('id').rstrip()
-        cursor.execute('INSERT INTO %sterms (term_id) VALUES("%s")' % (table_prefix, id_))
+        term_prefix = match.group('db')
+        id_ = int(match.group('id'))
+        cursor.execute('INSERT INTO %sterms (id, term) VALUES(%d, "%s")' % (table_prefix, id_, term_prefix+":"+str(id_)))
     
     match = name_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET name="%s" WHERE term_id="%s"' % (table_prefix, match.group('name').rstrip(), id_))
+        cursor.execute('UPDATE %sterms SET name="%s" WHERE id=%d' % (table_prefix, match.group('name'), id_))
         #print "name["+match.group('name').rstrip()+"]"
     
     match = def_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET def="%s", tag="%s" WHERE term_id="%s"' % (table_prefix, match.group('def').rstrip().translate(None, '"'), match.group('tag').rstrip(), id_))
+        cursor.execute('UPDATE %sterms SET def="%s", tag="%s" WHERE id=%d' % (table_prefix, match.group('def').translate(None, '"'), match.group('tag'), id_))
         #print "def["+match.group('def').rstrip()+"]"
         #print "tag["+match.group('tag').rstrip()+"]"
     
     match = is_a_line.match(line)
     if match:
         did_match = True
-        cursor.execute('INSERT INTO %sis_as (term_id, is_a) VALUES("%s", "%s")' % (table_prefix, id_, match.group('is_a').rstrip()))    
+        cursor.execute('INSERT INTO %sis_as (%sterm_id, is_a) VALUES(%d, %d)' % ( table_prefix, table_prefix, id_, int(match.group('is_a') )))
         #print "is_a["+match.group('is_a').rstrip()+"]"
     
     match = synonym_line.match(line)
     if match:
         did_match = True
-        cursor.execute('INSERT INTO %ssynonyms (term_id, name, type, tag) VALUES("%s", "%s", "%s", "%s")' % (table_prefix, id_, match.group('synonym').rstrip(), match.group('type').rstrip(), match.group('tag').rstrip()))   
+        cursor.execute('INSERT INTO %ssynonyms (%sterm_id, name, type, tag) VALUES(%d, "%s", "%s", "%s")' % (table_prefix, table_prefix, id_, match.group('synonym'), match.group('type'), match.group('tag')))   
         #print "syn["+match.group('synonym').rstrip()+"]"
         #print "syn-type["+match.group('type').rstrip()+"]"
         #print "syn-tag["+match.group('tag').rstrip()+"]"
@@ -153,42 +168,42 @@ for line in obo_ifh:
     match = creator_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET created_by="%s" WHERE term_id="%s"' % (table_prefix, match.group('by').rstrip(), id_))
+        cursor.execute('UPDATE %sterms SET created_by="%s" WHERE id=%d' % (table_prefix, match.group('by'), id_))
     
     match = creation_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET created_on="%s" WHERE term_id="%s"' % (table_prefix, match.group('date'), id_))
+        cursor.execute('UPDATE %sterms SET created_on="%s" WHERE id=%d' % (table_prefix, match.group('date'), id_))
         #print "id[%s], date[%s]"%(id_,match.group('date'))
     
     match = obsolete_line.match(line)
     if match:
         did_match = True
         obsolete = True
-        cursor.execute('UPDATE %sterms SET is_obsolete=%d WHERE term_id="%s"' % (table_prefix, obsolete, id_))
+        cursor.execute('UPDATE %sterms SET is_obsolete=%d WHERE id=%d' % (table_prefix, obsolete, id_))
     
     match = comment_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET comment="%s" WHERE term_id="%s"' % (table_prefix, match.group('comment').rstrip().translate(None, '"'), id_))
+        cursor.execute('UPDATE %sterms SET comment="%s" WHERE id=%d' % (table_prefix, match.group('comment').translate(None, '"'), id_))
     
     match = xref_line.match(line)
     if match:
         did_match = True
-        cursor.execute('UPDATE %sterms SET xref="%s" WHERE term_id="%s"' % (table_prefix, match.group('xref').rstrip(), id_))
+        cursor.execute('UPDATE %sterms SET xref="%s" WHERE id=%d' % (table_prefix, match.group('xref'), id_))
     
     match = relation_line.match(line)
     if match:
         did_match = True
-        cursor.execute('INSERT INTO %srelationships (type, relationship, term_id) VALUES("%s", "%s", "%s")' % (table_prefix, match.group('type').rstrip(), match.group('relationship').rstrip(), id_))
+        cursor.execute('INSERT INTO %srelationships (type, relationship, %sterm_id) VALUES("%s", "%s", %d)' % (table_prefix, table_prefix, match.group('type'), int(match.group('relationship')), id_))
     
     match = alt_line.match(line)
     if match:
         did_match = True
-        cursor.execute('INSERT INTO %salts (term_id, alt) VALUES("%s", "%s")' % (table_prefix, id_, match.group('alt').rstrip()))
+        cursor.execute('INSERT INTO %salts (%sterm_id, alt) VALUES(%d, %d)' % (table_prefix, table_prefix, id_, int(match.group('alt'))))
     
     if not did_match:
-        print "WARNING! No regular expression matched: '%s'" % line.rstrip()
+        print "Line %d: WARNING! No regular expression matched: '%s'" % (line_no, line)
 
 
 '''

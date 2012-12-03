@@ -14,32 +14,77 @@ class PhenotypesController < ApplicationController
     @very_oldest = 1016;
   end
   
+  def test2
+    @anat_id_list = [ @anat_id ]
+    @found_ids = [ @anat_id ]
+    while not @found_ids.empty?
+        @result_ids = AnatIsA.where(:is_a => @found_ids.pop).map(&:anat_term_id)
+        @result_ids.each do |id| 
+            @found_ids.push id
+            @anat_id_list.push id
+        end
+    end
+    
+    @mpath_id_list = [ @mpath_id ]
+    @found_ids = [ @mpath_id ]
+    while not @found_ids.empty?
+        @result_ids = MpathIsA.where(:is_a => @found_ids.pop).map(&:mpath_term_id)
+        @result_ids.each do |id| 
+            @found_ids.push id
+            @mpath_id_list.push id
+        end
+    end
+    
+    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
+  end
+  
+  
+  
   # The landing page after the phnotypes are selected
   def show
     @mpath_id = params['MPATH'].to_i
     @anat_id =  params['MA'].to_i
 
-    # Set the mpath to a better default value if neccessary
-    if @mpath_id == 0
-        @mapth_id = 458
+    # Get all anatomys below this term in heirarchy
+    @anat_id_list = [ @anat_id ]
+    @found_ids = [ @anat_id ]
+    while not @found_ids.empty?
+        @result_ids = AnatIsA.where(:is_a => @found_ids.pop).map(&:anat_term_id)
+        @result_ids.each do |id| 
+            @found_ids.push id
+            @anat_id_list.push id
+        end
+    end
+    
+    # Get all mpath below this term in heirarchy
+    @mpath_id_list = [ @mpath_id ]
+    @found_ids = [ @mpath_id ]
+    while not @found_ids.empty?
+        @result_ids = MpathIsA.where(:is_a => @found_ids.pop).map(&:mpath_term_id)
+        @result_ids.each do |id| 
+            @found_ids.push id
+            @mpath_id_list.push id
+        end
     end
 
     # Select the Diagnoses with this mpath/manat combination, join the mice strain names, ages, and codes
-    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
     # Get all the strain names, the minimum/maximum ages and all codes
     @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
     @very_youngest = @mice.minimum(:age)
     @very_oldest = @mice.maximum(:age)
     @all_codes = @mice.select(:code).map(&:code).uniq!
-
+    
   end
-
+  
+  
+  
   # This is an AJAX JSON action to update page data when the user changes selections
   def query
     # Get the requested filters
-    @mpath_id           = params['mpath'].to_i
-    @anat_id            = params['anat'].to_i
+    @mpath_id_list      = params['mpath_id_list'].map! { |x| x.to_i }
+    @anat_id_list       = params['anat_id_list'].map! { |x| x.to_i }
     @selelected_strains = params['selected_strains']
     @youngest           = params['youngest'].to_i
     @oldest             = params['oldest'].to_i
@@ -82,7 +127,7 @@ class PhenotypesController < ApplicationController
         @ids = @sexed_mice.map(&:id)
         
         # Get the scores for these mice after filtering by mpath/anat ids, 
-        @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+        @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
         @scores.where(:mouse_id => @ids)
         # Make a hash mapping mouse id to score
         @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
@@ -109,8 +154,8 @@ class PhenotypesController < ApplicationController
   # This action is triggered when the user submits the phenotype selections
   def submit
     # Get the requested filters
-    @mpath_id           = params['mpath'].to_i
-    @anat_id            = params['anat'].to_i
+    @mpath_id_list      = JSON.parse(params['mpath_id_list']).map! { |x| x.to_i }
+    @anat_id_list       = JSON.parse(params['anat_id_list']).map! { |x| x.to_i }
     @selelected_strains = JSON.parse(params['selected_strains'])
     @youngest           = params['youngest'].to_i
     @oldest             = params['oldest'].to_i
@@ -147,7 +192,7 @@ class PhenotypesController < ApplicationController
     # Get the mice ids
     @ids = @mice.map(&:id)
     # Get the scores for these mice after filtering by mpath/anat ids, 
-    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
     @scores.where(:mouse_id => @ids)
     # Make a hash mapping mouse id to score
     @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
@@ -175,6 +220,10 @@ class PhenotypesController < ApplicationController
     @ns = Hash[@results.map { |k,v| [k, v.length] }]
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @sex_long = {'B'=>'Male & Female', 'M' => 'Male', 'F' => 'Female' }
+    
+    # Use the first terms in the list to display user friendly terms for phenotypes
+    @mpath_id = @mpath_id_list[0]
+    @anat_id = @mpath_id_list[0]
   end
 
 
@@ -196,8 +245,8 @@ class PhenotypesController < ApplicationController
   # This action is triggered when the user accepts data on the stat page
   def analyze
     # Get the requested filters
-    @mpath_id           = params['mpath'].to_i
-    @anat_id            = params['anat'].to_i
+    @mpath_id_list      = JSON.parse(params['mpath_id_list']).map! { |x| x.to_i }
+    @anat_id_list       = JSON.parse(params['anat_id_list']).map! { |x| x.to_i }
     @selected_strains   = params['selected_strains']
     @youngest           = params['youngest'].to_i
     @oldest             = params['oldest'].to_i
@@ -231,7 +280,7 @@ class PhenotypesController < ApplicationController
     # Get the mice ids
     @ids = @mice.map(&:id)
     # Get the scores for these mice after filtering by mpath/anat ids, 
-    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id, :path_base_term_id => @mpath_id)
+    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
     @scores.where(:mouse_id => @ids)
     # Make a hash mapping mouse id to score
     @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
@@ -276,7 +325,7 @@ class PhenotypesController < ApplicationController
 
     # Set some parameters for the UWF view
     @new_job = false
-    @job_name = PathBaseTerm.find(@mpath_id).term + " " + MouseAnatomyTerm.find(@anat_id).term + " " + @measure
+    @job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure
     @job_id = @job.ID
     render :template => "uwf/index"
   end

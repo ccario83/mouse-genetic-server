@@ -225,7 +225,7 @@ class PhenotypesController < ApplicationController
     
     # Use the first terms in the list to display user friendly terms for phenotypes
     @mpath_id = @mpath_id_list[0]
-    @anat_id = @mpath_id_list[0]
+    @anat_id = @anat_id_list[0]
   end
 
 

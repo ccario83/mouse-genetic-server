@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #===============================================================================
 # Programmer:   Clinton Cario
-# Purpose:      This script creates a Circos VEP track file from a MHP track circos file using annotations in the database
+# Purpose:      This script will generate a circos plot input file to display VEP information for SNP positions using the MHP track file as an input and VEP annotations in the database
 #
 # Input:	1) See command line arguments below
 # Output:	1) A file that can be read by Circos to generate a VEP annotation track
@@ -25,7 +25,7 @@ warnings.filterwarnings("ignore", "Unknown table.*")
 SNP_SUBMIT_MAX = 10000
 
 # Get command line arguments and parse them
-parser = argparse.ArgumentParser(description='This script will update or populate Ensembl VEP information to our local database')
+parser = argparse.ArgumentParser(description='This script will generate a circos plot input file to displays gene names for SNP positions using the MHP track file as an input and VEP annotations in the database')
 
 parser.add_argument('-H', '--host',                 action='store',         default='localhost',                dest='host',        help='mysql --host')
 parser.add_argument('-u', '--user',                 action='store',         default='',                         dest='user',        help='mysql --user')

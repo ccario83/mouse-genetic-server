@@ -55,7 +55,7 @@ xc = r
 # Y coordinate of center point
 yc = r
 # The inner radius of the clickable band per region
-ri = 380
+ri = 0
 # The outer radius of the clickable band per region
 ro = 1268
 # The spacing between ideograms in Mb to attempt to correct for spacing between args.chromosomes in zoom level 0

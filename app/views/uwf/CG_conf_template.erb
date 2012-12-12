@@ -3,7 +3,7 @@
 ## Job ID is used to report to redis the job status, use -1 to disable this
 job_id = <%= job_ID %>
 track_spacing = 3
-start_radius  = 30
+start_radius  = 15
 ## REQUIRED!
 emma_file = <%= emma_result_file %>
 ## These 3 are optional 
@@ -30,6 +30,9 @@ size    = medium
 
 [VEP_track]
 size    = small
+
+[gene_track]
+size    = medium
 
 ## NOT YET IMPLEMENTED
 ##[PPH2_track]

@@ -5199,12 +5199,13 @@
 
     <owl:Class rdf:about="&obo;MA_0000337">
         <rdfs:label rdf:datatype="&xsd;string">small intestine</rdfs:label>
-        <rdfs:subClassOf>
+        <rdfs:subClassOf rdf:resource="&obo;MPATH_328"/>
+        <!--<rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="&obo;ADULT_MOUSE_ANATOMY.GXD_part_of"/>
                 <owl:someValuesFrom rdf:resource="&obo;MA_0000328"/>
             </owl:Restriction>
-        </rdfs:subClassOf>
+        </rdfs:subClassOf>-->
     </owl:Class>
     
 

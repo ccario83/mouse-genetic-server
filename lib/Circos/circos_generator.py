@@ -19,6 +19,7 @@
 #  2012 09 27 --    Various bug fixes for start/stop position support
 #  2012 09 27 --    Cleaned up how paths are handled a bit (use os.path functions instead of string concat)
 #  2012 10 01 --    Updated command line call for image_mapper.py
+#  2012 12 12 --    Added gene track
 #===============================================================================
 
 import sys              # General system functions
@@ -118,10 +119,12 @@ except:
 
 '''
 # ==== DEBUG ==== 
-db_conf.read('/home/clinto/Desktop/circos_generator/database.conf')
-gen_conf.read('/home/clinto/Desktop/AED697/generator.conf')
-template = Template(filename='/home/clinto/Desktop/circos_generator/circos_template.conf')
-project_dir = '/home/clinto/Desktop/AED697/'
+db_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
+gen_conf = ConfigParser.SafeConfigParser(dict_type=ordereddict.OrderedDict)
+db_conf.read('/home/clinto/Desktop/Circos/database.conf')
+gen_conf.read('/home/clinto/Desktop/c15e0a/Plots/CG.conf')
+template = Template(filename='/home/clinto/Desktop/Circos/circos_template.conf')
+project_dir = '/home/clinto/Desktop/c15e0a/'
 def generate_track_data(track):
     pass
 # ================
@@ -153,7 +156,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         #print cmd
         #print script_dir
         subprocess.call(cmd, cwd = script_dir, shell=True)
-        return SNP_of        
+        return SNP_of
     
     if track_name == 'MHP_track':
         return MHP_of
@@ -167,6 +170,16 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         #print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return VEP_of
+    
+    if track_name == 'gene_track':
+        #print "\nGenerating SNP track"
+        gene_if = MHP_of
+        gene_of = os.path.join(project_dir, 'gene_track.txt')
+        params = map(lambda k: db_settings[k], ['host','user','password','port'])
+        cmd = 'python circos_gene_track.py -H %s -u %s -p %s -P %s -i %s -o %s'%tuple(params+[gene_if, gene_of])
+        #print cmd
+        subprocess.call(cmd, cwd = script_dir, shell=True)
+        return gene_of
     
     # STUBBED!
     if track_name == 'PPH2_track':
@@ -294,6 +307,28 @@ for section in sections:
             rule = {'condition':              '_VALUE_ == %d'%(rule_no), 
                     'color':                  'spectral-7-div-%d'%(8-rule_no)}
             plot['rules'].append(rule)
+        plots.append(plot)
+    if section == 'gene_track':
+        plot['comment'] =                     '# Gene Track'
+        plot['file'] =                        generate_track_data('gene_track')
+        plot['type'] =                        'text'
+        plot['r0'] =                          current_r0
+        plot['r1'] =                          current_r1
+        plot['attributes'] = {'color':        'black',
+                              'show_links':   'yes',
+                              'link_dims':    '1p,1p,2p,1p,1p',
+                              'link_thickness':'1p',
+                              'link_color':   'red',
+                              'padding':      '2p',
+                              'rpadding':     '2p',
+                              'label_rotate': 'yes',
+                              'label_size':   '6p',
+                              'label_font':   'condensed',}
+        plot['backgrounds'] = []
+        plot['rules'] = [{'importance':         100,
+                              'condition':     '_VALUE_ =~ /\[[\w\d\._-]*\]/i',
+                              'label_font':    'condensedbold',
+                              'color':         'vvdred',}]
         plots.append(plot)
     if section == 'PPH2_track':
         plot['comment'] =                     '# PPH2 Track'

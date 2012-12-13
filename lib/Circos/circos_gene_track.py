@@ -8,6 +8,8 @@
 #
 # Modification History:
 #  2012 12 10 --    First version completed
+#  2012 12 12 --    Added scaling for gene size relative to SNP proximity (closer = larger)
+#  2012 12 13 --    Removed duplicate genes, keeping largest scaled
 #===============================================================================
 # Load Libraries
 import MySQLdb          # 
@@ -19,8 +21,6 @@ import argparse
 import warnings
 
 warnings.filterwarnings("ignore", "Unknown table.*")
-
-SEARCH_REGION = 10000
 
 # Get command line arguments and parse them
 parser = argparse.ArgumentParser(description='This script will update or populate Ensembl VEP information to our local database')
@@ -82,25 +82,45 @@ snp = SNPs[0]
 results = []
 for snp in SNPs:
     chromo = (snp['Chr'] if not(snp['Chr'] == '20') else 'X')
-    cursor.execute('SELECT x.display_label, s.name, g.seq_region_start, g.seq_region_end FROM gene g INNER JOIN seq_region s ON s.seq_region_id = g.seq_region_id INNER JOIN xref x ON x.xref_id = g.display_xref_id WHERE s.name= "%s" AND seq_region_start <= %d ORDER BY seq_region_start DESC LIMIT 1'%(chromo,long(snp['Pos'])) )
+    cursor.execute('''
+        SELECT x.display_label, s.name, g.seq_region_start, g.seq_region_end, LEAST(ABS(cast(g.seq_region_start as signed) - %d), ABS(cast(g.seq_region_end as signed) - %d)) as distance
+        FROM gene g 
+        INNER JOIN seq_region s ON s.seq_region_id = g.seq_region_id 
+        INNER JOIN xref x ON x.xref_id = g.display_xref_id 
+        WHERE s.name= '%s'
+        ORDER BY LEAST(ABS(cast(g.seq_region_start as signed) - %d), ABS(cast(g.seq_region_end as signed) - %d))
+        LIMIT 1 ''' % ( long(snp['Pos']), long(snp['Pos']), chromo, long(snp['Pos']), long(snp['Pos']) ) )
     snp_id = cursor.fetchone()
     if snp_id:
         snp_id['name'] = (20 if(snp_id['name'] == 'X') else snp_id['name'])
         
-        size = 24;
+        size = 6;
         dist_from_gene_center = abs( long(snp['Pos']) - (((long(snp_id['seq_region_end']) - long(snp_id['seq_region_start'])) / 2) + long(snp_id['seq_region_start'])) )
         #print str(dist_from_gene_center)
         if (dist_from_gene_center > 10000):
-            size = 24;
+            size = 6;
         else:
-            size = int((-.0001*dist_from_gene_center) + 34)
+            size = int((-.0028*dist_from_gene_center) + 34)
         if ((snp_id['seq_region_start'] <= snp['Pos']) and (snp['Pos'] <= snp_id['seq_region_end'])):
-            snp_id['size'] = 'label_size=' + 34 + 'p'
+            snp_id['size'] = 34
             #snp_id['display_label'] = "<span style='font:bold; color:#0000FF;'>" +  snp_id['display_label'] + "</span>"
             snp_id['display_label'] = "[" +  snp_id['display_label'] + "]"
-        snp_id['size'] = 'label_size=' +  str(size) + 'p' 
+        snp_id['size'] = size
         
         results.append(snp_id)
+
+shared_gene = {}
+for result in results:
+    dup = str(result['display_label']) + '_' + str(result['name'])
+    if dup in shared_gene.keys() or result['display_label'] == '.':
+        continue
+    shared_gene[dup] = [ k for k in results if k['display_label'] == result['display_label'] and k['name'] == result['name'] ]
+    closest = min([ k['distance'] for k in shared_gene[dup]])
+    for snp in shared_gene[dup]:
+        if not snp['distance'] == closest:
+            snp['size'] = 'label_size=0p'
+        else:
+            snp['size'] = 'label_size=%dp'%snp['size']
 
 
 # Write the results to an output file

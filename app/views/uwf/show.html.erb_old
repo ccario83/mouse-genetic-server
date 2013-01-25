@@ -1,0 +1,91 @@
+<% @page_title = "Unified Workflow Results" %>
+<% content_for :page_js do %>
+<%= javascript_include_tag('gmaps4rails/gmaps4rails.base') %>
+		<%= javascript_include_tag('interactive_circos_plot') %>
+<% end %>
+<span id="job_ID" style="display:none;"><%= @job_ID %></span>
+				<!-- Left Panel -->
+				<!--<div class="span2 offset1 job-panel">
+					<%= render(:partial => "jobs_panel") %>
+				</div>-->
+				
+				<!-- Center Panel-->
+				<div class="span8 offset2 main-panel">
+				<% if @ready %>
+					<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
+					This causes the check_progress() JS function to stop the timer as an error function
+					-->
+					<div class="row-fluid">
+						<div id="fs-container" class="img-polaroid" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
+							<center>
+							<div id="fs">
+									<%= image_tag(@circos_thumb, :id => 'circos_thumb', :width => '75%')%>
+							</div>
+							</center>
+							<center><h3>Click here for full screen interactive mode</h3></center>
+						</div>
+					</div>
+
+					<br/>
+					<div class="row-fluid">
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Parameter</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Job ID</td><td><%= @job.ID %></td>
+								</tr>
+								<tr>
+									<td>Phenotype</td><td><%= @pheno_file %></td>
+								</tr>
+								<tr>
+									<td>Algorithm</td><td><%= @emma_type %></td>
+								</tr>
+								<tr>
+									<td>SNP Set</td><td><%= @snp_set %></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+				<% else %>
+					<div class="row span12">
+						<h3>Job Status: Running...</h3>
+						<%= javascript_include_tag('job_progress') %>
+						<script type="text/javascript"> window.job_id = '<%= @job_ID %>';</script>
+						<div id="job-progress">
+							<ul>
+								<li id="started" class="incomplete">Started</li>
+								<li id="config-emma" class="incomplete">Configuring <%= @emma_type %></li>
+								<li id="run-emma" class="incomplete">Running <%= @emma_type %>
+									<ul>
+										<li id="phenos-read" class="incomplete">Reading phenotypes</li>
+										<li id="phenos-processed" class="incomplete">Processing phenotypes</li>
+										<li id="genos-processed" class="incomplete">Reading genotypes</li>
+										<li id="emma-started" class="incomplete">Running algorithm</li>
+										<li id="post-processing" class="incomplete">Post processing</li>
+									</ul>
+								</li>
+								<li id="config-circos" class="incomplete">Configuring Circos</li>
+								<li id="run-circos" class="incomplete"> Starting Circos</li>
+									<ul>
+										<li id="pop-tracks" class="incomplete">Populating tracks</li>
+										<li id="gen-datapoint" class="incomplete">Generating datapoints</li>
+										<li id="draw-image" class="incomplete">Drawing full genome Circos plot</li>
+										<li class="incomplete">Finished!</li>
+									</ul>
+								<li>
+						</div>
+					</div>
+				<% end %>
+				</div>
+
+				<!-- Right Panel -->
+				<!--<div class="span2 user-panel">
+					<%= render(:partial => "user_panel") %>
+				</div>-->
+

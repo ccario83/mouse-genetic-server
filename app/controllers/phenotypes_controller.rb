@@ -4,7 +4,11 @@ require 'jobber'
 class PhenotypesController < ApplicationController
   def index
   end
-    
+
+  def d3tree
+    render "new_pheno"
+  end
+
   # Simply returns data to test form layout
   def test
     @mpath_id = 343;
@@ -336,4 +340,21 @@ class PhenotypesController < ApplicationController
   def create
     redirect_to "uwf/create"
   end
+
+  # This is an AJAX JSON action to update page data when the user changes selections
+  def get_anat
+    @@anat = File.read(File.join(Rails.root, 'public', 'flare.json'))
+    render :json => @@anat
+  end
+  
+  def get_mpath_tree
+    @@mpath = File.read(File.join(Rails.root, 'public', 'mpath.json'))
+    render :json => @@mpath
+  end
+  
+    def get_anat_tree
+    @@mpath = File.read(File.join(Rails.root, 'public', 'anat.json'))
+    render :json => @@mpath
+  end
+  
 end

@@ -1,0 +1,54 @@
+<% content_for :page_css do %>
+
+		<%= stylesheet_link_tag('d3')%>
+		<%= stylesheet_link_tag('dynatree/dynatree')%>
+		<%= stylesheet_link_tag('phenotype_selection')%>
+<% end %>
+
+<% content_for :page_js do %>
+
+		<%= javascript_include_tag('jquery.cookie') %>
+		<%= javascript_include_tag('d3/d3') %>
+		<%= javascript_include_tag('d3/d3.layout') %>
+		<%= javascript_include_tag('d3/d3.tree') %>
+		<%= javascript_include_tag('dynatree/jquery.dynatree') %>
+		<%= javascript_include_tag('dynatree/dynatree') %>
+
+		
+<% end %>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span6">
+			<div class="row-fluid">
+				<div class="navbar">
+					<div><!--<div class="navbar-inner">-->
+						<form class="navbar-search">
+						<span class="">Pathology Selection</span>
+						<input type="text" class="search-query" placeholder="Search by term or ID">
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div id="mpath_tree"></div>
+			</div>
+		</div>
+		<div class="span6">
+			<div class="row-fluid">
+				<div class="navbar">
+					<div><!--<div class="navbar-inner">-->
+						<form class="navbar-search">
+						<span class="">Anatomy Selection</span>
+						<input type="text" class="search-query" placeholder="Search by term or ID">
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div id="anat_tree"></div>
+			</div>
+		</div>
+	</div>
+</div>
+

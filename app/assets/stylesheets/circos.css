@@ -1,0 +1,24 @@
+/* Main style overrides */
+html { height: 100%; }
+body { height: 100%; padding: 0px; }
+
+/* For a results flash */
+#navigation
+{
+	
+	position: fixed; 
+	top: 25px; 
+	left:25px; 
+	border: 1px solid #eee;
+	z-index: 1000;
+	width: 400px;
+	height: 500px;
+	background: rgba(173,216,199,.3);
+}
+
+#plot
+{
+	width: 50%;
+	margin: 0px auto;
+}
+

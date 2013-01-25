@@ -11,12 +11,15 @@ RorWebsite::Application.routes.draw do
   get "phenotypes/show"
   post "phenotypes/query"
   post "phenotypes/stats"
+  post "phenotypes/d3tree"
+  post "phenotypes/get_anat"
   
   # Static handlers for development mode
   #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path' => 'static#show'
   match 'exists/data/*path' => 'static#exists'
-  #match 'data/*path(.svg)' => 'static#svg'
+  
+  #get 'uwf/show/:job_id/circos.svg' 
   
   # Route to the sidekiq manager
   mount Sidekiq::Web => '/sidekiq'

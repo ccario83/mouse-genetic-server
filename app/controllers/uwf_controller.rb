@@ -59,6 +59,7 @@ class UwfController < ApplicationController
     if @ready
         @circos_thumb = File.join('/data/', @job_ID, "/Plots/circos.png")
     end
+    render :layout => false
   end
   
   def progress

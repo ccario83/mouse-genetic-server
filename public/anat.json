@@ -1,0 +1,650 @@
+[
+ {
+  "children": [
+   {
+    "children": [
+     {
+      "children": [
+       {
+        "key": 10, 
+        "name": "cardiovascular system", 
+        "parent": 3, 
+        "title": "cardiovascular system"
+       }, 
+       {
+        "key": 12, 
+        "name": "endocrine system", 
+        "parent": 3, 
+        "title": "endocrine system"
+       }, 
+       {
+        "key": 13, 
+        "name": "hemolymphoid system", 
+        "parent": 3, 
+        "title": "hemolymphoid system"
+       }, 
+       {
+        "key": 14, 
+        "name": "integumental system", 
+        "parent": 3, 
+        "title": "integumental system"
+       }, 
+       {
+        "key": 16, 
+        "name": "nervous system", 
+        "parent": 3, 
+        "title": "nervous system"
+       }, 
+       {
+        "children": [
+         {
+          "key": 325, 
+          "name": "renal/urinary system", 
+          "parent": 19, 
+          "title": "renal/urinary system"
+         }, 
+         {
+          "children": [
+           {
+            "key": 381, 
+            "name": "female reproductive system", 
+            "parent": 326, 
+            "title": "female reproductive system"
+           }, 
+           {
+            "key": 396, 
+            "name": "male reproductive system", 
+            "parent": 326, 
+            "title": "male reproductive system"
+           }
+          ], 
+          "key": 326, 
+          "name": "reproductive system", 
+          "parent": 19, 
+          "title": "reproductive system"
+         }, 
+         {
+          "key": 327, 
+          "name": "respiratory system", 
+          "parent": 19, 
+          "title": "respiratory system"
+         }, 
+         {
+          "key": 2431, 
+          "name": "digestive system", 
+          "parent": 19, 
+          "title": "digestive system"
+         }
+        ], 
+        "key": 19, 
+        "name": "visceral organ system", 
+        "parent": 3, 
+        "title": "visceral organ system"
+       }, 
+       {
+        "key": 2411, 
+        "name": "exocrine system", 
+        "parent": 3, 
+        "title": "exocrine system"
+       }, 
+       {
+        "key": 2418, 
+        "name": "musculoskeletal system", 
+        "parent": 3, 
+        "title": "musculoskeletal system"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2443, 
+          "name": "auditory system", 
+          "parent": 2442, 
+          "title": "auditory system"
+         }, 
+         {
+          "key": 2444, 
+          "name": "visual system", 
+          "parent": 2442, 
+          "title": "visual system"
+         }, 
+         {
+          "key": 2445, 
+          "name": "olfactory system", 
+          "parent": 2442, 
+          "title": "olfactory system"
+         }, 
+         {
+          "key": 2446, 
+          "name": "gustatory system", 
+          "parent": 2442, 
+          "title": "gustatory system"
+         }
+        ], 
+        "key": 2442, 
+        "name": "sensory organ system", 
+        "parent": 3, 
+        "title": "sensory organ system"
+       }, 
+       {
+        "key": 2711, 
+        "name": "immune system", 
+        "parent": 3, 
+        "title": "immune system"
+       }, 
+       {
+        "key": 2887, 
+        "name": "set of connective tissues", 
+        "parent": 3, 
+        "title": "set of connective tissues"
+       }
+      ], 
+      "key": 3, 
+      "name": "organ system", 
+      "parent": 3000, 
+      "title": "organ system"
+     }, 
+     {
+      "key": 2405, 
+      "name": "postnatal mouse", 
+      "parent": 3000, 
+      "title": "postnatal mouse"
+     }, 
+     {
+      "children": [
+       {
+        "key": 4, 
+        "name": "trunk", 
+        "parent": 2433, 
+        "title": "trunk"
+       }, 
+       {
+        "children": [
+         {
+          "children": [
+           {
+            "key": 566, 
+            "name": "parietal mesothelium", 
+            "parent": 565, 
+            "title": "parietal mesothelium"
+           }, 
+           {
+            "key": 567, 
+            "name": "visceral mesothelium", 
+            "parent": 565, 
+            "title": "visceral mesothelium"
+           }
+          ], 
+          "key": 565, 
+          "name": "mesothelium", 
+          "parent": 5, 
+          "title": "mesothelium"
+         }, 
+         {
+          "children": [
+           {
+            "key": 53, 
+            "name": "pericardial cavity", 
+            "parent": 2447, 
+            "title": "pericardial cavity"
+           }, 
+           {
+            "key": 54, 
+            "name": "peritoneal cavity", 
+            "parent": 2447, 
+            "title": "peritoneal cavity"
+           }, 
+           {
+            "key": 55, 
+            "name": "pleural cavity", 
+            "parent": 2447, 
+            "title": "pleural cavity"
+           }
+          ], 
+          "key": 2447, 
+          "name": "body cavity", 
+          "parent": 5, 
+          "title": "body cavity"
+         }, 
+         {
+          "children": [
+           {
+            "children": [
+             {
+              "key": 2738, 
+              "name": "fibrous pericardium", 
+              "parent": 99, 
+              "title": "fibrous pericardium"
+             }, 
+             {
+              "children": [
+               {
+                "key": 483, 
+                "name": "parietal serous pericardium", 
+                "parent": 2739, 
+                "title": "parietal serous pericardium"
+               }, 
+               {
+                "key": 484, 
+                "name": "visceral serous pericardium", 
+                "parent": 2739, 
+                "title": "visceral serous pericardium"
+               }
+              ], 
+              "key": 2739, 
+              "name": "serous pericardium", 
+              "parent": 99, 
+              "title": "serous pericardium"
+             }
+            ], 
+            "key": 99, 
+            "name": "pericardium", 
+            "parent": 2448, 
+            "title": "pericardium"
+           }, 
+           {
+            "children": [
+             {
+              "key": 2488, 
+              "name": "parietal pleura", 
+              "parent": 433, 
+              "title": "parietal pleura"
+             }, 
+             {
+              "key": 2489, 
+              "name": "visceral pleura", 
+              "parent": 433, 
+              "title": "visceral pleura"
+             }
+            ], 
+            "key": 433, 
+            "name": "pleura", 
+            "parent": 2448, 
+            "title": "pleura"
+           }, 
+           {
+            "key": 449, 
+            "name": "peritoneal cavity lining", 
+            "parent": 2448, 
+            "title": "peritoneal cavity lining"
+           }
+          ], 
+          "key": 2448, 
+          "name": "cavity lining", 
+          "parent": 5, 
+          "title": "cavity lining"
+         }
+        ], 
+        "key": 5, 
+        "name": "body cavity or lining", 
+        "parent": 2433, 
+        "title": "body cavity or lining"
+       }, 
+       {
+        "key": 6, 
+        "name": "head and neck", 
+        "parent": 2433, 
+        "title": "head and neck"
+       }, 
+       {
+        "children": [
+         {
+          "key": 25, 
+          "name": "forelimb", 
+          "parent": 7, 
+          "title": "forelimb"
+         }, 
+         {
+          "key": 26, 
+          "name": "hindlimb", 
+          "parent": 7, 
+          "title": "hindlimb"
+         }
+        ], 
+        "key": 7, 
+        "name": "limb", 
+        "parent": 2433, 
+        "title": "limb"
+       }, 
+       {
+        "key": 8, 
+        "name": "tail", 
+        "parent": 2433, 
+        "title": "tail"
+       }
+      ], 
+      "key": 2433, 
+      "name": "anatomic region", 
+      "parent": 3000, 
+      "title": "anatomic region"
+     }, 
+     {
+      "children": [
+       {
+        "key": 59, 
+        "name": "blood", 
+        "parent": 2450, 
+        "title": "blood"
+       }, 
+       {
+        "children": [
+         {
+          "key": 1236, 
+          "name": "aqueous humour", 
+          "parent": 1911, 
+          "title": "aqueous humour"
+         }, 
+         {
+          "key": 1286, 
+          "name": "vitreous humor", 
+          "parent": 1911, 
+          "title": "vitreous humor"
+         }
+        ], 
+        "key": 1911, 
+        "name": "ocular refractive media", 
+        "parent": 2450, 
+        "title": "ocular refractive media"
+       }, 
+       {
+        "key": 2503, 
+        "name": "cerebrospinal fluid", 
+        "parent": 2450, 
+        "title": "cerebrospinal fluid"
+       }, 
+       {
+        "children": [
+         {
+          "children": [
+           {
+            "key": 2551, 
+            "name": "colostrum", 
+            "parent": 2505, 
+            "title": "colostrum"
+           }, 
+           {
+            "key": 2552, 
+            "name": "mammary gland milk", 
+            "parent": 2505, 
+            "title": "mammary gland milk"
+           }
+          ], 
+          "key": 2505, 
+          "name": "mammary gland fluid/secretion", 
+          "parent": 2504, 
+          "title": "mammary gland fluid/secretion"
+         }, 
+         {
+          "key": 2506, 
+          "name": "cerumen", 
+          "parent": 2504, 
+          "title": "cerumen"
+         }, 
+         {
+          "key": 2507, 
+          "name": "saliva", 
+          "parent": 2504, 
+          "title": "saliva"
+         }, 
+         {
+          "key": 2508, 
+          "name": "tear", 
+          "parent": 2504, 
+          "title": "tear"
+         }
+        ], 
+        "key": 2504, 
+        "name": "exocrine gland fluid/secretion", 
+        "parent": 2450, 
+        "title": "exocrine gland fluid/secretion"
+       }, 
+       {
+        "key": 2509, 
+        "name": "feces", 
+        "parent": 2450, 
+        "title": "feces"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2511, 
+          "name": "ovary follicle fluid", 
+          "parent": 2510, 
+          "title": "ovary follicle fluid"
+         }
+        ], 
+        "key": 2510, 
+        "name": "female reproductive system fluid/secretion", 
+        "parent": 2450, 
+        "title": "female reproductive system fluid/secretion"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2513, 
+          "name": "bile", 
+          "parent": 2512, 
+          "title": "bile"
+         }, 
+         {
+          "key": 2514, 
+          "name": "esophagus secretion", 
+          "parent": 2512, 
+          "title": "esophagus secretion"
+         }, 
+         {
+          "key": 2515, 
+          "name": "intestine secretion", 
+          "parent": 2512, 
+          "title": "intestine secretion"
+         }, 
+         {
+          "children": [
+           {
+            "key": 2517, 
+            "name": "endocrine pancreas secretion", 
+            "parent": 2516, 
+            "title": "endocrine pancreas secretion"
+           }, 
+           {
+            "key": 2518, 
+            "name": "exocrine pancreas secretion", 
+            "parent": 2516, 
+            "title": "exocrine pancreas secretion"
+           }
+          ], 
+          "key": 2516, 
+          "name": "pancreas secretion", 
+          "parent": 2512, 
+          "title": "pancreas secretion"
+         }, 
+         {
+          "key": 2519, 
+          "name": "stomach secretion", 
+          "parent": 2512, 
+          "title": "stomach secretion"
+         }
+        ], 
+        "key": 2512, 
+        "name": "digestive system fluid or secretion", 
+        "parent": 2450, 
+        "title": "digestive system fluid or secretion"
+       }, 
+       {
+        "key": 2520, 
+        "name": "lymph", 
+        "parent": 2450, 
+        "title": "lymph"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2522, 
+          "name": "semen", 
+          "parent": 2521, 
+          "title": "semen"
+         }
+        ], 
+        "key": 2521, 
+        "name": "male reproductive system fluid/secretion", 
+        "parent": 2450, 
+        "title": "male reproductive system fluid/secretion"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2528, 
+          "name": "endolymph", 
+          "parent": 2527, 
+          "title": "endolymph"
+         }, 
+         {
+          "key": 2529, 
+          "name": "perilymph", 
+          "parent": 2527, 
+          "title": "perilymph"
+         }
+        ], 
+        "key": 2527, 
+        "name": "otolymph", 
+        "parent": 2450, 
+        "title": "otolymph"
+       }, 
+       {
+        "key": 2530, 
+        "name": "pericardial fluid", 
+        "parent": 2450, 
+        "title": "pericardial fluid"
+       }, 
+       {
+        "key": 2531, 
+        "name": "peritoneal fluid", 
+        "parent": 2450, 
+        "title": "peritoneal fluid"
+       }, 
+       {
+        "key": 2532, 
+        "name": "pleural fluid", 
+        "parent": 2450, 
+        "title": "pleural fluid"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2534, 
+          "name": "lung surfactant", 
+          "parent": 2533, 
+          "title": "lung surfactant"
+         }, 
+         {
+          "key": 2535, 
+          "name": "nasal mucus", 
+          "parent": 2533, 
+          "title": "nasal mucus"
+         }, 
+         {
+          "key": 2536, 
+          "name": "sputum", 
+          "parent": 2533, 
+          "title": "sputum"
+         }
+        ], 
+        "key": 2533, 
+        "name": "respiratory system fluid/secretion", 
+        "parent": 2450, 
+        "title": "respiratory system fluid/secretion"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2538, 
+          "name": "sebum", 
+          "parent": 2537, 
+          "title": "sebum"
+         }, 
+         {
+          "key": 2539, 
+          "name": "sweat", 
+          "parent": 2537, 
+          "title": "sweat"
+         }
+        ], 
+        "key": 2537, 
+        "name": "skin fluid/secretion", 
+        "parent": 2450, 
+        "title": "skin fluid/secretion"
+       }, 
+       {
+        "children": [
+         {
+          "key": 2541, 
+          "name": "cementum", 
+          "parent": 2540, 
+          "title": "cementum"
+         }, 
+         {
+          "key": 2542, 
+          "name": "dentin", 
+          "parent": 2540, 
+          "title": "dentin"
+         }, 
+         {
+          "key": 2543, 
+          "name": "enamel", 
+          "parent": 2540, 
+          "title": "enamel"
+         }
+        ], 
+        "key": 2540, 
+        "name": "tooth substance", 
+        "parent": 2450, 
+        "title": "tooth substance"
+       }, 
+       {
+        "key": 2544, 
+        "name": "synovial fluid", 
+        "parent": 2450, 
+        "title": "synovial fluid"
+       }, 
+       {
+        "key": 2545, 
+        "name": "urine", 
+        "parent": 2450, 
+        "title": "urine"
+       }, 
+       {
+        "key": 2893, 
+        "name": "amniotic fluid", 
+        "parent": 2450, 
+        "title": "amniotic fluid"
+       }
+      ], 
+      "key": 2450, 
+      "name": "body fluid or substance", 
+      "parent": 3000, 
+      "title": "body fluid or substance"
+     }, 
+     {
+      "key": 3001, 
+      "name": "organ", 
+      "parent": 3000, 
+      "title": "organ"
+     }, 
+     {
+      "key": 3002, 
+      "name": "tissue", 
+      "parent": 3000, 
+      "title": "tissue"
+     }
+    ], 
+    "key": 3000, 
+    "name": "anatomical structure", 
+    "parent": 0, 
+    "title": "anatomical structure"
+   }
+  ], 
+  "key": 0, 
+  "name": "mouse anatomical entity", 
+  "parent": null, 
+  "title": "mouse anatomical entity"
+ }
+]

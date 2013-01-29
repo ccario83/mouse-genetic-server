@@ -3,8 +3,8 @@
 <% end %>
 <% content_for :page_js do %>
 <script>
-			var MPATH_ID_LIST = <%=raw @mpath_id_list %>;
-			var ANAT_ID_LIST = <%= @anat_id_list %>;
+			var MPATH_ID_LIST = <%=raw @mpath_ids %>;
+			var ANAT_ID_LIST = <%= @anat_ids %>;
 			var ALL_STRAINS = <%=raw @all_strains %>;
 			var VERY_YOUNGEST = <%= @very_youngest.nil? ? "null":@very_youngest %>;
 			var VERY_OLDEST = <%= @very_oldest.nil? ? "null":@very_oldest %>;
@@ -17,41 +17,6 @@
 		<%= javascript_include_tag('phenotype_show') %>
 <% end %>
 
-<style type="text/css">
-#submit-right
-{
-	position: fixed;
-	top: 50%;
-	right: 0%;
-	z-index: 100;
-	border-top-left-radius: 7px;
-	border-bottom-left-radius: 7px;
-	background: #888;
-	opacity: .25;
-
-}
-#submit-right img
-{
-	height: 50px;
-}
-#submit-left
-{
-	position: fixed;
-	top: 50%;
-	left: 0%;
-	z-index: 100;
-	border-top-right-radius: 7px;
-	border-bottom-right-radius: 7px;
-	background: #888;
-	opacity: .25;
-
-}
-#submit-left img
-{
-	height: 50px;
-}
-</style>
-
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span4 well">
@@ -63,11 +28,9 @@
 					<table class="table table-striped">
 						<tr>
 							<td><b>Pathology</b></td>
-							<td><%=PathBaseTerm.find(@mpath_id).term%></td>
 						</tr>
 						<tr>
 							<td><b>Anatomy</b></td>
-							<td><%=MouseAnatomyTerm.find(@anat_id).term %></td>
 						</tr>
 					</table>
 				</div>

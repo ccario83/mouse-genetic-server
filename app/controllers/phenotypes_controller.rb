@@ -2,78 +2,26 @@ require 'securerandom'
 require 'jobber'
 
 class PhenotypesController < ApplicationController
+
   def index
+    render "selector"
   end
 
-  def d3tree
-    render "new_pheno"
-  end
-
-  # Simply returns data to test form layout
-  def test
-    @mpath_id = 343;
-    @anat_id = 2434;
-    @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
-    @very_youngest = 201;
-    @very_oldest = 1016;
+  def selector
   end
   
-  def test2
-    @anat_id_list = [ @anat_id ]
-    @found_ids = [ @anat_id ]
-    while not @found_ids.empty?
-        @result_ids = AnatIsA.where(:is_a => @found_ids.pop).map(&:anat_term_id)
-        @result_ids.each do |id| 
-            @found_ids.push id
-            @anat_id_list.push id
-        end
-    end
-    
-    @mpath_id_list = [ @mpath_id ]
-    @found_ids = [ @mpath_id ]
-    while not @found_ids.empty?
-        @result_ids = MpathIsA.where(:is_a => @found_ids.pop).map(&:mpath_term_id)
-        @result_ids.each do |id| 
-            @found_ids.push id
-            @mpath_id_list.push id
-        end
-    end
-    
-    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
-  end
-  
-  
-  
-  # The landing page after the phnotypes are selected
+  # The landing page after the phenotypes are selected
   def show
-    @mpath_id = params['MPATH'].to_i
-    @anat_id =  params['MA'].to_i
-
-    # Get all anatomys below this term in heirarchy
-    @anat_id_list = [ @anat_id ]
-    @found_ids = [ @anat_id ]
-    while not @found_ids.empty?
-        @result_ids = AnatIsA.where(:is_a => @found_ids.pop).map(&:anat_term_id)
-        @result_ids.each do |id| 
-            @found_ids.push id
-            @anat_id_list.push id
-        end
-    end
-    
-    # Get all mpath below this term in heirarchy
-    @mpath_id_list = [ @mpath_id ]
-    @found_ids = [ @mpath_id ]
-    while not @found_ids.empty?
-        @result_ids = MpathIsA.where(:is_a => @found_ids.pop).map(&:mpath_term_id)
-        @result_ids.each do |id| 
-            @found_ids.push id
-            @mpath_id_list.push id
-        end
-    end
+    @mpath_ids = JSON.parse(params['mpath_ids']).map! { |x| x.to_i }
+    @anat_ids =  JSON.parse(params['anat_ids']).map! { |x| x.to_i }
 
     # Select the Diagnoses with this mpath/manat combination, join the mice strain names, ages, and codes
-    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
+    @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_ids, :path_base_term_id => @mpath_ids)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
+    if @mice.empty?
+        print "NONE FOUND!"
+        render "selector"
+    end
     # Get all the strain names, the minimum/maximum ages and all codes
     @all_strains = Mouse.joins(:strain).select(:name).map(&:name).uniq!.sort!
     @very_youngest = @mice.minimum(:age)
@@ -341,20 +289,15 @@ class PhenotypesController < ApplicationController
     redirect_to "uwf/create"
   end
 
-  # This is an AJAX JSON action to update page data when the user changes selections
-  def get_anat
-    @@anat = File.read(File.join(Rails.root, 'public', 'flare.json'))
-    render :json => @@anat
-  end
-  
+  # AJAX to load phenotype selector tree data
   def get_mpath_tree
     @@mpath = File.read(File.join(Rails.root, 'public', 'mpath.json'))
     render :json => @@mpath
   end
   
     def get_anat_tree
-    @@mpath = File.read(File.join(Rails.root, 'public', 'anat.json'))
-    render :json => @@mpath
+    @@anat = File.read(File.join(Rails.root, 'public', 'anat.json'))
+    render :json => @@anat
   end
   
 end

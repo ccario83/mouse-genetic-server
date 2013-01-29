@@ -246,32 +246,12 @@ body
 .modal-body { max-height: 800px; }
 
 
-/* jOWL OVERRIDES */
-.jowl-content
-{
-	overflow-y: scroll;
-	height: 260px;
-}
-.ui-state-hover, 
-.ui-widget-content,
-.ui-state-hover, 
-.ui-state-focus, 
-.ui-widget-content,
-.ui-state-focus 
-{
-	border: 0px solid #999999; 
-	background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; 
-	font-weight: normal; 
-	color: #212121; 
-	outline: none;
-}
-
-/* Simple selected/unselected class */
+/* Simple selected/unselected classes */
 .selected { opacity: 1.0; }
 .unselected { opacity: .2; }
 
-/* SCROLL BAR STYLE */
-/* Let's get this party started */
+
+/* Scroll bar style */
 ::-webkit-scrollbar { width: 10px; }
  
 ::-webkit-scrollbar-track
@@ -286,4 +266,43 @@ body
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	background: rgb(175,175,175); 
+}
+
+/* Navigation Arrows */
+#submit-right
+{
+	position: fixed;
+	top: 50%;
+	right: 0%;
+	z-index: 100;
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+	background: #888;
+	opacity: .25;
+
+}
+#submit-right img
+{
+	height: 50px;
+}
+.tooltip.left
+{
+margin-left: -55px;
+}
+
+#submit-left
+{
+	position: fixed;
+	top: 50%;
+	left: 0%;
+	z-index: 100;
+	border-top-right-radius: 7px;
+	border-bottom-right-radius: 7px;
+	background: #888;
+	opacity: .25;
+
+}
+#submit-left img
+{
+	height: 50px;
 }

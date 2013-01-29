@@ -1,24 +1,21 @@
 <% content_for :page_css do %>
 
 		<%= stylesheet_link_tag('dynatree/dynatree')%>
-		<%= stylesheet_link_tag('phenotype_selection')%>
+		<%= stylesheet_link_tag('phenotype_selector')%>
 <% end %>
 
 <% content_for :page_js do %>
 
 		<%= javascript_include_tag('jquery.cookie') %>
-		<%= javascript_include_tag('d3/d3') %>
-		<%= javascript_include_tag('d3/d3.layout') %>
-		<%= javascript_include_tag('d3/d3.tree') %>
-		<%= javascript_include_tag('dynatree/jquery.dynatree') %>
-		<%= javascript_include_tag('dynatree/dynatree') %>
+		<%= javascript_include_tag('jquery.dynatree') %>
+		<%= javascript_include_tag('phenotype_selector') %>
 
 		
 <% end %>
 
 <div class="container-fluid">
 	<div class="row-fluid">
-		<div class="span6">
+		<div class="span5 offset1">
 			<div class="row-fluid">
 				<div class="navbar">
 					<div><!--<div class="navbar-inner">-->
@@ -33,7 +30,7 @@
 				<div id="mpath_tree"></div>
 			</div>
 		</div>
-		<div class="span6">
+		<div class="span5">
 			<div class="row-fluid">
 				<div class="navbar">
 					<div><!--<div class="navbar-inner">-->
@@ -51,3 +48,8 @@
 	</div>
 </div>
 
+<div id="submit-right" onClick="lookup();">
+	<a href="#" id="submit-right-tooltip" rel="tooltip" data-placement="left" data-original-title="Use these phenotypes">
+		<img src="/assets/go-right.png"></img>
+	</a>
+</div>

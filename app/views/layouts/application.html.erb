@@ -7,16 +7,24 @@
 		<title>BerndtLab | <%= @page_title %></title>
 
 		<!-- Style Sheets -->
-		<%= stylesheet_link_tag('bootstrap') %>
-		<%= stylesheet_link_tag('bootstrap-responsive.min') %>
-		<%= stylesheet_link_tag('jquery-ui/jquery-ui-1.9.1.custom.min') %>
+		<%= stylesheet_link_tag('http://code.jquery.com/ui/1.8.24/themes/base/jquery-ui.css') %>
+		<!-- Bootstrap themes provided by http://www.bootstrapcdn.com/ -->
+		<!-- To change the theme, simply replace the bootswatch cdn below --> 
+		<!-- <%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css') %> -->
+		<%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/bootswatch/2.1.1/cerulean/bootstrap.min.css') %>
+		<!-- <%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/bootswatch/2.1.1/spruce/bootstrap.min.css') %> -->
+		<!-- <%= stylesheet_link_tag('//netdna.bootstrapcdn.com/bootswatch/2.1.1/spacelab/bootstrap.min.css') %> -->
+		<!-- <%= stylesheet_link_tag('//netdna.bootstrapcdn.com/bootswatch/2.1.1/cosmo/bootstrap.min.css') %> -->
+		<!-- <%= stylesheet_link_tag('//netdna.bootstrapcdn.com/bootswatch/2.1.1/united/bootstrap.min.css') %>  -->
+		
 		<%= stylesheet_link_tag('main') %>
 		<%= yield :page_css %>
 
 		<!-- JS/jQuery libraries -->
-		<%= javascript_include_tag('jquery-1.8.2.min') %>
-		<%= javascript_include_tag('jquery-ui-1.9.1.custom.min') %>
-		<%= javascript_include_tag('bootstrap') %>
+		<%= javascript_include_tag('http://code.jquery.com/jquery-1.9.0.min.js') %>
+		<%= javascript_include_tag('http://code.jquery.com/jquery-migrate-1.0.0.min.js') %>
+		<%= javascript_include_tag('http://code.jquery.com/ui/1.8.24/jquery-ui.min.js') %>
+		<%= javascript_include_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js') %>
 		<%= javascript_include_tag('main') %>
 		<%= yield :page_js %>
 				

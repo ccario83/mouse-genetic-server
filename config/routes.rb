@@ -5,14 +5,11 @@ RorWebsite::Application.routes.draw do
   # Redirect the root url to the uwf page
   root :to => 'uwf#index'
   
-  get "phenotypes/test"
-  
   # Phenotype generator routes
   get "phenotypes/show"
   post "phenotypes/query"
   post "phenotypes/stats"
-  post "phenotypes/d3tree"
-  post "phenotypes/get_anat"
+
   
   # Static handlers for development mode
   #get 'data/:path', :controller => 'static', :action => 'show'

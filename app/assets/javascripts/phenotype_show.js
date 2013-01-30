@@ -6,6 +6,29 @@ var data;
 /* =============================================================================== */
 $(window).bind("load", function()
 {
+	// Truncate the pathology list
+	$('#path-list').jTruncate({  
+		length: 35,
+		minTrail: 0,
+		moreText: "[see all]",
+		lessText: "[hide extra]",
+		ellipsisText: "...",
+		moreAni: "fast",
+		lessAni: "fast",
+	});
+	// Truncate the anatomy list
+	$('#anat-list').jTruncate({  
+		length: 35,
+		minTrail: 0,
+		moreText: "[see all]",
+		lessText: "[hide extra]",
+		ellipsisText: "...",
+		moreAni: "fast",
+		lessAni: "fast",
+	});
+
+
+
 	// Initialize the age range slider
 	set_age_range(VERY_YOUNGEST, VERY_OLDEST);
 	lookup(MPATH_ID_LIST, ANAT_ID_LIST, ALL_STRAINS, VERY_YOUNGEST, VERY_OLDEST, '', 'B');

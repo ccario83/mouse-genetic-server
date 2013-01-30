@@ -16,42 +16,8 @@
 		<%= javascript_include_tag('underscore') %>
 		<%= javascript_include_tag('jquery.tablesorter.min') %>
 		<%= javascript_include_tag('phenotype_submit') %>
+		<%= javascript_include_tag('jquery.jtruncate.pack') %>
 <% end %>
-
-<style type="text/css">
-#submit-right
-{
-	position: fixed;
-	top: 50%;
-	right: 0%;
-	z-index: 100;
-	border-top-left-radius: 7px;
-	border-bottom-left-radius: 7px;
-	background: #888;
-	opacity: .25;
-
-}
-#submit-right img
-{
-	height: 50px;
-}
-#submit-left
-{
-	position: fixed;
-	top: 50%;
-	left: 0%;
-	z-index: 100;
-	border-top-right-radius: 7px;
-	border-bottom-right-radius: 7px;
-	background: #888;
-	opacity: .25;
-
-}
-#submit-left img
-{
-	height: 50px;
-}
-</style>
 
 <div class="container-fluid">
 	<div class="row-fluid">
@@ -65,13 +31,13 @@
 							<td><b>Pathology</b></td>
 						</tr>
 						<tr>
-							<td><%=PathBaseTerm.find(@mpath_id).term%></td>
+							<td><span id="path-list"><%= PathBaseTerm.find(@mpath_ids).map { |x| x.term }.join(",") %></span></td>
 						</tr>
 						<tr>
 							<td><b>Anatomy</b></td>
 						</tr>
 						<tr>
-							<td><%=MouseAnatomyTerm.find(@anat_id).term %></td>
+							<td><span id="anat-list"><%= MouseAnatomyTerm.find(@anat_ids).map { |x| x.term }.join(", ") %></span></td>
 						</tr>
 						<tr>
 							<td><b>Age Range</b></td>

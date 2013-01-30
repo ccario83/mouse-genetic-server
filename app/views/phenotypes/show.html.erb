@@ -9,10 +9,10 @@
 			var VERY_YOUNGEST = <%= @very_youngest.nil? ? "null":@very_youngest %>;
 			var VERY_OLDEST = <%= @very_oldest.nil? ? "null":@very_oldest %>;
 		</script>
-		<%= javascript_include_tag('main') %>
 		<%= javascript_include_tag('underscore') %>
 		<%= javascript_include_tag('highcharts/highcharts') %>
 		<%= javascript_include_tag('highcharts/modules/exporting') %>
+		<%= javascript_include_tag('jquery.jtruncate.pack') %>
 
 		<%= javascript_include_tag('phenotype_show') %>
 <% end %>
@@ -28,9 +28,11 @@
 					<table class="table table-striped">
 						<tr>
 							<td><b>Pathology</b></td>
+							<td><span id="path-list"><%= PathBaseTerm.find(@mpath_ids).map { |x| x.term }.join(",") %></span></td>
 						</tr>
 						<tr>
 							<td><b>Anatomy</b></td>
+							<td><span id="anat-list"><%= MouseAnatomyTerm.find(@anat_ids).map { |x| x.term }.join(", ") %></span></td>
 						</tr>
 					</table>
 				</div>
@@ -43,7 +45,7 @@
 				</div>
 				<div class="row-fluid" style="margin-bottom:20px">
 					<label for="ages">Mice Ages (days):</label>
-					<input type="text" id="ages" style="border: 0; color: #f6931f; font-weight: bold;" />
+					<input type="text" id="ages" style="border: 0;  font-weight: bold;" />
 					<div id="age-range"></div>
 				</div>
 				<div class="row-fluid">
@@ -84,7 +86,7 @@
 	</div>
 </div> <!-- /container -->
 
-<div id="submit-left" onClick="window.history.back();">
+<div id="submit-left" onClick="window.location.href = 'index';">
 	<span id="submit-left-tooltip" rel="tooltip" data-placement="right" data-original-title="Reselect Phenotype" >
 		<img src="/assets/go-left.png"></img>
 	</span>

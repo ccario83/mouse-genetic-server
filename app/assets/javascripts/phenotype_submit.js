@@ -9,6 +9,27 @@ var data;
 /* =============================================================================== */
 $(window).bind("load", function()
 {
+	// Truncate the pathology list
+	$('#path-list').jTruncate({  
+		length: 35,
+		minTrail: 0,
+		moreText: "[see all]",
+		lessText: "[hide extra]",
+		ellipsisText: "...",
+		moreAni: "fast",
+		lessAni: "fast",
+	});
+	// Truncate the anatomy list
+	$('#anat-list').jTruncate({  
+		length: 35,
+		minTrail: 0,
+		moreText: "[see all]",
+		lessText: "[hide extra]",
+		ellipsisText: "...",
+		moreAni: "fast",
+		lessAni: "fast",
+	});
+
 	$('#please-wait').modal('show');
 	poll_stats(ID);
 	$('#submit-right').click(function () { $('#choice-modal').modal('show'); });

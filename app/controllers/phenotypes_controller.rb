@@ -19,7 +19,7 @@ class PhenotypesController < ApplicationController
     @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_ids, :path_base_term_id => @mpath_ids)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
     if @mice.empty?
-        print "NONE FOUND!"
+        flash[:notice] = "No Animals found with this combination. Please select again."
         render "selector"
     end
     # Get all the strain names, the minimum/maximum ages and all codes
@@ -108,8 +108,8 @@ class PhenotypesController < ApplicationController
   # This action is triggered when the user submits the phenotype selections
   def submit
     # Get the requested filters
-    @mpath_id_list      = JSON.parse(params['mpath_id_list']).map! { |x| x.to_i }
-    @anat_id_list       = JSON.parse(params['anat_id_list']).map! { |x| x.to_i }
+    @mpath_ids          = JSON.parse(params['mpath_id_list']).map! { |x| x.to_i }
+    @anat_ids           = JSON.parse(params['anat_id_list']).map! { |x| x.to_i }
     @selelected_strains = JSON.parse(params['selected_strains'])
     @youngest           = params['youngest'].to_i
     @oldest             = params['oldest'].to_i
@@ -146,7 +146,7 @@ class PhenotypesController < ApplicationController
     # Get the mice ids
     @ids = @mice.map(&:id)
     # Get the scores for these mice after filtering by mpath/anat ids, 
-    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
+    @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_ids, :path_base_term_id => @mpath_ids)
     @scores.where(:mouse_id => @ids)
     # Make a hash mapping mouse id to score
     @scores = Hash[@scores.map { |s| [s.mouse_id, s.score] }]
@@ -175,9 +175,6 @@ class PhenotypesController < ApplicationController
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @sex_long = {'B'=>'Male & Female', 'M' => 'Male', 'F' => 'Female' }
     
-    # Use the first terms in the list to display user friendly terms for phenotypes
-    @mpath_id = @mpath_id_list[0]
-    @anat_id = @anat_id_list[0]
   end
 
 

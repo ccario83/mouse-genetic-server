@@ -208,6 +208,15 @@ html { height: 100%; }
 /* BOOTSTRAP OVERRIDES */
 /*#circos_img { height:650px; }*/
 
+/* Fix for cerulean alert window */
+.alert-info 
+{
+	background-color: #43ACE9;
+	color: white;
+}
+
+
+
 .nav-tabs > li { margin-bottom: -2px; }
 
 .hero-unit

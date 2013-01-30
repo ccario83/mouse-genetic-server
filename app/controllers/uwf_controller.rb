@@ -5,7 +5,6 @@ class UwfController < ApplicationController
   def index
     @new_job = true
     @job_name = "Enter a job name"
-    render('index')
   end
 
   def create
@@ -59,7 +58,6 @@ class UwfController < ApplicationController
     if @ready
         @circos_thumb = File.join('/data/', @job_ID, "/Plots/circos.png")
     end
-    render :layout => false
   end
   
   def progress

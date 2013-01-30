@@ -55,7 +55,7 @@ function update_table(strains, means, stderrs, letters)
 		}
 		else
 		{
-			$(this).find('td').eq(2).after('<td>'+means[strain_idx].toFixed(2)+'</td><td>'+stderrs[strain_idx].toFixed(3)+'</td><td style="text-shadow: -1px -1px 0 #ccc, 1px -1px 0 #ccc, -1px 1px 0 #999, 1px 1px 0 #999; color:'+colors[letters[strain_idx].toUpperCase()]+'"><h4>'+letters[strain_idx].toUpperCase()+'</h4></td>');
+			$(this).find('td').eq(2).after('<td>'+means[strain_idx].toFixed(2)+'</td><td>'+stderrs[strain_idx].toFixed(3)+'</td><td style="text-shadow: -1px -1px 0 #ccc, 1px -1px 0 #ccc, -1px 1px 0 #999, 1px 1px 0 #999; color:'+colors[letters[strain_idx].toUpperCase()]+'; font-size:22px;">'+letters[strain_idx].toUpperCase()+'</td>');
 			strain_idx = strain_idx+1;
 		}
 	});

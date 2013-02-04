@@ -5,6 +5,13 @@ RorWebsite::Application.routes.draw do
   # Redirect the root url to the uwf page
   root :to => 'uwf#index'
   
+  match '/home' => 'pages#home'
+  match '/about' => 'pages#about'
+  match '/contact' => 'pages#contact'
+  match '/publications' => 'pages#publications'
+  match '/screencasts' => 'pages#screencasts'
+  match '/tool_descriptions' => 'pages#tool_descriptions'
+  
   # Phenotype generator routes
   get "phenotypes/show"
   post "phenotypes/query"

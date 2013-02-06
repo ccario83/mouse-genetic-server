@@ -1,9 +1,20 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-  
+
   # Redirect the root url to the uwf page
   root :to => 'pages#home'
+
+  resources :users
+  resources :sessions, :only => [:new, :create, :destroy]
+  resources :microposts, :only => [:create, :destroy]
+
+  
+  match '/signup',  :to => 'users#new'
+  match '/signin',  :to => 'sessions#new'
+  match '/signout', :to => 'sessions#destroy', :via => :delete
+
+
   
   match '/home' => 'pages#home'
   match '/about' => 'pages#about'

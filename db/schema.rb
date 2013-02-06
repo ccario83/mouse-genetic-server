@@ -11,41 +11,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120920221903) do
-
-  create_table "resource_types", :force => true do |t|
-    t.string "name", :limit => 64, :null => false
-  end
-
-  create_table "resource_types_resources", :id => false, :force => true do |t|
-    t.integer "resource_id",      :null => false
-    t.integer "resource_type_id", :null => false
-  end
+ActiveRecord::Schema.define(:version => 20120920222310) do
 
   create_table "resources", :force => true do |t|
-    t.string   "name",        :limit => 64
-    t.string   "address"
-    t.float    "latitude"
-    t.float    "longitude"
-    t.string   "description"
-    t.string   "owner",       :limit => 64
-    t.string   "website"
-    t.boolean  "validated",                 :default => false
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
-  end
-
-  create_table "tags", :force => true do |t|
     t.string   "resource_type"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
-  end
-
-  create_table "users", :force => true do |t|
-    t.string   "name"
-    t.string   "email"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
 end

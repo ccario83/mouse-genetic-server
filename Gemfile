@@ -22,7 +22,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-# Gems required by Clint
+# Gems required by workflow tools
 gem 'jquery-rails', '2.0.2'
 gem 'jobber', '1.0.3', :path => 'lib/jobber/'
 gem 'redis', '2.2.2'
@@ -33,8 +33,8 @@ gem 'slim'
 gem 'gmaps4rails'
 gem 'rinruby'
 
-# To use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+#Gems requied by social site
+gem 'bcrypt-ruby', '~> 3.0.0'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'

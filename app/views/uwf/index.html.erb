@@ -13,7 +13,7 @@
 					</div>
 
 					<div class="row span12" style="margin-left:0px">
-						<%= simple_form_for('uwf_submit', :url => { :action => '../uwf/create' }, :html => { :class => 'form-horizontal' } ) do |f| %>
+						<%= simple_form_for(:uwf_submit, :url => { :action => 'create' }, :html => { :class => 'form-horizontal' } ) do |f| %>
 							<fieldset>
 								<%= f.input :job_name, :label => 'Give your job a name:', :required => false, :input_html => { :value => @job_name } %>
 								<% if @new_job %>

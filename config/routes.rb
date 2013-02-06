@@ -3,7 +3,7 @@ require 'sidekiq/web'
 RorWebsite::Application.routes.draw do
   
   # Redirect the root url to the uwf page
-  root :to => 'uwf#index'
+  root :to => 'pages#home'
   
   match '/home' => 'pages#home'
   match '/about' => 'pages#about'

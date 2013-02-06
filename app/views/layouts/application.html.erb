@@ -32,7 +32,7 @@
 
 	<body>
 		<% if notice %>
-		<div id="notice" class="alert alert-info"><button type="button" class="close" data-dismiss="alert">×</button><span><%= notice %><span></div>
+		<div id="notice" class="alert fade in"><button type="button" class="close" data-dismiss="alert">×</button><%= notice %></div>
 		<% end %>
 		
 		<div class="navbar navbar-fixed-top">
@@ -67,7 +67,7 @@
 									</ul>
 							</li>
 							
-							<li><%= link_to('Contact','/contact') %></li>
+							<li><%= link_to_function('Contact',"$('#contact').modal('show')") %></li>
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div>
@@ -89,5 +89,82 @@
 			</div>
 		</div>
 	
+	
+		<div id="contact" class="modal hide fade">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Feedback Form</h3>
+			</div>
+			<div class="modal-body">
+			<%= simple_form_for(:contact_form, :url => 'contact', :html => { :id => 'contact_form', :class => 'form-horizontal', :style => 'margin:0px; width: 95%;' } ) do |f| %>
+			<fieldset>
+				<%= f.input :type, :collection => [ 'Comment', 'Complement', 'Problem', 'Question' ], :selected => 'Comment', :label => 'What type of feedback would you like to give?', :input_html => { :style => 'width: 99%;' } %>
+				<%= f.input :response, :as => :text,  :input_html => { :rows => 3, :style => 'width: 95%;' } %>
+				<%= f.input :name, :input_html => { :style => 'width: 95%;' } %>
+				<%= f.input :email, :input_html => { :style => 'width: 95%;' } %>
+
+				<%= f.input :attitude, :collection => ['Delighted', 'Enthusiastic' 'Excited', 'Glorious', 'Happy', 'Lucky', 'Thankful', 'Successful', 'Angry', 'Bewildered', 'Bored', 'Helpless', 'Perplexed', 'Tired', 'Upset' ], :selected => 'Delighted', :label => 'How do you Feel right now?', :input_html => { :style => 'width: 99%;'} %>
+			</fieldset>
+			<% end %>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="submitCommentForm()">Contact Us</button>
+			</div>
+
+			</div>
+		</div>
+	
+	
+	<!--
+		<div id="contact" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Feedback Form</h3>
+		</div>
+	
+		<form class=".form-horizontal" style="margin:0px;" action="contact" method="post">
+		<div class="modal-body">
+			<label for="type">What type of feedback would you like to give?</label>
+			<select id="type" style="width:529px;">
+				<option value="problem">Problem</option>
+				<option value="comment">Comment</option>
+				<option value="question">Question</option>
+				<option value="complement">Complement</option>
+			</select>
+
+			<label for="response">What would you like to say?</label>
+			<textarea id="response" style="width:515px;" rows="3"></textarea>
+
+			<label for="name">Name</label>
+			<input type="text" id="name" style="width:515px;" placeholder="Your name">
+
+			<label for="email">Email</label>
+			<input type="text" id="email" style="width:515px;" placeholder="Your email address">
+
+			<label for="attitude">How do you Feel right now?</label>
+			<select id="attitude" style="width:529px;" >
+				<option value="delighted">Delighted</option>
+				<option value="enthusiastic">Enthusiastic</option>
+				<option value="excited">Excited</option>
+				<option value="glorious">Glorious</option>
+				<option value="happy">Happy</option>
+				<option value="lucky">Lucky</option>
+				<option value="thankful">Thankful</option>
+				<option value="successful">Successful</option>
+				<option value="angry">Angry</option>
+				<option value="bewildered">Bewildered</option>
+				<option value="bored">Bored</option>
+				<option value="helpless">Helpless</option>
+				<option value="perplexed">Perplexed</option>
+				<option value="tired">Tired</option>
+				<option value="upset">Upset</option>
+			</select>
+
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn">Contact Us</button>
+		</div>
+		</form>
+	</div>
+	-->
 	</body>
 </html>

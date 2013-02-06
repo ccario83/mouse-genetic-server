@@ -15,5 +15,11 @@ class PagesController < ApplicationController
   end
 
   def contact
+    FeedbackMailer.send_feedback(params['contact_form']).deliver
+    respond_to do |format|
+      print format
+      format.json { render :json => "Message Sent".to_json }
+      format.html {} 
+    end
   end
 end

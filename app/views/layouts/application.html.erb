@@ -31,9 +31,15 @@
 	</head>
 
 	<body>
+		<% flash.each do |key, value| %>
+			<%= content_tag(:div, value, :id => "#{key}", :class => "alert alert-#{key} fade in") %>
+		<% end %>
+		
+		<!--  Replaced with newer content_tag function for multiple flash types
 		<% if notice %>
 		<div id="notice" class="alert fade in"><button type="button" class="close" data-dismiss="alert">×</button><%= notice %></div>
 		<% end %>
+		-->
 		
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
@@ -44,17 +50,26 @@
 						<span class="icon-bar"></span>
 					</a>
 					<a class="brand" href="/phenotypes">Mouse Genetics Server</a>
+					<% if signed_in? %>
 					<div class="btn-group pull-right">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<i class="icon-user"></i> Clint Cario
+							<i class="icon-user"></i> My Account
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><%= link_to('Profile', '/') %></li>
+							<li><%= link_to "Users", users_path %></li>
+							<li><%= link_to "Profile", current_user %></li>
+							<li><%= link_to "Settings", edit_user_path(current_user) %></li>
 							<li class="divider"></li>
-							<li><a href="#">Sign Out</a></li>
+							<li>
+								<%= link_to "Sign out", signout_path, :method => "delete" %>
+							</li>
 						</ul>
 					</div>
+					<% else %>
+					<li><%= link_to "Sign in", signin_path %></li>
+					<% end %>
+					
 					<div class="nav-collapse">
 						<ul class="nav">
 							<li><%= link_to('Home', '/home') %></li>
@@ -112,59 +127,5 @@
 
 			</div>
 		</div>
-	
-	
-	<!--
-		<div id="contact" class="modal hide fade">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3>Feedback Form</h3>
-		</div>
-	
-		<form class=".form-horizontal" style="margin:0px;" action="contact" method="post">
-		<div class="modal-body">
-			<label for="type">What type of feedback would you like to give?</label>
-			<select id="type" style="width:529px;">
-				<option value="problem">Problem</option>
-				<option value="comment">Comment</option>
-				<option value="question">Question</option>
-				<option value="complement">Complement</option>
-			</select>
-
-			<label for="response">What would you like to say?</label>
-			<textarea id="response" style="width:515px;" rows="3"></textarea>
-
-			<label for="name">Name</label>
-			<input type="text" id="name" style="width:515px;" placeholder="Your name">
-
-			<label for="email">Email</label>
-			<input type="text" id="email" style="width:515px;" placeholder="Your email address">
-
-			<label for="attitude">How do you Feel right now?</label>
-			<select id="attitude" style="width:529px;" >
-				<option value="delighted">Delighted</option>
-				<option value="enthusiastic">Enthusiastic</option>
-				<option value="excited">Excited</option>
-				<option value="glorious">Glorious</option>
-				<option value="happy">Happy</option>
-				<option value="lucky">Lucky</option>
-				<option value="thankful">Thankful</option>
-				<option value="successful">Successful</option>
-				<option value="angry">Angry</option>
-				<option value="bewildered">Bewildered</option>
-				<option value="bored">Bored</option>
-				<option value="helpless">Helpless</option>
-				<option value="perplexed">Perplexed</option>
-				<option value="tired">Tired</option>
-				<option value="upset">Upset</option>
-			</select>
-
-		</div>
-		<div class="modal-footer">
-			<button type="submit" class="btn">Contact Us</button>
-		</div>
-		</form>
-	</div>
-	-->
 	</body>
 </html>

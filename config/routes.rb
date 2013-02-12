@@ -1,13 +1,12 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-
-  # Redirect the root url to the uwf page
-  root :to => 'pages#home'
-
   resources :users
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
+
+  # Redirect the root url to the uwf page
+  root :to => 'static_pages#home'
 
   
   match '/signup',  :to => 'users#new'
@@ -16,12 +15,12 @@ RorWebsite::Application.routes.draw do
 
 
   
-  match '/home' => 'pages#home'
-  match '/about' => 'pages#about'
-  match '/contact' => 'pages#contact'
-  match '/publications' => 'pages#publications'
-  match '/screencasts' => 'pages#screencasts'
-  match '/tool_descriptions' => 'pages#tool_descriptions'
+  match '/home' => 'static_pages#home'
+  match '/about' => 'static_pages#about'
+  match '/contact' => 'static_pages#contact'
+  match '/publications' => 'static_pages#publications'
+  match '/screencasts' => 'static_pages#screencasts'
+  match '/tool_descriptions' => 'static_pages#tool_descriptions'
   
   # Phenotype generator routes
   get "phenotypes/show"

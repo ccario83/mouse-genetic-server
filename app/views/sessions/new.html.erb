@@ -1,0 +1,20 @@
+<% @page_title = "Sign In" %>
+
+<% content_for :page_css do %>
+<% end %>
+<% content_for :page_js do %>
+<% end %>
+
+				<div class="row span10 offset2">
+				<h1>Sign in</h1>
+					<%= form_for(:session, :url => sessions_path) do |f| %>
+						<%= f.label :email %>
+						<%= f.text_field :email %>
+						<%= f.label :password %>
+						<%= f.password_field :password %>
+						<br/>
+						<%=  f.submit "Sign in", :class => "btn btn-primary" %>	
+						<p>New user? <%= link_to 'Sign up now!', signup_path %></p>
+					<% end %>
+				</div>
+

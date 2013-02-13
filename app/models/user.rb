@@ -19,6 +19,10 @@ class User < ActiveRecord::Base
 		Micropost.where("user_id =?", id)
 	end
 
+	def name
+		"#{self.first_name} #{self.last_name}"
+	end
+
 	private
 
 		def create_remember_token

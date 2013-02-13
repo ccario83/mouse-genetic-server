@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-	before_filter :signed_in_user, 	:only => [:index, :edit, :update, :destroy]
+	before_filter :signed_in_user, :only => [:index, :edit, :update, :destroy]
 	before_filter :correct_user, 	:only => [:edit, :update]
-	before_filter :admin_user, 	:only => :destroy
+	before_filter :admin_user, 		:only => :destroy
 	
 	def index
 		@users = User.paginate(:page => params[:page])
@@ -20,10 +20,10 @@ class UsersController < ApplicationController
 		@user = User.new(params[:user])
 		if @user.save
 			sign_in @user
-			flash[:success] = "Welcome to the Sample App"
-			redirect_to @user
+			flash[:notice] = "Account successfully created"
+			redirect_to @user # Same as render 'show' with user_id (POST /users/show/id)
 		else	
-			render 'new'
+			render 'new' # Otherwise redirect back to the new page with errors
 		end
 	end
 
@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 	def update
 		if @user.update_attributes(params[:user])
 			sign_in @user
-			flash[:success] = "Profile updated"
+			flash[:notice] = "Profile updated"
 			redirect_to @user
 		else
 			render 'edit'
@@ -42,7 +42,7 @@ class UsersController < ApplicationController
 	
 	def destroy
 		User.find(params[:id]).destroy
-		flash[:success] = "User destroyed"
+		flash[:notice] = "User destroyed"
 		redirect_to users_path
 	end 
 

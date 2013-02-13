@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<%= csrf_meta_tag %>
+		<%= csrf_meta_tags %>
 		<title>BerndtLab | <%= @page_title %></title>
 
 		<!-- Style Sheets -->
@@ -27,12 +27,11 @@
 		<%= javascript_include_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js') %>
 		<%= javascript_include_tag('main') %>
 		<%= yield :page_js %>
-				
 	</head>
 
 	<body>
 		<% flash.each do |key, value| %>
-			<%= content_tag(:div, value, :id => "#{key}", :class => "alert alert-#{key} fade in") %>
+		<%= content_tag(:div, value, :id => "flash", :class => "alert alert-#{key}") %>
 		<% end %>
 		
 		<!--  Replaced with newer content_tag function for multiple flash types
@@ -57,9 +56,11 @@
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><%= link_to "Users", users_path %></li>
+							<% if is_admin? %>
+							<li><a href="<%= users_path %>">View Users <i class="icon-star-empty"></i> </a></li>
+							<% end %>
 							<li><%= link_to "Profile", current_user %></li>
-							<li><%= link_to "Settings", edit_user_path(current_user) %></li>
+							<li><%= link_to "Edit", edit_user_path(current_user) %></li>
 							<li class="divider"></li>
 							<li>
 								<%= link_to "Sign out", signout_path, :method => "delete" %>
@@ -67,7 +68,11 @@
 						</ul>
 					</div>
 					<% else %>
-					<li><%= link_to "Sign in", signin_path %></li>
+					<div class="btn-group pull-right">
+						<a class="btn" href="/signin">
+							Sign In
+						</a>
+					</div>
 					<% end %>
 					
 					<div class="nav-collapse">
@@ -84,16 +89,16 @@
 							
 							<li><%= link_to_function('Contact',"$('#contact').modal('show')") %></li>
 						</ul>
-					</div><!--/.nav-collapse -->
+					</div>
 				</div>
 			</div>
-		</div>
+		</div> <!-- /navbar -->
 
 		<div class="container-fluid" style="padding:0px;">
 			<div class="row-fluid">
 				<%= yield %>
 			</div>
-		</div> <!-- /container -->
+		</div> <!-- /main content-->
 		
 
 		<div class="bottom-bar">
@@ -102,7 +107,7 @@
 					<p><center>(c) 2012 University of Pittsburgh, Berndt Lab</center></p>
 				</div>
 			</div>
-		</div>
+		</div> <!-- /bootom-bar -->
 	
 	
 		<div id="contact" class="modal hide fade">

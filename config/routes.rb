@@ -8,11 +8,9 @@ RorWebsite::Application.routes.draw do
   # Redirect the root url to the uwf page
   root :to => 'static_pages#home'
 
-  
   match '/signup',  :to => 'users#new'
   match '/signin',  :to => 'sessions#new'
-  match '/signout', :to => 'sessions#destroy', :via => :delete
-
+  match '/signout', :to => 'sessions#destroy'
 
   
   match '/home' => 'static_pages#home'
@@ -23,9 +21,9 @@ RorWebsite::Application.routes.draw do
   match '/tool_descriptions' => 'static_pages#tool_descriptions'
   
   # Phenotype generator routes
-  get "phenotypes/show"
-  post "phenotypes/query"
-  post "phenotypes/stats"
+  get "/phenotypes/show"
+  post "/phenotypes/query"
+  post "/phenotypes/stats"
 
   
   # Static handlers for development mode

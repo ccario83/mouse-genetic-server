@@ -1,23 +1,19 @@
-<%= provide(:title, 'Sign up') %>
+<% @page_title = "Sign Up" %>
 
 <% content_for :page_css do %>
 <% end %>
 <% content_for :page_js do %>
 <% end %>
 
-
-<div class="container-fluid">
-	<div class="row span12 offset1">
-	<h1>Sign up</h1>
-
-		<%= simple_form_for(@user, :html => { :class => 'form-horizontal' } ) do |f| %>
-			<%= f.input :first_name, :label => 'First Name' %>
-			<%= f.input :last_name, :label => 'Last Name' %>
-			<%= f.input :email, :label => 'Email' %>
-			<%= f.input :password, :label => 'Password' %>
-			<%= f.input :password_confirmation, :label => 'Password Confirmation' %>
-			<%= f.button :wrapped, :label => "Create my account" %>	
-		<% end %>
-
-	</div>
-</div>
+				<div class="row span10 offset2">
+				<h1>Sign up</h1>
+					<%= simple_form_for(@user, :html => { :class => 'form-horizontal' } ) do |f| %>
+						<%= f.input :first_name, :label => 'First Name' %>
+						<%= f.input :last_name, :label => 'Last Name' %>
+						<%= f.input :institution, :label => 'Institution' %>
+						<%= f.input :email, :label => 'Email' %>
+						<%= f.input :password, :label => 'Password' %>
+						<%= f.input :password_confirmation, :label => 'Password Confirmation' %>
+						<%= f.button :wrapped, 'Create' %>	
+					<% end %>
+				</div>

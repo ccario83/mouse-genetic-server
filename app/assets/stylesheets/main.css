@@ -1,43 +1,16 @@
 /* Main stylesheet */
 html { height: 100%; }
-/* For a results flash */
-#notice
+/* For flash messages */
+#flash
 {
-	z-index: 100000000;
+	z-index: 10000;
 	max-width: 75%;
 	margin: 5px;
 	position: absolute; 
 	top: 0px; 
 	left:40%; 
-	/*display: none;*/
-	
-	border: 1px solid #FBEED5;
-	color: #C09853;
-	background: #FCF8E3;
 }
-/*
-#notice
-{
-	z-index: 100000000;
-	max-width: 500px;
-	margin: 5px;
-	position: absolute; 
-	top: 25%; 
-	left:40%; 
-	display: none;
-	border: 1px solid #999;
-}
-#notice span
-{
-	display: block;
-	float: left;
-	padding: 5px 0px;
-	margin: 0px;
-	margin-bottom: 5px;
-	font-size: 16px;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-*/
+
 
 /* PANEL CSS */
 #job-progress *
@@ -230,13 +203,22 @@ html { height: 100%; }
 	background-color: #43ACE9;
 	color: white;
 }
+
+/* Add styling for flash notice */
+.alert-notice
+{	
+	border: 1px solid #FBEED5;
+	color: #C09853;
+	background: #FCF8E3;
+}
+
+
 .form-actions
 {
 	border-top: 0px;
 	background-color: rgba(0,0,0,0);
 }
 span.help-inline { width: 500px; }
-.row-fluid [class*="span"] { width: auto; }
 
 
 .nav-tabs > li { margin-bottom: -2px; }

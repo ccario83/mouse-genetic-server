@@ -1,26 +1,26 @@
-<%= provide(:title, 'Edit user') %>
-<h1>Update your profile</h1>
+<% @page_title = "Edit user" %>
 
-<div class="row">
-	<div class="span6 offset3">
-		<%= form_for(@user) do |f| %>
-			<%=  render 'shared/error_messages', :object => @user %>
-			<%=  f.label :name %>
-			<%=  f.text_field :name %>
-			
-			<%=  f.label :email %>
-			<%=  f.text_field :email %>
+<% content_for :page_css do %>
+<% end %>
+<% content_for :page_js do %>
+<% end %>
 
-			<%=  f.label :password %>
-			<%=  f.password_field :password %>
-
-			<%=  f.label :password_confirmation, "Confirm Password" %>
-			<%=  f.password_field :password_confirmation %>
-
-			<%=  f.submit "Save changes", :class => "btn btn-large btn-primary" %>	
-		<% end %>
-
-		<%= gravatar_for @user %>
-		<a href="http://gravatar.com/emails" target="_blank">change</a>
-	</div>
-</div>
+				<div class="span10 offset2">
+					<h1>Update your profile</h1>
+					<%= simple_form_for(@user, :html => { :class => 'form-horizontal' } ) do |f| %>
+						<%= f.input :first_name, :label => 'First Name' %>
+						<%= f.input :last_name, :label => 'Last Name' %>
+						<%= f.input :institution, :label => 'Institution' %>
+						<%= f.input :email, :label => 'Email' %>
+						<%= f.input :password, :label => 'Password' %>
+						<%= f.input :password_confirmation, :label => 'Password Confirmation' %>
+						<div class="control-group string">
+							<label class="string control-label" for="gravatar">Gravatar</label>
+							<div class="controls">
+								<%= gravatar_for @user %>
+								<%= gravatar_edit_for @user %>
+							</div>
+						</div>
+						<%= f.button :wrapped, 'Update' %>
+					<% end %>
+				</div>

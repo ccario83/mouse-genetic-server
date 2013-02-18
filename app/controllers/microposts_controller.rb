@@ -15,7 +15,8 @@ class MicropostsController < ApplicationController
 
 	def destroy
 		@micropost.destroy
-		redirect_to root_path
+		flash[:notice] = "Post deleted"
+		redirect_to :back
 	end
 
 	private

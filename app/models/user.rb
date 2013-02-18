@@ -24,8 +24,10 @@ class User < ActiveRecord::Base
 	end
 
 	private
-
 		def create_remember_token
 			self.remember_token = SecureRandom.base64
-		end		
+		end
+
+	# Set the number of users per page for will_paginate
+	self.per_page = 10
 end

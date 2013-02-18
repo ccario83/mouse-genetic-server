@@ -1,0 +1,23 @@
+
+		<div id="contact" class="modal hide fade">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Feedback Form</h3>
+			</div>
+			<div class="modal-body">
+			<%= simple_form_for(:contact_form, :url => 'contact', :html => { :id => 'contact_form', :class => 'form-horizontal', :style => 'margin:0px; width: 95%;' } ) do |f| %>
+			<fieldset>
+				<%= f.input :type, :collection => [ 'Comment', 'Complement', 'Problem', 'Question' ], :selected => 'Comment', :label => 'What type of feedback would you like to give?', :input_html => { :style => 'width: 99%;' } %>
+				<%= f.input :response, :as => :text,  :input_html => { :rows => 3, :style => 'width: 95%;' } %>
+				<%= f.input :name, :input_html => { :style => 'width: 95%;' } %>
+				<%= f.input :email, :input_html => { :style => 'width: 95%;' } %>
+
+				<%= f.input :attitude, :collection => ['Delighted', 'Enthusiastic' 'Excited', 'Glorious', 'Happy', 'Lucky', 'Thankful', 'Successful', 'Angry', 'Bewildered', 'Bored', 'Helpless', 'Perplexed', 'Tired', 'Upset' ], :selected => 'Delighted', :label => 'How do you Feel right now?', :input_html => { :style => 'width: 99%;'} %>
+			</fieldset>
+			<% end %>
+			<div class="modal-footer">
+				<button class="btn btn-primary" onclick="submitCommentForm()">Contact Us</button>
+			</div>
+
+			</div>
+		</div>

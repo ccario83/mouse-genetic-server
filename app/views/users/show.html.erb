@@ -5,14 +5,11 @@
 <% content_for :page_js do %>
 <% end %>
 
-				<div class="row span10 offset2">
-					<h1>
-						<%= gravatar_for @user %>
-						<%= @user.name %>
-					</h1>
+				<div class="container-fluid span3 offset1">
+				<%= render 'user_panel' %>
 				</div>
-				<br />
-				<div class="row span10 offset2">
+				
+				<div class="container-fluid span4">
 					<h3>Microposts (<%= @user.microposts.count %>)</h3>
 					<% if @user.microposts.any? %>
 					<ol class="microposts">

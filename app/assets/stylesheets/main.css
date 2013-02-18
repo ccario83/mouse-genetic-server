@@ -1,11 +1,12 @@
 /* Main stylesheet */
 html { height: 100%; }
+
 /* For flash messages */
 #flash
 {
 	z-index: 10000;
 	max-width: 75%;
-	margin: 5px;
+	margin: 2px;
 	position: absolute; 
 	top: 0px; 
 	left:40%; 
@@ -148,7 +149,6 @@ html { height: 100%; }
 .progress { margin: 10px 0px; }
 
 
-
 /* FULLSCREEN CSS */
 :-webkit-full-screen
 {
@@ -203,6 +203,8 @@ html { height: 100%; }
 	background-color: #43ACE9;
 	color: white;
 }
+
+.alert { padding: 8px 20px; }
 
 /* Add styling for flash notice */
 .alert-notice
@@ -430,3 +432,57 @@ margin-left: -55px;
 		letter-spacing: -1px;
 	}
 
+
+/* user index */
+
+.users
+{
+	list-style: none;
+	margin: 0;
+	li
+	{
+		overflow: auto;
+		padding: 10px 0;
+		border-top: 1px solid #999;
+		&:last-child
+		{
+			border-bottom: 1px solid #999;
+		}
+	}
+}
+
+.users .gravatar
+{
+	float: none;
+	padding: 1px 5px;
+}
+
+
+/* microposts */
+.my-user .gravatar
+{
+	float: left;
+	margin-right: 10px;
+}
+
+.microposts
+{
+	list-style: none;
+	margin: 10px 0 0 0;
+}
+
+.microposts li
+{
+	padding: 10px 0;
+	border-top: 1px solid #e8e8e8;
+}
+
+.content { 	display: block; }
+
+.timestamp { color: #999; }
+
+aside textarea
+{
+	height: 100px;
+	margin-bottom: 5px;
+}

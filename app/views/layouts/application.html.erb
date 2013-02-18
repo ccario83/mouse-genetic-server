@@ -10,8 +10,8 @@
 		<%= stylesheet_link_tag('http://code.jquery.com/ui/1.8.24/themes/base/jquery-ui.css') %>
 		<!-- Bootstrap themes provided by http://www.bootstrapcdn.com/ -->
 		<!-- To change the theme, simply replace the bootswatch cdn below --> 
-		<!-- <%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css') %> -->
-		<%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/bootswatch/2.1.1/cerulean/bootstrap.min.css') %>
+		<%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css') %>
+		<!-- <%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/bootswatch/2.1.1/cerulean/bootstrap.min.css') %> -->
 		<!-- <%= stylesheet_link_tag('http://netdna.bootstrapcdn.com/bootswatch/2.1.1/spruce/bootstrap.min.css') %> -->
 		<!-- <%= stylesheet_link_tag('//netdna.bootstrapcdn.com/bootswatch/2.1.1/spacelab/bootstrap.min.css') %> -->
 		<!-- <%= stylesheet_link_tag('//netdna.bootstrapcdn.com/bootswatch/2.1.1/cosmo/bootstrap.min.css') %> -->
@@ -25,6 +25,7 @@
 		<%= javascript_include_tag('http://code.jquery.com/jquery-migrate-1.0.0.min.js') %>
 		<%= javascript_include_tag('http://code.jquery.com/ui/1.8.24/jquery-ui.min.js') %>
 		<%= javascript_include_tag('http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js') %>
+		<%= javascript_include_tag('rails') %>
 		<%= javascript_include_tag('main') %>
 		<%= yield :page_js %>
 	</head>
@@ -33,104 +34,15 @@
 		<% flash.each do |key, value| %>
 		<%= content_tag(:div, value, :id => "flash", :class => "alert alert-#{key}") %>
 		<% end %>
+		<%= render 'layouts/navbar' %>
 		
-		<!--  Replaced with newer content_tag function for multiple flash types
-		<% if notice %>
-		<div id="notice" class="alert fade in"><button type="button" class="close" data-dismiss="alert">×</button><%= notice %></div>
-		<% end %>
-		-->
-		
-		<div class="navbar navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container-fluid">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="/phenotypes">Mouse Genetics Server</a>
-					<% if signed_in? %>
-					<div class="btn-group pull-right">
-						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-							<i class="icon-user"></i> My Account
-							<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<% if is_admin? %>
-							<li><a href="<%= users_path %>">View Users <i class="icon-star-empty"></i> </a></li>
-							<% end %>
-							<li><%= link_to "Profile", current_user %></li>
-							<li><%= link_to "Edit", edit_user_path(current_user) %></li>
-							<li class="divider"></li>
-							<li>
-								<%= link_to "Sign out", signout_path, :method => "delete" %>
-							</li>
-						</ul>
-					</div>
-					<% else %>
-					<div class="btn-group pull-right">
-						<a class="btn" href="/signin">
-							Sign In
-						</a>
-					</div>
-					<% end %>
-					
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li><%= link_to('Home', '/home') %></li>
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">About<b class="caret"></b></a>
-									<ul class="dropdown-menu">
-										<li><%= link_to('Publications', '/publications') %></li>
-										<li><%= link_to('Screencasts', '/screencasts') %></li>
-										<li><%= link_to('Tool Description', '/tool_descriptions') %></li>
-									</ul>
-							</li>
-							
-							<li><%= link_to_function('Contact',"$('#contact').modal('show')") %></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div> <!-- /navbar -->
-
 		<div class="container-fluid" style="padding:0px;">
 			<div class="row-fluid">
 				<%= yield %>
 			</div>
-		</div> <!-- /main content-->
-		
-
-		<div class="bottom-bar">
-			<div class="bottombar-inner">
-				<div class="container">
-					<p><center>(c) 2012 University of Pittsburgh, Berndt Lab</center></p>
-				</div>
-			</div>
-		</div> <!-- /bootom-bar -->
-	
-	
-		<div id="contact" class="modal hide fade">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3>Feedback Form</h3>
-			</div>
-			<div class="modal-body">
-			<%= simple_form_for(:contact_form, :url => 'contact', :html => { :id => 'contact_form', :class => 'form-horizontal', :style => 'margin:0px; width: 95%;' } ) do |f| %>
-			<fieldset>
-				<%= f.input :type, :collection => [ 'Comment', 'Complement', 'Problem', 'Question' ], :selected => 'Comment', :label => 'What type of feedback would you like to give?', :input_html => { :style => 'width: 99%;' } %>
-				<%= f.input :response, :as => :text,  :input_html => { :rows => 3, :style => 'width: 95%;' } %>
-				<%= f.input :name, :input_html => { :style => 'width: 95%;' } %>
-				<%= f.input :email, :input_html => { :style => 'width: 95%;' } %>
-
-				<%= f.input :attitude, :collection => ['Delighted', 'Enthusiastic' 'Excited', 'Glorious', 'Happy', 'Lucky', 'Thankful', 'Successful', 'Angry', 'Bewildered', 'Bored', 'Helpless', 'Perplexed', 'Tired', 'Upset' ], :selected => 'Delighted', :label => 'How do you Feel right now?', :input_html => { :style => 'width: 99%;'} %>
-			</fieldset>
-			<% end %>
-			<div class="modal-footer">
-				<button class="btn btn-primary" onclick="submitCommentForm()">Contact Us</button>
-			</div>
-
-			</div>
 		</div>
+		
+		<%= render 'layouts/bottombar' %>
+		<%= render 'layouts/contactform' %>
 	</body>
 </html>

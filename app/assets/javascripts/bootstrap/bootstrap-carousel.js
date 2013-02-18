@@ -182,4 +182,8 @@
     e.preventDefault()
   })
 
+	$(function(){
+		$('#myCarousel').carousel({interval:4000})
+	})
+
 }(window.jQuery);

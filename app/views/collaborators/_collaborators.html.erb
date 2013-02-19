@@ -1,0 +1,8 @@
+
+						<li>
+							<a href="<%= user_path(user) %>">
+								<%= gravatar_for user, :size => 40 %>
+							</a>
+							<%= user.name %>  <%= link_to '[ Show Posts ]', user %><br />
+							<%= user.institution %><br/>
+						</li>

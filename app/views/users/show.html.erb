@@ -6,15 +6,13 @@
 <% end %>
 
 				<div class="container-fluid span3 offset1">
-				<%= render 'user_panel' %>
+					<%= render 'user_panel', user: current_user %>
 				</div>
 				
 				<div class="container-fluid span4">
-					<h3>Microposts (<%= @user.microposts.count %>)</h3>
-					<% if @user.microposts.any? %>
-					<ol class="microposts">
-						<%= render @microposts %>
-					</ol>
-					<%= will_paginate @microposts %>
-					<% end %>
+					<h3>Tools</h3>
+				</div>
+				
+				<div class="container-fluid span3 offset">
+					<%= render 'tool_panel' %>
 				</div>

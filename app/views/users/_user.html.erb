@@ -1,8 +1,9 @@
-<li style="list-style: none">
-	<%= gravatar_for user, :size => 52 %>
-	<%= link_to user.name %>
-	<% if current_user.admin? && !current_user?(user) %>
-		 [ <%= link_to "Delete", user, :method => :delete, :data => { :confirm => 'You sure?' } %> ]
-	<% end %>
-</li>
+
+						<li style="list-style: none">
+							<%= gravatar_for user, :size => 52 %>
+							<%= link_to user.name, user %>
+							<% if current_user.admin? && !current_user?(user) %>
+								 [ <%= link_to "Delete", user, :method => :delete, :data => { :confirm => 'You sure?' } %> ]
+							<% end %>
+						</li>
 

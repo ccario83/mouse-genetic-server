@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-	before_filter :signed_in_user, :only => [:index, :edit, :update, :destroy]
+	before_filter :signed_in_user,	:only => [:index, :edit, :update, :destroy]
 	before_filter :correct_user, 	:only => [:edit, :update]
 	before_filter :admin_user, 		:only => :destroy
 	
@@ -9,7 +9,8 @@ class UsersController < ApplicationController
 
 	def show
 		@user = User.find(params[:id])
-		@microposts = @user.microposts.paginate(:page => params[:page])
+		@microposts = @user.microposts.paginate(:page => params[:page], :per_page => 3)
+		@micropost = current_user.microposts.build
 	end
 
 	def new
@@ -23,7 +24,7 @@ class UsersController < ApplicationController
 			flash[:notice] = "Account successfully created"
 			redirect_to @user # Same as render 'show' with user_id (POST /users/show/id)
 		else	
-			render 'new' # Otherwise redirect back to the new page with errors
+			render 'new' # Otherwise redirect back to the new view. Simple_form or other code will handle display of errors in the @user object
 		end
 	end
 
@@ -47,7 +48,6 @@ class UsersController < ApplicationController
 	end 
 
 	private
-
 		def correct_user
 			@user = User.find(params[:id])
 			redirect_to root_path unless current_user?(@user)

@@ -1,16 +1,28 @@
 
 
 					<div class="row-fluid my-user">
-						<%= gravatar_for @user, :size => 100 %>
-						<h4><%= @user.name %></h4>
-						<%= @user.institution %>
-						<%= @user.email %>
-					</div>
-					<hr>
-					<div class="row-fluid">
-						<h3> Micropost </h3>
+						<a href="<%= user_path(user) %>">
+							<%= gravatar_for user, :size => 100 %>
+						</a>
+						<h4><%= user.name %></h4>
+						<%= user.institution %><br/>
+						<%= user.email %><br/>
+						<%= link_to pluralize(user.microposts.count, "micropost"), user %>
 					</div>
 					<hr>
 					<div class="row-fluid">
 						<h3> Collaborators </h3>
+						<ol class="collaborators">
+							
+						</ol>
+					</div>
+					<hr>
+					<div class="row-fluid">
+						<h3>Microposts (<%= user.microposts.count %>)</h3>
+						<% if user.microposts.any? %>
+						<ol class="microposts">
+							<%= render @microposts %>
+						</ol>
+						<%= will_paginate @microposts, :page_links => false %>
+						<% end %>
 					</div>

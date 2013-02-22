@@ -1,13 +1,8 @@
 
 
 					<div class="row-fluid my-user">
-						<a href="<%= user_path(user) %>">
-							<%= gravatar_for user, :size => 100 %>
-						</a>
-						<h4><%= user.name %></h4>
-						<%= user.institution %><br/>
-						<%= user.email %><br/>
-						<%= link_to pluralize(user.microposts.count, "micropost"), user %>
+						<%= render 'user_info', user: user %>
+						<%= render 'shared/stats' %>
 					</div>
 					<hr>
 					<div class="row-fluid">

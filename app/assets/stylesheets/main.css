@@ -434,6 +434,12 @@ margin-left: -55px;
 
 
 /* user index */
+.user-box
+{
+	width: 300px !important;
+	margin: 25px !important;
+}
+
 
 .users
 {
@@ -451,15 +457,40 @@ margin-left: -55px;
 	}
 }
 
-.users .gravatar
+.user-management
 {
-	float: none;
-	padding: 1px 5px;
+	overflow: auto;	
+}
+.user-management a
+{
+	float: left;
+	padding: 6px 12px;
+	border-left: 1px solid #eee;
+	color: gray;
+}
+.user-management a:hover
+{
+	text-decoration: none;
+	color: #08c;
 }
 
+.user-management a:first-child
+{
+	padding-left: 0;
+	border: 0;
+}
+
+.user-management strong { display: block; }
+
+.user-management form
+{
+	float:left;
+	margin: 0px;
+}
+.user-management .info { line-height: 31px; }
 
 /* microposts */
-.my-user .gravatar
+.gravatar
 {
 	float: left;
 	margin-right: 10px;
@@ -486,3 +517,39 @@ aside textarea
 	height: 100px;
 	margin-bottom: 5px;
 }
+
+
+.stats
+{
+	overflow: auto;	
+}
+.stats a
+{
+	float: left;
+	padding: 0 10px;
+	border-left: 1px solid #eee;
+	color: gray;
+}
+.stats a:hover
+{
+	text-decoration: none;
+	color: #08c;
+}
+
+.stats a:first-child
+{
+	padding-left: 0;
+	border: 0;
+}
+
+stats strong { display: block; }
+
+
+.clear-fix:after
+{
+	content: "";
+	display: block;
+	height: 0;
+	clear: both;
+}
+

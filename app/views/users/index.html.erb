@@ -5,12 +5,10 @@
 <% content_for :page_js do %>
 <% end %>
 
-				<div class="row span10 offset2">
-				<h1>All users</h1>
-					<ul class="users">
-						<%= render @users %>
-					</ul>
-				<%= will_paginate %>
+				<div class="row-fluid span10 offset1">
+					<h1>All users</h1>
+					<%= will_paginate %>
+					<%= render @users, current_user: current_user %>
 				</div>
 
 

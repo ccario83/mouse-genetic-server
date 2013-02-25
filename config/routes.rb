@@ -1,14 +1,11 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-  resources :users do
-    member do
-        get :following, :followers
-    end
-  end
+  get "groups/new"
+
+  resources :users
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
-  resources :relationships, :only => [:create, :destroy]
 
   # Redirect the root url to the uwf page
   root :to => 'static_pages#home'

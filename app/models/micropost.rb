@@ -1,18 +1,19 @@
 class Micropost < ActiveRecord::Base
-	attr_accessible :content
-	belongs_to :user
+	attr_accessible :creator_id, :recipient_id, :recipient_type, :content
+	
+	# A micropost belongs to the user that created it 
+	belongs_to :creator, :class_name => 'User', :foreign_key => 'creator_id'
+	
+	# A micropost also belongs to the intended recipient, which can be either another user or a group	
+	belongs_to :recipient, :polymorphic => true
 
-	validates :user_id, :presence => true
+	validates :creator_id, :presence => true
+	validates :recipient_id, :presence => true
+	validates :recipient_type, :presence => true
 	validates :content, :presence => true, :length => { :minimum => 1, :maximum => 140 }
 
 	default_scope :order => 'microposts.created_at DESC'
 
-	def self.from_users_followed_by(user)
-		followed_user_ids = "SELECT followed_id FROM relationships
-							 WHERE follower_id = :user_id"
-		where("user_id IN (#{followed_user_ids}) OR user_id = :user_id", user_id: user.id)
-  end
-	
 	# Set the default number of posts per page for will_paginate
 	self.per_page = 4
 end

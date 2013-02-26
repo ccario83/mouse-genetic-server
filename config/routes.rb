@@ -1,9 +1,9 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-  get "groups/new"
 
   resources :users
+  resources :groups
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
 

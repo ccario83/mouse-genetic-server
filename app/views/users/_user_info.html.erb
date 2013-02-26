@@ -1,9 +1,11 @@
 
-									<div class="clear-fix">
-										<a href="<%= user_path(user) %>">
-											<%= gravatar_for user, :size =>78 %>
-										</a>
-										<h4><%= user.name %></h4>
-										<h6><%= user.institution %></h6>
-										<h6><%= user.email %></h6>
+									<div class="user-box">
+										<div class="clear-fix">
+											<a href="<%= user_path(user) %>">
+												<%= gravatar_for user, :size =>78 %>
+											</a>
+											<h4><%= user.name %></h4>
+											<h6><%= user.institution %></h6>
+											<h6><%= user.email %></h6>
+										</div>
 									</div>

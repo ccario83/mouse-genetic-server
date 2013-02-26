@@ -34,5 +34,5 @@ class User < ActiveRecord::Base
 		end
 
 	# Set the number of users per page for will_paginate
-	self.per_page = 9
+	self.per_page = 8
 end

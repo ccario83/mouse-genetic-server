@@ -8,7 +8,7 @@
 				<div class="row-fluid span10 offset1">
 					<h1>All users</h1>
 					<%= will_paginate %>
-					<%= render @users, current_user: current_user %>
+					<%= render :partial => 'user_info', :collection => @users, :as => :user %>
 				</div>
 
 

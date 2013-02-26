@@ -11,7 +11,6 @@ gem 'mysql'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -36,7 +35,7 @@ gem 'rinruby'
 #Gems requied by social site
 gem 'bcrypt-ruby', '~> 3.0.0'
 gem 'faker', '1.0.1'
-gem 'will_paginate', '3.0.3'
+gem 'will_paginate', '3.0.3'      # For rails pagination, pajinate bootstrap juggernaut is used when GET REQUESTS cannot be used
 gem 'bootstrap-will_paginate', '0.0.6'
 
 # To use Jbuilder templates for JSON

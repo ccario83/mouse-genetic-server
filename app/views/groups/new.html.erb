@@ -1,2 +1,28 @@
-<h1>Groups#new</h1>
-<p>Find me in app/views/groups/new.html.erb</p>
+<% @page_title = "Group Creation" %>
+
+<% content_for :page_css do %>
+<% end %>
+<% content_for :page_js do %>
+
+		<%= javascript_include_tag('jquery.pajinate') %>
+		<%= javascript_include_tag('group_new') %>
+<% end %>
+
+				<div class="row span10 offset2">
+				<h1>Create a new group</h1>
+					<%= simple_form_for(@group, :html => { :class => 'form-horizontal' } ) do |f| %>
+						<%= f.input :name, :label => 'Name', :required => false %>
+						<%= f.input :description, :label => 'Description', :required => false, :input_html => { :rows => 5 } %>
+						<div class="control-group optional">
+							<label class="text optional control-label">Select Members</label>
+							<div id="page_container" class="controls">
+								<div class="page_navigation pagination"></div>
+								<ul id="selectable" class="users content" style="display:none;">
+									<%= render @users %>
+								</ul>
+							</div>
+						</div>
+						
+						<%= f.button :wrapped, 'Create' %>
+					<% end %>
+				</div>

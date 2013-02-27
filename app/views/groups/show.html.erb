@@ -1,0 +1,21 @@
+<% @page_title = @group.name %>
+
+<% content_for :page_css do %>
+<% end %>
+<% content_for :page_js do %>
+
+		<%= javascript_include_tag('group_show') %>
+		<%= javascript_include_tag('jquery.pajinate') %>
+<% end %>
+
+				<div class="container-fluid span3 offset1">
+					<%= render 'group_panel', group: @group %>
+				</div>
+				
+				<div class="container-fluid span4">
+					<%= render 'micropost_panel', micropost: @micropost, microposts: @microposts %>
+				</div>
+				
+				<div class="container-fluid span3 offset">
+					<%= render 'member_panel', members: @members%>
+				</div>

@@ -434,21 +434,22 @@ margin-left: -55px;
 
 
 /* user index */
-.user-box
+#user-index .user-box
 {
 	width: 300px !important;
 	margin: 25px !important;
+	border-bottom: 1px solid #eee;
 }
 
 
-.users
+.users, .groups
 {
 	list-style: none;
 	margin: 5px;
 
 }
 
-.users li
+.users li, .groups li
 {
 	overflow: auto;
 	padding: 2px 0;
@@ -471,6 +472,7 @@ margin-left: -55px;
 #selectable .ui-selectee
 {
 	border: 1px solid rgba(255,255,255,0);
+	cursor: pointer;
 }
 
 

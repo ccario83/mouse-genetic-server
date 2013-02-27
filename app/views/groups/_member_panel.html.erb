@@ -1,0 +1,15 @@
+
+					<div class="row-fluid my-user">
+						<h3> Members </h3>
+						<div>
+							<ul class="users">
+								<%= render members %>
+							</ul>
+							<%= will_paginate members, :param_name => 'members_paginate' %>
+						</div>
+					</div>
+					<hr>
+					<div class="row-fluid">
+						<h3> Tasks </h3>
+					</div>
+

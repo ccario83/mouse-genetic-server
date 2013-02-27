@@ -4,13 +4,14 @@ class UsersController < ApplicationController
 	before_filter :admin_user, 		:only => :destroy
 	
 	def index
-		@users = User.paginate(:page => params[:page])
+		@users = User.paginate(:page => params[:page], :per_page => 5)
 	end
 
 	def show
 		@user = User.find(params[:id])
 		@microposts = @user.recieved_posts.paginate(:page => params[:page])
 		@micropost = current_user.authored_posts.build
+		@groups = @user.groups.paginate(:page => params[:members_paginate], :per_page => 3)
 	end
 
 	def new

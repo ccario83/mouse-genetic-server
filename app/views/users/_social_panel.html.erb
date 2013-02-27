@@ -2,15 +2,20 @@
 
 					<div class="row-fluid">
 						<h3>Groups </h3>
-						
-					</div>
-					<hr>
-					<div class="row-fluid">
-						<h3> Micropost Feed </h3>
-						
+						<div>
+							<ul class="groups">
+								<%= render groups %>
+							</ul>
+							<%= will_paginate groups, :param_name => 'groups_paginate' %>
+						</div>
 					</div>
 					<hr>
 					<div class="row-fluid">
 						<h3> Post </h3>
 						<%= render 'shared/micropost_form' %>
+					</div>
+					<hr>
+					<div class="row-fluid">
+						<h3> Micropost Feed </h3>
+						
 					</div>

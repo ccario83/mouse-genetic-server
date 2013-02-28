@@ -1,11 +1,18 @@
 
-						<% @user ||= current_user %>
-						<div class="stats">
-							<a href= "/users/<%= @user.id %>">
-								<strong id="microposts" class="stat">
-									<%= @user.authored_posts.count %>
-								</strong>
-								microposts
-							</a>
 
+						<div class="text-links">
+							<a>
+							<% if defined? user %>
+								<strong><%= user.authored_posts.count %></strong> microposts
+							<% elsif defined? group %>
+								<strong><%= group.microposts.count %></strong> microposts
+							<% end %>
+							</a>
+							<a>
+							<% if defined? user %>
+								<strong><%= user.groups.count %></strong> groups
+							<% elsif defined? group %>
+								<strong><%= group.members.count %></strong> members
+							<% end %>
+							</a>
 						</div>

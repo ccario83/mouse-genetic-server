@@ -260,6 +260,11 @@ body
 .row-fluid { height: inherit; }
 .modal-body { max-height: 800px; }
 
+.pagination { margin: 5px 0px; }
+
+
+
+
 
 /* Simple selected/unselected classes */
 .selected { opacity: 1.0; }
@@ -432,6 +437,8 @@ margin-left: -55px;
 		letter-spacing: -1px;
 	}
 
+/* Page wide stuff */
+
 
 /* user index */
 #user-index .user-box
@@ -445,7 +452,7 @@ margin-left: -55px;
 .users, .groups
 {
 	list-style: none;
-	margin: 5px;
+	margin: 15px 5px;
 
 }
 
@@ -519,7 +526,7 @@ margin-left: -55px;
 .microposts
 {
 	list-style: none;
-	margin: 10px 50px 0px 0px;
+	margin: 15px 0px;
 }
 
 .microposts li
@@ -527,6 +534,8 @@ margin-left: -55px;
 	padding: 10px 0;
 	border-top: 1px dashed #ddd;
 }
+
+.microposts li:first-child {border-top: none;}
 
 .content { 	display: block; }
 
@@ -539,33 +548,27 @@ aside textarea
 }
 
 
-.stats
+.text-links
 {
 	overflow: auto;	
 }
-.stats a
+.text-links a
 {
-	float: left;
 	padding: 0 10px;
 	border-left: 1px solid #eee;
-	color: gray;
-}
-.stats a:hover
-{
-	text-decoration: none;
 	color: #08c;
 }
+.text-links a:hover
+{
+	text-decoration: none;
+	color: #7FD4FF;
+}
 
-.stats a:first-child
+.text-links a:first-child
 {
 	padding-left: 0;
 	border: 0;
 }
-
-stats strong { display: block; }
-
-
-
 
 
 .gray

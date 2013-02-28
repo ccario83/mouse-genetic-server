@@ -1,31 +1,45 @@
 class MicropostsController < ApplicationController
 	before_filter :signed_in_user
 	before_filter :correct_user, :only => :destroy
+	before_filter :suspicious?, :only => :create # Verify hidden fields weren't altered
 
 	def create
-		@micropost = current_user.microposts.build(params[:micropost])
-		#@micropost = Micropost.new({:creator_id=>1, :recipient_id => 4, :recipient_type => 'Group', :content => 'Hi group!'})
-
-		
+		#@micropost = current_user.authored_posts.build(params[:micropost])
 		if @micropost.save
-			flash[:success] = "Micropost created!"
+			flash[:success] = "The micropost was successfully created."
 			redirect_to :back
 		else
-			@feed_items = []
-			@user = current_user
-			render 'users/show'
+			flash[:error] = "The micropost creation failed!"
+			redirect_to :back
 		end
 	end
 
 	def destroy
-		@micropost.destroy
-		flash[:notice] = "Post deleted"
-		redirect_to :back
+		if @micropost.destroy
+			flash[:notice] = "The micropost was successfully deleted."
+			redirect_to :back
+		else
+			flash[:error] = "The micropost deletion failed!"
+			redirect_to :back
+		end
 	end
 
-	#private
-	#	def correct_user
-	#		@micropost = current_user.microposts.find_by_id(params[:id])
-	#		redirect_to root_path if @micropost.nil?
-	#	end
+	private
+		def correct_user
+			@micropost = current_user.authored_posts.find_by_id(params[:id])
+			if @micropost.nil?
+				flash[:error] = "The micropost ownership verification failed!"
+				redirect_to :back
+			end
+		end
+		
+		def suspicious?
+			@micropost = current_user.authored_posts.build(params[:micropost])
+			if @micropost.recipient_type == 'Group'
+				if !(@micropost.creator.groups.map(&:id).include?(@micropost.recipient_id))
+					flash[:error] = "Nice try h4x0r..."
+					redirect_to :back
+				end
+			end
+		end
 end

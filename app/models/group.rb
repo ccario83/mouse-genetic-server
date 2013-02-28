@@ -11,4 +11,9 @@ class Group < ActiveRecord::Base
 	validates :creator_id, :presence => true
 	validates :name, :presence => true
 	validates :description,	:presence => true, :length => { :maximum => 50 }
+	
+	# Maybe a little friendlier than group.users
+	def members
+		self.users
+	end
 end

@@ -462,21 +462,21 @@ margin-left: -55px;
 	padding: 2px 0;
 	/*border-top: 1px solid #999;*/
 }
-#selectable {width: 300px;}
-#selectable .ui-selecting
+.selectable {width: 300px;}
+.selectable .ui-selecting
 {
 }
-#selectable .ui-unselecting
+.selectable .ui-unselecting
 {
 }
 
-#selectable .ui-selected
+.selectable .ui-selected
 {
 	background-color: #FCF8E3;
 	border: 1px solid #FBEED5;
 }
 
-#selectable .ui-selectee
+.selectable .ui-selectee
 {
 	border: 1px solid rgba(255,255,255,0);
 	cursor: pointer;
@@ -537,7 +537,12 @@ margin-left: -55px;
 
 .microposts li:first-child {border-top: none;}
 
-.content { 	display: block; }
+.content 
+{
+	display: block; 
+	word-wrap: break-word;
+}
+
 
 .timestamp { color: #999; }
 
@@ -548,13 +553,24 @@ aside textarea
 }
 
 
+
+h3 span.btn
+{
+	float:right; 
+	font-size:14px; 
+	font-weight:normal; 
+	margin-top: 6px;
+}
+
 .text-links
 {
 	overflow: auto;	
 }
 .text-links a
 {
-	padding: 0 10px;
+	/*padding: 5px 5px;
+	border-radius: 5px;
+	border: 1px solid #ddd;*/
 	border-left: 1px solid #eee;
 	color: #08c;
 }
@@ -562,9 +578,32 @@ aside textarea
 {
 	text-decoration: none;
 	color: #7FD4FF;
+	background: #FFF;
+}
+.text-links a:first-child
+{
+	padding-left: 0;
+	border: 0;
 }
 
-.text-links a:first-child
+
+.stats
+{
+	overflow: auto;	
+}
+.stats a
+{
+	padding: 0 10px;
+	border-left: 1px solid #eee;
+	color: #08c;
+}
+.stats a:hover
+{
+	text-decoration: none;
+	color: #7FD4FF;
+}
+
+.stats a:first-child
 {
 	padding-left: 0;
 	border: 0;

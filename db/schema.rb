@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20130227165435) do
   create_table "groups_users", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "user_id"
+    t.boolean "confirmed", :default => false
   end
 
   add_index "groups_users", ["group_id", "user_id"], :name => "index_groups_users_on_group_id_and_user_id", :unique => true

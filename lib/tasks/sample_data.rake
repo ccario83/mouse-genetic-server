@@ -15,7 +15,14 @@ def make_users
 				 		 :password 				=> "foobar",
 				 		 :password_confirmation => "foobar")
 	admin.toggle!(:admin)
-	99.times do |n|
+	admin = User.create!(:first_name 			=> "Annerose",
+						 :last_name				=> "Berndt",
+						 :institution			=> "University of Pittsburgh",
+				 		 :email 				=> "anb128@pitt.edu",
+				 		 :password 				=> "foobar",
+				 		 :password_confirmation => "foobar")
+	admin.toggle!(:admin)
+	20.times do |n|
 		first_name	= Faker::Name.name.split()[0]
 		last_name 	= Faker::Name.name.split()[1]
 		institution = "Some Other Place"
@@ -31,19 +38,36 @@ def make_users
 end
 
 def make_groups
-	25.times do |n|
+	users = User.all(:limit => 6)
+	10.times do |n|
 		name		= Faker::Company.name
-		description = Faker::Lorem.sentence(5)
-		users.each { |user| user.group.create!(:creator_id => user.id, :name => name, :description => description) }
+		description = Faker::Lorem.sentence(1)
+		Group.create!(:creator => User.find([*1..6].sample), :name => name, :description => description, :users => users)
 	end
+	# A group created by Clint
+	name		= Faker::Company.name
+	description = Faker::Lorem.sentence(1)
+	Group.create!(:creator => User.find(1), :name => name, :description => description, :users => User.all)
 end
 
 
 def make_microposts
 	users = User.all(:limit => 6)
-	25.times do
-		content = Faker::Lorem.sentence(5)
-		users.each { |user| user.microposts.create!(:content => content) }
+	10.times do
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 1, :recipient_type => 'Group') }
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 2, :recipient_type => 'Group') }
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 3, :recipient_type => 'Group') }
+	end
+	5.times do
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 1, :recipient_type => 'User') }
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 2, :recipient_type => 'User') }
+		content = Faker::Lorem.sentence(1)
+		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 3, :recipient_type => 'User') }
 	end
 end
 

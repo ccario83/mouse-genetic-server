@@ -4,7 +4,7 @@ class GroupUserJoinTables < ActiveRecord::Migration
     create_table :groups_users, :id => false do |t|
       t.references :group
       t.references :user
-      t.boolean :confirmed => {:default => false}
+      t.boolean :confirmed, :default => false
     end
 
     add_index(:groups_users, [:group_id, :user_id], :unique => true)

@@ -1,9 +1,10 @@
 
 					<div class="row-fluid my-user">
-						<h3> Members </h3>
-						<span class="text-links">
-							<a href="add/<%= group.id %>">Manage</a>
-						</span>
+						<h3> Members (<%= members.count %>)
+							<span id="manage" class="btn btn-primary">
+								Manage
+							</span>
+						</h3>
 						<div>
 							<ul class="users">
 								<%= render members %>

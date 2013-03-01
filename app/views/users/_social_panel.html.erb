@@ -1,7 +1,11 @@
 
 
 					<div class="row-fluid">
-						<h3>Groups </h3>
+						<h3> Groups (<%= groups.count %>)
+							<span id="manage" class="btn btn-primary">
+								Manage
+							</span>
+						</h3>
 						<div>
 							<ul class="groups">
 								<%= render groups %>
@@ -16,6 +20,11 @@
 					</div>
 					<hr>
 					<div class="row-fluid">
-						<h3> Micropost Feed </h3>
-						
+						<h3> Micropost Feed (<%= microposts.count %>)</h3>
+						<% if microposts.any? %>
+							<ol class="microposts">
+								<%= render :partial =>'shared/micropost', :collection => microposts %>
+							</ol>
+						<%= will_paginate microposts, :param_name => 'microposts_paginate' %>
+						<% end %>
 					</div>

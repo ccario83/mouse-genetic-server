@@ -15,14 +15,10 @@
 						<%= f.input :description, :label => 'Description', :required => false, :input_html => { :rows => 5 } %>
 						<div class="control-group optional">
 							<label class="text optional control-label">Select Members</label>
-							<div id="page_container" class="controls">
-								<div class="page_navigation pagination"></div>
-								<ul id="selectable" class="users content" style="display:none;">
-									<%= render @users %>
-								</ul>
-							</div>
+							<%= render 'shared/multi_select', items: @users, id: 'users' %>
 						</div>
-						
+						<%= f.input :users, :as => :hidden %>
+						<input id="preselected_users" type="hidden" value="<%= @preselected %>">
 						<%= f.button :wrapped, 'Create' %>
 					<% end %>
 				</div>

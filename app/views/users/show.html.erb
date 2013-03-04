@@ -5,14 +5,14 @@
 <% content_for :page_js do %>
 <% end %>
 
-				<div class="container-fluid span3 offset1">
+				<div class="container-fluid span2">
 					<%= render 'user_panel', user: current_user %>
 				</div>
 				
-				<div class="container-fluid span4">
+				<div class="container-fluid span6">
 					<%= render 'tool_panel' %>
 				</div>
 				
-				<div class="container-fluid span3 offset">
+				<div class="container-fluid span4">
 					<%= render 'social_panel', groups: @groups, micropost: @micropost, microposts: @microposts %>
 				</div>

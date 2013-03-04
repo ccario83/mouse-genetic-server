@@ -36,9 +36,17 @@ class GroupsController < ApplicationController
 	def show
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:recipient_id => @group.id, :recipient_type => 'Group'})
-		@microposts = @group.microposts.paginate(:page => params[:microposts_paginate], :per_page => 3)
+		
+		@microposts = @group.microposts
+		if params.has_key?(:user_filter)
+			puts "{"+params[:user_filter]+"}"
+			@microposts = @microposts.where(:creator_id => params[:user_filter])
+		end
+		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 3)
+
 		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 3)
 	end
+
 
 	private
 		def correct_user

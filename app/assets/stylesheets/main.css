@@ -516,6 +516,9 @@ margin-left: -55px;
 }
 .user-management .info { line-height: 31px; }
 
+
+
+
 /* microposts */
 .gravatar
 {
@@ -552,7 +555,8 @@ aside textarea
 	margin-bottom: 5px;
 }
 
-
+.display-User { color: #08c; }
+.display-Group { color: #FAA732; }
 
 h3 span.btn
 {
@@ -560,6 +564,7 @@ h3 span.btn
 	font-size:14px; 
 	font-weight:normal; 
 	margin-top: 6px;
+	margin-right: 25%;
 }
 
 .text-links
@@ -572,12 +577,12 @@ h3 span.btn
 	border-radius: 5px;
 	border: 1px solid #ddd;*/
 	border-left: 1px solid #eee;
-	color: #08c;
+	color: #888;
 }
 .text-links a:hover
 {
 	text-decoration: none;
-	color: #7FD4FF;
+	color: #08C;
 	background: #FFF;
 }
 .text-links a:first-child
@@ -595,12 +600,12 @@ h3 span.btn
 {
 	padding: 0 10px;
 	border-left: 1px solid #eee;
-	color: #08c;
+	color: #ccc;
 }
 .stats a:hover
 {
 	text-decoration: none;
-	color: #7FD4FF;
+	color: #ccc;
 }
 
 .stats a:first-child

@@ -9,9 +9,9 @@ class UsersController < ApplicationController
 
 	def show
 		@user = User.find(params[:id])
-		@microposts = @user.recieved_posts.paginate(:page => params[:microposts_paginate])
+		@microposts = @user.all_recieved_posts.paginate(:page => params[:microposts_paginate], :per_page => 3)
 		@micropost = current_user.authored_posts.new
-		@groups = @user.groups.paginate(:page => params[:members_paginate], :per_page => 3)
+		@groups = @user.groups.paginate(:page => params[:groups_paginate], :per_page => 3)
 	end
 
 	def new

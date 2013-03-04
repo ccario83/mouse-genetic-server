@@ -7,11 +7,20 @@
 					<hr>
 					<div class="row-fluid">
 						<h3> Micropost Feed (<%= microposts.count %>)</h3>
+						<% if params.has_key?(:user_filter)%>
+							Filter:
+							<span class="display-User" style="font-size:14px; font-weight:normal;"> 
+								<%=User.find(params[:user_filter]).name %>  
+							</span>
+							<span class="text-links">
+								<a href="/groups/<%= params[:id] %>">[Remove]</a>
+							</span>
+						<% end %>
 						<% if microposts.any? %>
 							<ol class="microposts">
 								<%= render :partial =>'shared/micropost', :collection => microposts %>
 							</ol>
-						<%= will_paginate microposts, :param_name => 'microposts_paginate' %>
+						<%= will_paginate microposts, :param_name => 'microposts_paginate', :inner_window => 1 %>
 						<% end %>
 					</div>
 

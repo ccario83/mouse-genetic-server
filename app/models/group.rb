@@ -9,7 +9,7 @@ class Group < ActiveRecord::Base
 	has_and_belongs_to_many :users
 
 	validates :creator_id, :presence => true
-	validates :name, :presence => true, :uniqueness => { :case_sensitive => true}
+	validates :name, :presence => true, :length => {:maximum => 25 }, :uniqueness => { :case_sensitive => true}
 	validates :description,	:presence => true, :length => { :maximum => 50 }
 	
 	# Maybe a little friendlier than group.users

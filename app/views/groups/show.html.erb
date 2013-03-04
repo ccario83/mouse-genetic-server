@@ -8,14 +8,14 @@
 		<%= javascript_include_tag('jquery.pajinate') %>
 <% end %>
 
-				<div class="container-fluid span3 offset1">
+				<div class="container-fluid span2">
 					<%= render 'group_panel', group: @group %>
 				</div>
 				
-				<div class="container-fluid span4">
+				<div class="container-fluid span6">
 					<%= render 'micropost_panel', micropost: @micropost, microposts: @microposts %>
 				</div>
 				
-				<div class="container-fluid span3 offset">
+				<div class="container-fluid span4">
 					<%= render 'member_panel', members: @members, group: @group %>
 				</div>

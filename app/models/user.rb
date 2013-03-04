@@ -28,6 +28,17 @@ class User < ActiveRecord::Base
 		self.authored_posts.create!(:content => message, :recipient_id => user.id, :recipient_type => 'User')
 	end
 
+	def group_recieved_posts
+		microposts = self.groups.map(&:microposts).flatten
+		return microposts
+	end
+
+	def all_recieved_posts
+		microposts = self.recieved_posts + self.groups.map(&:microposts).flatten
+		microposts.sort_by(&:created_at)
+		return microposts
+	end
+
 	private
 		def create_remember_token
 			self.remember_token = SecureRandom.base64

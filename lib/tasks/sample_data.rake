@@ -40,12 +40,12 @@ end
 def make_groups
 	users = User.all(:limit => 6)
 	10.times do |n|
-		name		= Faker::Company.name
+		name		= Faker::Company.name[0..24]
 		description = Faker::Lorem.sentence(1)
 		Group.create!(:creator => User.find([*1..6].sample), :name => name, :description => description, :users => users)
 	end
 	# A group created by Clint
-	name		= Faker::Company.name
+	name		= Faker::Company.name[0..24]
 	description = Faker::Lorem.sentence(1)
 	Group.create!(:creator => User.find(1), :name => name, :description => description, :users => User.all)
 end

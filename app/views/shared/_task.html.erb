@@ -1,0 +1,25 @@
+
+								<li id="<%= task.id %>" class="clear-fix">
+									<div class="container-fluid" style="padding:0px;">
+										<div class="row-fluid">
+											
+											<div class="row-fluid span1">
+												<div id="checkbox-<%= task.id %>" class="checkbutton"> </div>
+											</div>	
+											
+											<div class="content span11">
+												<div class="row-fluid">
+													<%= task.description %>
+												</div>
+												<div class="row-fluid timestamp">
+													<span class="text-links">
+													<% if current_user?(task.creator) %>
+															<%= link_to "[Delete]", task, :data => { :method => :delete, :confirm => "You sure?", :title => task.description } %>
+													<% end %>
+													</span>
+												</div>
+											
+											</div>
+										</div>
+									</div>
+								</li>

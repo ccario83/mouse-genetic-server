@@ -8,12 +8,12 @@
 					<div class="row-fluid">
 						<h3> Micropost Feed (<%= microposts.count %>)</h3>
 						<% if params.has_key?(:user_filter)%>
-							Filter:
+							Feeds by:
 							<span class="display-User" style="font-size:14px; font-weight:normal;"> 
-								<%=User.find(params[:user_filter]).name %>  
+								<%=User.find(params[:user_filter]).name %>
 							</span>
 							<span class="text-links">
-								<a href="/groups/<%= params[:id] %>">[Remove]</a>
+								<a href="/groups/<%= params[:id] %>">[Show All]</a>
 							</span>
 						<% end %>
 						<% if microposts.any? %>

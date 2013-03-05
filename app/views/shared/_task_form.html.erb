@@ -1,0 +1,7 @@
+
+					<%= simple_form_for(task, :html => { :class => '' } ) do |f| %>
+						<%= f.input :description, :label => false, :as => :text, :placeholder => "Compose a new task...", :input_html => { :rows => 1, :style => 'margin-bottom:0px; width:65%; float:left;' }, :required => false %>
+						<%= f.button :submit, 'Create', :class => 'btn btn-link'%>
+						<%= f.input :group_id,  %>
+					<% end %>
+

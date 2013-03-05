@@ -3,13 +3,16 @@
 <% content_for :page_css do %>
 <% end %>
 <% content_for :page_js do %>
+
+		<%= javascript_include_tag('user_show') %>
+		<%= javascript_include_tag('jquery.pajinate') %>
 <% end %>
 
-				<div class="container-fluid span2">
+				<div class="container-fluid span3">
 					<%= render 'user_panel', user: current_user %>
 				</div>
 				
-				<div class="container-fluid span6">
+				<div class="container-fluid span5">
 					<%= render 'tool_panel' %>
 				</div>
 				

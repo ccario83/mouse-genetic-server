@@ -14,13 +14,20 @@
 						</div>
 					</div>
 					<hr>
+
 					<div class="row-fluid">
-						<h3> Post </h3>
-						<%= render 'shared/micropost_form', micropost: micropost %>
+						<h3> Microposts (<%= microposts.count %>)
+							<span id="add-micropost">
+								<i class="icon-plus-sign"></i>
+							</span>
+						</h3>
+						<div id="new-micropost" style="display:none">
+							<%= render 'shared/micropost_form', micropost: micropost %>
+							<hr>
+						</div>
 					</div>
-					<hr>
+
 					<div class="row-fluid">
-						<h3> Micropost Feed (<%= microposts.count %>)</h3>
 						<% if microposts.any? %>
 							<ol class="microposts">
 								<%= render :partial =>'shared/micropost', :collection => microposts %>

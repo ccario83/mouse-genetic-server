@@ -2,10 +2,10 @@
 								<li id="<%= micropost.id %>" class="clear-fix">
 									<div class="container-fluid" style="padding:0px;">
 										<div class="row-fluid">
-											<div class="span2">
+											<div class="span1">
 												<%= gravatar_for(micropost.creator) %>
 											</div>
-											<div class="content span9">
+											<div class="content span11">
 												<%= micropost.content %>
 											<div>
 										</div>
@@ -15,7 +15,7 @@
 												<% if micropost.recipient == current_user %> You <% else %><%= micropost.recipient.name %><% end %>
 										</div>
 										<div class="timestamp">
-												Posted <%= time_ago_in_words(micropost.created_at) %> ago
+												<%= time_ago_in_words(micropost.created_at) %> ago
 												<span class="text-links">
 												<% if current_user?(micropost.creator) %>
 														<%= link_to "[Delete]", micropost, :data => { :method => :delete, :confirm => "You sure?", :title => micropost.content } %>

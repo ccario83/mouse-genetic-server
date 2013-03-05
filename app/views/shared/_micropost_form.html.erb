@@ -1,6 +1,6 @@
 
 					<%= simple_form_for(micropost, :html => { :class => '' } ) do |f| %>
-						<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'margin-bottom:0px; width:100%;' }, :required => false %>
+						<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'margin-bottom:0px; width:65%;' }, :required => false %>
 						<%= f.button :submit, 'Post', :class => 'btn btn-primary'%>
 						<%= f.input :recipient_id, :as => :hidden %>
 						<%= f.input :recipient_type, :as => :hidden %>

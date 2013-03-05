@@ -36,6 +36,7 @@ class GroupsController < ApplicationController
 	def show
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:recipient_id => @group.id, :recipient_type => 'Group'})
+		@task ||= current_user.tasks.new({:group_id => @group.id, })
 		
 		@microposts = @group.microposts
 		if params.has_key?(:user_filter)
@@ -43,6 +44,8 @@ class GroupsController < ApplicationController
 			@microposts = @microposts.where(:creator_id => params[:user_filter])
 		end
 		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 3)
+
+		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 3)
 
 		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 3)
 	end

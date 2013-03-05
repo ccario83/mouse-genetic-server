@@ -4,6 +4,7 @@ namespace :db do
 		make_users
 		make_groups
 		make_microposts
+		make_tasks
 	end
 end
 
@@ -54,21 +55,22 @@ end
 def make_microposts
 	users = User.all(:limit => 6)
 	10.times do
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 1, :recipient_type => 'Group') }
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 2, :recipient_type => 'Group') }
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 3, :recipient_type => 'Group') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 1, :recipient_type => 'Group') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 2, :recipient_type => 'Group') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 3, :recipient_type => 'Group') }
 	end
 	5.times do
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 1, :recipient_type => 'User') }
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 2, :recipient_type => 'User') }
-		content = Faker::Lorem.sentence(1)
-		users.each { |user| user.authored_posts.create!(:content => content, :recipient_id => 3, :recipient_type => 'User') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 1, :recipient_type => 'User') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 2, :recipient_type => 'User') }
+		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 3, :recipient_type => 'User') }
 	end
 end
 
+
+def make_tasks
+	users = User.all(:limit => 2)
+	3.times do
+		users.each { |user| user.tasks.create!(:description => Faker::Lorem.sentence(1), :group_id => 1) }
+	end
+end
 

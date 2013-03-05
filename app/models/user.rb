@@ -1,9 +1,12 @@
+require 'will_paginate/array'
+
 class User < ActiveRecord::Base
 	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation
 	has_secure_password
 	has_many :recieved_posts, :class_name => 'Micropost', :as => :recipient # A user can have microposts through micropost recipients
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id'
 	has_and_belongs_to_many :groups
+	has_many :tasks, :foreign_key => 'creator_id'
 
 	before_save { |user| user.email = user.email.downcase }
 	before_save :create_remember_token

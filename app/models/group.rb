@@ -7,6 +7,8 @@ class Group < ActiveRecord::Base
 	has_many :microposts, :as => :recipient 
 	# A group has many users, and users have many groups, initally the user/group combination has a false confirmation status until the user OKs membership
 	has_and_belongs_to_many :users
+	# A group has many tasks
+	has_many :tasks
 
 	validates :creator_id, :presence => true
 	validates :name, :presence => true, :length => {:maximum => 25 }, :uniqueness => { :case_sensitive => true}

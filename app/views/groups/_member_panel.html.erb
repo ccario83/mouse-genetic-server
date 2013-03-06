@@ -1,12 +1,8 @@
 
 					<div class="row-fluid my-user">
-						<h3> Members (<%= members.count %>)
-							<span id="group-add" class="btn btn-primary">
-								Add
-							</span>
-							<span id="group-manage" class="btn btn-primary">
-								Manage
-							</span>
+						<h3> Members (<%= members.count %>)&nbsp;&nbsp;&nbsp;&nbsp;
+							<i id="group-add" class="icon-plus"></i>
+							<i id="group-manage" class="icon-edit"></i>
 						</h3>
 						<div>
 							<ul class="users">
@@ -18,10 +14,8 @@
 					<hr>
 
 					<div class="row-fluid">
-						<h3> Tasks (<%= tasks.count %>)
-							<span id="add-task" class="btn btn-primary">
-								Add
-							</span>
+						<h3> Tasks (<%= tasks.count %>)&nbsp;&nbsp;&nbsp;&nbsp;
+							<i id="add-task" class="icon-plus"></i>
 						</h3>
 						<div id="new-task" style="display:none">
 							<%= render 'shared/task_form', task: task %>

@@ -646,20 +646,36 @@ h3 span.btn
 
 .tasks li:first-child {border-top: none;}
 
-.checkbutton
-{
-	border:1px solid #ddd;
-	background: #eee;
-	height:20px;
-	width:20px;
-	position: relative;
-	margin:20% auto;
+/* =========================================================== */
+/*   Group Page styles                                         */
+/* =========================================================== */
+
+/* The show group group_panel/group-info/group partial         */
+/* ---------------------------------------------------         */
+
+.icon-group 
+{ 
+	color: #FAA732; 
+	float: left;
+	margin-right: 10px;
 }
 
+a i.icon-group:hover { text-decoration: none; }
 
+#group-name
+{
+	font-size: 1.1em;
+	font-weight: bold;
+	display: block;
+	padding-bottom: 7px;
+}
 
+#group-description
+{
+	font-size: 1.0em;
+	display: block;
+}
 
-
-
-
-
+/* The show group member_panel/task      partial               */
+/* ---------------------------------------------               */
+.checkbutton.selected { background: yellow; }

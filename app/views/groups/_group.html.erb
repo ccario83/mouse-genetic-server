@@ -1,9 +1,10 @@
 
 						<li id="<%=group.id%>" class="ui-selectee">
-						<a href="/groups/<%= group.id %>">
-							<%= image_tag("group_icon.png", :class => "gravatar", :alt => group.name, :width => "25px") %>
-							<span class="display-Group"> <%= group.name %></span>
+						
+							<i class="icon-group"></i>
+							<a href="/groups/<%= group.id %>">						
+								<span class="display-Group"> <%= group.name %></span>
+							</a>
 							<span class="gray">by <%= group.creator.name %></span>
-						</a>
 						</li>
 

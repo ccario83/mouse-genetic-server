@@ -2,10 +2,10 @@
 						<div class="user-box">
 							<div class="clear-fix">
 								<a href="">
-									<%= image_tag("group_icon.png", :alt => group.name, :class => "gravatar") %>
+									<% image_tag("group_icon.png", :alt => group.name, :class => "gravatar") %>
+									<i class="icon-group icon-4x icon-border"></i>
 								</a>
-								<h4><%= group.name %></h4>
-								<h6><%= group.description %></h6>
-								<h6>created by <%= group.creator.name %></h6>
+								<span id="group-name"><%= group.name %></span>
+								<span id="group-description"><%= group.description %></span>
 							</div>
 						</div>

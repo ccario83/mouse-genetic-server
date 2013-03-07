@@ -26,8 +26,8 @@
 							<i id="add-group" class="icon-plus" onclick="$('#new-task').modal('show'); return false;"></i>
 						</div>
 					</div>
-					<div id="new-task" class="modal hide fade">
-						<%= render 'shared/task_form', task: task %>
+					<div id="new-task" class="modal hide">
+						<%= render 'shared/task_form', task: task, members: members %>
 					</div>
 
 					<div class="row-fluid">

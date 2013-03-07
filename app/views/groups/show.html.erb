@@ -1,11 +1,14 @@
 <% @page_title = @group.name %>
 
 <% content_for :page_css do %>
+
+		<%= stylesheet_link_tag('bootstrap-datetimepicker.min') %>
 <% end %>
 <% content_for :page_js do %>
 
 		<%= javascript_include_tag('group_show') %>
 		<%= javascript_include_tag('jquery.pajinate') %>
+		<%= javascript_include_tag('bootstrap-datetimepicker') %>
 <% end %>
 
 				<div class="container-fluid span3">

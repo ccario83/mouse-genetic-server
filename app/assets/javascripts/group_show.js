@@ -9,7 +9,7 @@ $(window).bind("load", function()
 	});
 
 
-	/* Truncate the pathology list */
+	/* Truncate the group description if needed */
 	$('#group-description').jTruncate({  
 		length: 15,
 		minTrail: 5,
@@ -23,3 +23,9 @@ $(window).bind("load", function()
 	$('.task').click(function() { $(this).toggleClass('icon-check');  $(this).toggleClass('icon-check-empty'); });
 });
 
+$(function() {
+$('#duedate').datetimepicker({
+	language: 'en',
+	pick12HourFormat: true
+});
+});

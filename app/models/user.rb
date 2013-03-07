@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id'
 	has_and_belongs_to_many :groups
 	has_many :tasks, :foreign_key => 'creator_id'
+	has_many :tasks, :foreign_key => 'assignee_id'
 
 	before_save { |user| user.email = user.email.downcase }
 	before_save :create_remember_token
@@ -47,6 +48,4 @@ class User < ActiveRecord::Base
 			self.remember_token = SecureRandom.base64
 		end
 
-	# Set the number of users per page for will_paginate
-	self.per_page = 8
 end

@@ -5,8 +5,8 @@
 <% content_for :page_js do %>
 <% end %>
 
-				<div class="span10 offset2">
-					<h1>Update your profile</h1>
+				<div class="span4 offset4">
+					<h1 style="text-align:center">Update your profile</h1>
 					<%= simple_form_for(@user, :html => { :class => 'form-horizontal' } ) do |f| %>
 						<%= f.input :first_name, :label => 'First Name' %>
 						<%= f.input :last_name, :label => 'Last Name' %>

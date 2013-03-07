@@ -5,6 +5,7 @@ class Task < ActiveRecord::Base
 	# A task belongs to a group
 	belongs_to :group, :class_name => 'Group', :foreign_key => 'group_id'
 	belongs_to :creator, :class_name => 'User', :foreign_key => 'creator_id'
+	belongs_to :assignee, :class_name => 'User', :foreign_key => 'assignee_id'
 
 	validates :creator, :presence => true
 	validates :description, :presence => true, :length => { :minimum => 1, :maximum => 140 }

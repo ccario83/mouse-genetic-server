@@ -9,13 +9,13 @@
 <% end %>
 
 				<div class="container-fluid span3">
-					<%= render 'user_panel', user: current_user %>
+					<%= render 'user_left_panel', user: current_user %>
 				</div>
 				
 				<div class="container-fluid span5">
-					<%= render 'tool_panel' %>
+					<%= render 'user_center_panel' %>
 				</div>
 				
 				<div class="container-fluid span4">
-					<%= render 'social_panel', groups: @groups, micropost: @micropost, microposts: @microposts %>
+					<%= render 'user_right_panel', groups: @groups, micropost: @micropost, microposts: @microposts %>
 				</div>

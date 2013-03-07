@@ -16,7 +16,7 @@
 						</a>
 						<ul class="dropdown-menu">
 							<% if is_admin? %>
-							<li><a href="<%= users_path %>">View Users <i class="icon-star-empty"></i> </a></li>
+							<li><a href="<%= users_path %>">View Users <i class="icon-key"></i> </a></li>
 							<% end %>
 							<li><%= link_to "Profile", current_user %></li>
 							<li><%= link_to "Edit", edit_user_path(current_user) %></li>

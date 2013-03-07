@@ -9,13 +9,13 @@
 <% end %>
 
 				<div class="container-fluid span3">
-					<%= render 'group_panel', group: @group %>
+					<%= render 'group_left_panel', group: @group %>
 				</div>
 				
 				<div class="container-fluid span5">
-					<%= render 'micropost_panel', micropost: @micropost, microposts: @microposts %>
+					<%= render 'group_center_panel', micropost: @micropost, microposts: @microposts %>
 				</div>
 				
 				<div class="container-fluid span4">
-					<%= render 'member_panel', members: @members, group: @group, task: @task, tasks: @tasks %>
+					<%= render 'group_right_panel', members: @members, group: @group, task: @task, tasks: @tasks %>
 				</div>

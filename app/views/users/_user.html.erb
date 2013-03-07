@@ -1,9 +1,10 @@
 
 						<li id="<%=user.id%>" class="ui-selectee">
-						<a href="?user_filter=<%= user.id %>">
-							<%= gravatar_for user, :size =>20 %>
-							<span class="display-User"><%= user.name %></span>
+						<div class="user-info-small">
+							<% gravatar_for user, :size =>20 %>
+							<i class="icon-user"></i>
+							<a href="?user_filter=<%= user.id %>"><%= user.name %></a>
 							<span class="gray"><%= user.institution %></span>
-						</a>
+						</div>
 						</li>
 

@@ -21,6 +21,5 @@ $(window).bind("load", function()
 	});
 
 	$('.task').click(function() { $(this).toggleClass('icon-check');  $(this).toggleClass('icon-check-empty'); });
-
 });
 

@@ -1,0 +1,43 @@
+
+					<div class="row-fluid">
+						<div class="span4">
+							<span class="title"> Members (<%= members.count %>)</span>
+						</div>
+						<div class="span8 icon-panel">
+							<i id="manage-members" class="icon-edit"></i>
+						</div>
+					</div>
+					
+					<div class="row-fluid">
+						<div class="span12">
+							<ul class="members">
+								<%= render members %>
+							</ul>
+							<%= will_paginate members, :param_name => 'members_paginate' %>
+						</div>
+					</div>
+					<hr>
+
+					<div class="row-fluid">
+						<div class="span4">
+							<span class="title"> Tasks (<%= tasks.count %>)</span>
+						</div>
+						<div class="span8 icon-panel">
+							<i id="add-group" class="icon-plus" onclick="$('#new-task').modal('show'); return false;"></i>
+						</div>
+					</div>
+					<div id="new-task" class="modal hide fade">
+						<%= render 'shared/task_form', task: task %>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span12">
+							<% if tasks.any? %>
+								<ol class="tasks">
+									<%= render :partial =>'shared/task', :collection => tasks %>
+								</ol>
+							<%= will_paginate tasks, :param_name => 'tasks_paginate' , :inner_window => 1, :outer_window => 1 %>
+							<% end %>
+						</div>
+					</div>
+

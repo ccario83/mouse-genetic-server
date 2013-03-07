@@ -452,7 +452,7 @@ margin-left: -55px;
 .users, .groups
 {
 	list-style: none;
-	margin: 15px 5px;
+	margin: 5px 5px;
 
 }
 
@@ -520,11 +520,7 @@ margin-left: -55px;
 
 
 /* microposts */
-.gravatar
-{
-	float: left;
-	margin-right: 10px;
-}
+
 
 .microposts
 {
@@ -546,6 +542,8 @@ margin-left: -55px;
 	word-wrap: break-word;
 }
 
+.content .display-User { color:#08c; }
+.content .display-Group { color:#FAA732; }
 
 .timestamp { color: #999; }
 
@@ -555,8 +553,6 @@ aside textarea
 	margin-bottom: 5px;
 }
 
-.display-User { color: #08c; }
-.display-Group { color: #FAA732; }
 
 h3 span.btn
 {
@@ -592,9 +588,213 @@ h3 span.btn
 }
 
 
+
+
+
+
+
+
+.clear-fix:after
+{
+	content: "";
+	display: block;
+	height: 0;
+	clear: both;
+}
+
+.gray { color: #ccc; }
+
+
+
+/* =========================================================== */
+/*   Shared Styles                                             */
+/* =========================================================== */
+
+/* Section titles */
+.title 
+{
+	font-size:25px;
+	width: 50%;
+	line-height: 32px;
+}
+
+/* The icon panel                                              */
+/* ----------------------------------------------------------- */
+.icon-panel 
+{
+	height: 25px;
+	line-height: 25px;
+	/*
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background: #fff;
+	border: 1px solid #ccc;
+	*/
+}
+
+.icon-panel [class^="icon-"],.icon-panel [class*=" icon-"]
+{
+	width: 22px;
+	display: inline-block;
+	text-align: center;
+	vertical-align:middle;
+}
+
+.icon-panel [class^="icon-"]:hover,.icon-panel [class*=" icon-"]:hover
+{
+	color: #08c;
+	font-size: 22px;
+}
+
+/* The group partial                                           */
+/* ----------------------------------------------------------- */
+.groups
+{
+	list-style: none;
+	margin: 10px 5px;
+}
+
+/* Customize the font-awesome group icon a bit */
+.icon-group 
+{ 
+	color: #FAA732; 
+	float: left;
+	margin-top: 2px;
+	margin-right: 10px;
+}
+a i.icon-group:hover { text-decoration: none; }
+
+/* Parent container for each group */
+.group-info-small
+{
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow:ellipsis;
+
+	display: table-cell;
+	vertical-align: bottom;
+}
+.group-info-small a{ color: #FAA732; }
+
+/* The group-info partial                                      */
+/* ----------------------------------------------------------- */
+.group-info-large #group-name
+{
+	font-size: 1.1em;
+	font-weight: bold;
+	display: block;
+	padding: 7px 0px;
+}
+
+.group-info-large #group-description
+{
+	font-size: 1.0em;
+	display: block;
+}
+
+
+/* The user partial                                            */
+/* ----------------------------------------------------------- */
+.members
+{
+	list-style: none;
+	margin: 5px 5px;
+}
+
+/* Customize the font-awesome group icon a bit */
+.icon-user
+{ 
+	color: #08c; 
+	float: left;
+	margin-top: 2px;
+	margin-right: 10px;
+}
+a i.icon-group:hover { text-decoration: none; }
+
+/* Parent container for each group */
+.user-info-small
+{
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow:ellipsis;
+
+	display: table-cell;
+	vertical-align: bottom;
+}
+.user-info-small a{ color: #08c; }
+
+/* The user-info partial                                       */
+/* ----------------------------------------------------------- */
+.user-info-large 
+{
+	margin: 2px;
+	float: left;
+	width: 100%;
+}
+#user-index div.user-info-large 
+{
+	border: solid 3px #eee;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	width: 325px;
+}
+#user-index div.user-info-large:hover { background: #eee; }
+
+.user-info-large #user-name
+{
+	font-size: 1.1em;
+	font-weight: bold;
+	display: block;
+	padding: 7px 0px;
+}
+
+.user-info-large #user-institution
+{
+	font-size: 1.0em;
+	display: block;
+	padding-bottom: 7px;
+}
+
+.user-info-large #user-email
+{
+	font-size: 1.0em;
+	display: block;
+	padding-bottom: 7px;
+}
+
+.user-info-large .gravatar
+{
+	float: left;
+	margin-top: 2px;
+	margin-right: 10px;
+	padding: 8px 12px;
+	border: solid 3px #eee;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+#user-index div.user-info-large .gravatar
+{
+	border: none;
+}
+
+.user-info-large i
+{
+	/*position:relative;
+	top: -50px;
+	left: 90%;*/
+	float:right;
+}
+
+/* The stats partial                                           */
+/* ----------------------------------------------------------- */
 .stats
 {
-	overflow: auto;	
+	overflow: auto;
+	margin: 5px;
 }
 .stats a
 {
@@ -615,23 +815,33 @@ h3 span.btn
 }
 
 
-.gray
+/* Gravatar stuff                                              */
+/* ----------------------------------------------------------- */
+.gravatar
 {
-	color: #ccc;
-}
-.clear-fix:after
-{
-	content: "";
-	display: block;
-	height: 0;
-	clear: both;
+	float: left;
+	margin-top: 2px;
+	margin-right: 10px;
 }
 
+img.gravatar
+{
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
 
+/* =========================================================== */
+/*   groups/show view styles                                   */
+/* =========================================================== */
 
+/* The group_center_panel partial                              */
+/* ----------------------------------------------------------- */
+#new-post
+{ display: none; }
 
-/* Tasks */
-
+/* The group_right_panel/task partial                          */
+/* ----------------------------------------------------------- */
 .tasks
 {
 	list-style: none;
@@ -646,36 +856,13 @@ h3 span.btn
 
 .tasks li:first-child {border-top: none;}
 
+#new-task
+{ display: none; }
+
+
+
 /* =========================================================== */
-/*   Group Page styles                                         */
+/*   users/show view styles                                    */
 /* =========================================================== */
 
-/* The show group group_panel/group-info/group partial         */
-/* ---------------------------------------------------         */
 
-.icon-group 
-{ 
-	color: #FAA732; 
-	float: left;
-	margin-right: 10px;
-}
-
-a i.icon-group:hover { text-decoration: none; }
-
-#group-name
-{
-	font-size: 1.1em;
-	font-weight: bold;
-	display: block;
-	padding-bottom: 7px;
-}
-
-#group-description
-{
-	font-size: 1.0em;
-	display: block;
-}
-
-/* The show group member_panel/task      partial               */
-/* ---------------------------------------------               */
-.checkbutton.selected { background: yellow; }

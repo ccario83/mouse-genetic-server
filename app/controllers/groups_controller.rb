@@ -43,11 +43,11 @@ class GroupsController < ApplicationController
 			puts "{"+params[:user_filter]+"}"
 			@microposts = @microposts.where(:creator_id => params[:user_filter])
 		end
-		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 3)
+		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 7)
 
-		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 3)
+		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 7)
 
-		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 3)
+		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 7)
 	end
 
 

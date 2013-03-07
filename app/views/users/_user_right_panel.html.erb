@@ -1,0 +1,45 @@
+
+
+					<div class="row-fluid">
+						<div class="span4">
+							<span class="title"> Groups (<%= groups.count %>)</span>
+						</div>
+						<div class="span8 icon-panel">
+							<i id="manage-groups" class="icon-edit"></i>
+						</div>
+					</div>
+					
+					<div class="row-fluid">
+						<div class="span12">
+							<ul class="users">
+								<%= render groups %>
+							</ul>
+							<%= will_paginate groups, :param_name => 'groups_paginate' %>
+						</div>
+					</div>
+					<hr>
+
+					<div class="row-fluid">
+						<div class="span4">
+							<span class="title"> Microposts (<%= microposts.count %>)</span>
+						</div>
+						<div class="span8 icon-panel">
+							<i id="add-micropost" class="icon-plus-sign"></i>
+							<i id="add-micropost" class="icon-filter"></i>
+						</div>
+					</div>
+					<div id="new-micropost" class="modal hide fade">
+						<%= render 'shared/micropost_form', micropost: micropost %>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span12">
+						<% if microposts.any? %>
+							<ol class="microposts">
+								<%= render :partial =>'shared/micropost', :collection => microposts %>
+							</ol>
+						<%= will_paginate microposts, :param_name => 'microposts_paginate' , :inner_window => 1, :outer_window => 1 %>
+						<% end %>
+						</div>
+					</div>
+

@@ -1,10 +1,11 @@
 
 						<li id="<%=group.id%>" class="ui-selectee">
-						
+						<div class="group-info-small">
 							<i class="icon-group"></i>
-							<a href="/groups/<%= group.id %>">						
-								<span class="display-Group"> <%= group.name %></span>
-							</a>
-							<span class="gray">by <%= group.creator.name %></span>
+							<a href="/groups/<%= group.id %>"><%= group.name %></a>
+							<span class="gray"> by <%= group.creator.name %></span>
+						</div>
 						</li>
+
+
 

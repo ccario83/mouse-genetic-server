@@ -6,7 +6,7 @@ RorWebsite::Application.routes.draw do
   resources :groups, :only => [:new, :create, :show, :destroy]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
-  resources :tasks, :only => [:create, :destroy]
+  resources :tasks, :only => [:create, :destroy, :check]
 
   # Redirect the root url to the uwf page
   root :to => 'static_pages#home'

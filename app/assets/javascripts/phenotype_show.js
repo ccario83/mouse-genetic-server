@@ -60,7 +60,7 @@ function lookup(mpath_id_list, anat_id_list, selected_strains, youngest, oldest,
 		url: '/phenotypes/query',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		data: {mpath_id_list:mpath_id_list, anat_id_list:anat_id_list, selected_strains:selected_strains, youngest:youngest, oldest:oldest, code:code, sex:sex},
-		dataType:'json',
+		dataType: 'json',
 		success: function(response) {process_data(response)},
 		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
 	});

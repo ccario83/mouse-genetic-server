@@ -6,8 +6,8 @@ class User < ActiveRecord::Base
 	has_many :recieved_posts, :class_name => 'Micropost', :as => :recipient # A user can have microposts through micropost recipients
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id'
 	has_and_belongs_to_many :groups
-	has_many :tasks, :foreign_key => 'creator_id'
-	has_many :tasks, :foreign_key => 'assignee_id'
+	has_many :created_tasks, :class_name => 'Task', :foreign_key => 'creator_id'
+	has_many :assigned_tasks, :class_name => 'Task', :foreign_key => 'assignee_id'
 
 	before_save { |user| user.email = user.email.downcase }
 	before_save :create_remember_token

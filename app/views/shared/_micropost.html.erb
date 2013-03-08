@@ -10,7 +10,7 @@
 											<div>
 										</div>
 										<div class="display-<%= micropost.recipient_type %>">
-												<% if micropost.recipient == current_user %> You <% else %><%= micropost.creator.name %><% end %>
+												<% if micropost.creator == current_user %> You <% else %><%= micropost.creator.name %><% end %>
 												 to 
 												<% if micropost.recipient == current_user %> You <% else %><%= micropost.recipient.name %><% end %>
 										</div>

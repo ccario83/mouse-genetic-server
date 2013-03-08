@@ -4,14 +4,20 @@
 										<div class="row-fluid">
 											
 											<div class="row-fluid span1">
-												<i id="<%= task.id %>" class="task icon-check-empty icon-2x"></i>
+												<i id="<%= task.id %>" class="task <% if task.completed %> icon-check <% else %> icon-check-empty <% end %> icon-2x <% if !(task.creator == current_user || task.assignee == current_user) %> gray <% end %>"></i>
 											</div>	
 											
 											<div class="content span11">
 												<div class="row-fluid">
 													<%= task.description %>
 												</div>
+												<div class="display-User">
+													<% if task.creator == current_user %> You <% else %><%= task.creator.name %><% end %>
+													 to 
+													<% if task.assignee == current_user %> You <% else %><%= task.assignee.name %><% end %>
+												</div>
 												<div class="row-fluid timestamp">
+												due in <%= distance_of_time_in_words_to_now(task.due_date) %>
 													<span class="text-links">
 													<% if current_user?(task.creator) %>
 															<%= link_to "[Delete]", task, :data => { :method => :delete, :confirm => "You sure?", :title => task.description } %>
@@ -23,3 +29,4 @@
 										</div>
 									</div>
 								</li>
+

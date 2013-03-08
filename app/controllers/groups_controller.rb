@@ -36,7 +36,7 @@ class GroupsController < ApplicationController
 	def show
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:recipient_id => @group.id, :recipient_type => 'Group'})
-		@task ||= current_user.tasks.new({:group_id => @group.id, })
+		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
 		
 		@microposts = @group.microposts
 		if params.has_key?(:user_filter)

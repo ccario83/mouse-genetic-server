@@ -9,7 +9,7 @@ class MicropostsController < ApplicationController
 			flash[:success] = "The micropost was successfully created."
 			redirect_to :back
 		else
-			flash[:error] = "The microposts creation failed (did it contain any content?)"
+			flash[:error] = "A micropost should contain content."
 			redirect_to :back
 		end
 	end

@@ -498,7 +498,7 @@ margin-left: -55px;
 .user-management a:hover
 {
 	text-decoration: none;
-	color: #08c;
+	color: #FFB800;
 }
 
 .user-management a:first-child
@@ -531,10 +531,10 @@ margin-left: -55px;
 .microposts li
 {
 	padding: 10px 0;
-	border-top: 1px dashed #ddd;
+	border-bottom: 1px dashed #ddd;
 }
 
-.microposts li:first-child {border-top: none;}
+.microposts li:first-child {border-top: 1px dashed #ddd;}*/
 
 .content 
 {
@@ -542,8 +542,8 @@ margin-left: -55px;
 	word-wrap: break-word;
 }
 
-.content .display-User { color:#08c; }
-.content .display-Group { color:#FAA732; }
+.content .display-User { color:#08C; }
+.content .display-Group { color:#faa732; }
 
 .timestamp { color: #999; }
 
@@ -567,26 +567,30 @@ h3 span.btn
 {
 	overflow: auto;	
 }
-.text-links a
+.text-links a, .truncate_more_link
 {
-	/*padding: 5px 5px;
+	/*padding: 3px 3px;
 	border-radius: 5px;
-	border: 1px solid #ddd;*/
+	border: 1px solid #ddd;
 	border-left: 1px solid #eee;
-	color: #888;
+	background: #fff;	
+	*/
+	color: #735E3F;
+
 }
-.text-links a:hover
+.text-links a:hover, .truncate_more_link:hover
 {
 	text-decoration: none;
-	color: #08C;
+	color: #B39362;
 	background: #FFF;
 }
+/*
 .text-links a:first-child
 {
 	padding-left: 0;
 	border: 0;
 }
-
+*/
 
 
 
@@ -610,6 +614,19 @@ h3 span.btn
 /*   Shared Styles                                             */
 /* =========================================================== */
 
+/* Delete Icons */
+.delete { color: #aaa; }
+.delete:hover { color: #E62C29; text-decoration: none; }
+.delete i
+{
+	/*position:relative;
+	top: -50px;
+	left: 90%;*/
+	float:right;
+	font-size: 16px;
+	padding-right: 5px;
+}
+
 /* Section titles */
 .title 
 {
@@ -626,12 +643,12 @@ h3 span.btn
 	line-height: 25px;
 	width: 75px;
 	
-	/*
-	border: 1px solid #f2f2f2;
+	
+	/*border: 1px solid #f2f2f2;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	background: #fcfcfc;
-	*/
+	background: #fcfcfc;*/
+	
 	
 }
 
@@ -680,6 +697,11 @@ a i.icon-group:hover { text-decoration: none; }
 	vertical-align: bottom;
 }
 .group-info-small a{ color: #FAA732; }
+.group-info-small a:hover
+{
+	color: #FFDAA6;
+	text-decoration: none;
+}
 
 /* The group-info partial                                      */
 /* ----------------------------------------------------------- */
@@ -728,6 +750,11 @@ a i.icon-group:hover { text-decoration: none; }
 	vertical-align: bottom;
 }
 .user-info-small a{ color: #08c; }
+.user-info-small a:hover 
+{
+	color: #67BCE5;
+	text-decoration: none;
+}
 
 /* The user-info partial                                       */
 /* ----------------------------------------------------------- */
@@ -785,13 +812,6 @@ a i.icon-group:hover { text-decoration: none; }
 	border: none;
 }
 
-.user-info-large i
-{
-	/*position:relative;
-	top: -50px;
-	left: 90%;*/
-	float:right;
-}
 
 /* The stats partial                                           */
 /* ----------------------------------------------------------- */
@@ -835,6 +855,18 @@ img.gravatar
 	border-radius: 6px;
 }
 
+
+/* =========================================================== */
+/*   groups/show view styles                                   */
+/* =========================================================== */
+
+/* The shared/multi_select partial                             */
+/* ----------------------------------------------------------- */
+.selectable li .user-info-small a { pointer-events: none; } 
+
+
+
+
 /* =========================================================== */
 /*   groups/show view styles                                   */
 /* =========================================================== */
@@ -842,7 +874,7 @@ img.gravatar
 /* The group_center_panel partial                              */
 /* ----------------------------------------------------------- */
 #new-post
-{ display: none; }
+{ }
 
 /* The group_right_panel/task partial                          */
 /* ----------------------------------------------------------- */
@@ -855,13 +887,16 @@ img.gravatar
 .tasks li
 {
 	padding: 10px 0;
-	border-top: 1px dashed #ddd;
+	margin-bottom: 3px;
+	/*background: #fcfcfc;*/
+	border-bottom: 1px dashed #ddd;
+	border-radius: 5px;
 }
 
-.tasks li:first-child {border-top: none;}
+.tasks li:first-child {border-top: 1px dashed #ddd;}
 
 #new-task
-{ display: none; }
+{ }
 
 
 

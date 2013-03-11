@@ -68,9 +68,14 @@ end
 
 
 def make_tasks
-	users = User.all(:limit => 2)
-	3.times do
-		users.each { |user| user.tasks.create!(:description => Faker::Lorem.sentence(1), :group_id => 1) }
-	end
+	Task.create!(:creator_id => 1, :description => 'Please send me the latest micropost page specs', :group_id => 1, :assignee_id => 2, :due_date => Time.now+rand(10000000)
+)
+	Task.create!(:creator_id => 1, :description => 'Please compute the latest data', :group_id => 1, :assignee_id => 3, :due_date => Time.now+rand(10000000)
+)
+	Task.create!(:creator_id => 2, :description => 'Finish micropost pages', :group_id => 1, :assignee_id => 1, :due_date => Time.now+rand(10000000)
+)
+	Task.create!(:creator_id => 3, :description => 'Can I have the latest data', :group_id => 1, :assignee_id => 2, :due_date => Time.now+rand(10000000)
+)
 end
+
 

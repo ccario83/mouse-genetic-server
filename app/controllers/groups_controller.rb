@@ -4,7 +4,7 @@ class GroupsController < ApplicationController
 	def new
 		@group = Group.new
 		@users = User.all
-		@preselected = []
+		@preselected_ids = []
 	end
 
 	def create
@@ -34,6 +34,7 @@ class GroupsController < ApplicationController
 	end
 	
 	def show
+		@users = User.all
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:recipient_id => @group.id, :recipient_type => 'Group'})
 		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
@@ -48,9 +49,9 @@ class GroupsController < ApplicationController
 		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 7)
 
 		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 7)
+		@member_ids = @members.map(&:id)
 	end
-
-
+	
 	private
 		def correct_user
 			@group = Group.find(params[:id])

@@ -6,15 +6,22 @@ class TasksController < ApplicationController
 	def create
 		@creator = User.find(params[:task][:creator_id].to_i)
 		@group = Group.find(params[:task][:group_id].to_i)
-		@assignee = User.find(params[:task][:assignee_id].to_i)
-
+		@assignee_id = params[:task][:assignee_id].to_i
+		
+		if !(@assignee_id == 0)
+			@assignee = User.find(params[:task][:assignee_id].to_i)
+		else
+			flash[:error] = "A task must have an assignee."
+			redirect_to :back
+			return
+		end
+		
 		@task = Task.new({:creator => @creator, :group => @group, :assignee => @assignee, :description => params[:task][:description], :due_date => params[:task][:due_date]})
 		if @task.save
 			flash[:success] = "The task was successfully created."
 			redirect_to :back
 		else
-			flash[:error] = "The task creation failed (did you submit a blank field?)"
-			puts @task.errors.messages
+			flash[:error] = "A task must have a description and due date entered."
 			redirect_to :back
 		end
 	end

@@ -1,8 +1,16 @@
 
-					<%= simple_form_for(micropost, :html => { :class => '' } ) do |f| %>
-						<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'margin-bottom:0px; width:65%;' }, :required => false %>
-						<%= f.button :submit, 'Post', :class => 'btn btn-primary'%>
-						<%= f.input :recipient_id, :as => :hidden %>
-						<%= f.input :recipient_type, :as => :hidden %>
-					<% end %>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>New Micropost</h3>
+			</div>
+			<div class="modal-body">
+				<%= simple_form_for(micropost, :html => { :class => '' } ) do |f| %>
+					<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:98%%; margin:0px; padding:5px 5px;' }, :required => false %>
+					<%= f.input :recipient_id, :as => :hidden %>
+					<%= f.input :recipient_type, :as => :hidden %>
+				<div class="modal-footer">
+					<input type="submit" class="btn btn-primary" value="Post">
+				</div>
+				<% end %>
+			</div>
 

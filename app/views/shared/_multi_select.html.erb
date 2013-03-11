@@ -1,7 +1,12 @@
 
+						<div class="control-group optional">
+							<label class="text optional control-label">Select Members</label>
 							<div id="page_container" class="controls">
 								<div class="page_navigation pagination"></div>
-								<ul id="selectable-<%= id %>" class="selectable users content" style="display:none;">
+								<ul id="selectable-<%= type %>" class="selectable <%= type %> content" style="display:none;">
 									<%= render items %>
 								</ul>
 							</div>
+							<input id="preselected-<%= type %>" type="hidden" value="<%= preselected_ids %>">
+						</div>
+

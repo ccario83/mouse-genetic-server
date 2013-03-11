@@ -1,0 +1,15 @@
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Select Group Members</h3>
+			</div>
+			<div class="modal-body">
+			<%= simple_form_for(:modified_member, :html => { :id => 'group_management_form', :class => 'form-horizontal', :style => 'margin:0px; width: 100%;' } ) do |f| %>
+				<%= render 'shared/multi_select', items: users, type: type, preselected_ids: preselected_ids %>
+				<%= f.input :users, :as => :hidden %>
+
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Modify">
+			</div>
+			<% end %>
+			</div>

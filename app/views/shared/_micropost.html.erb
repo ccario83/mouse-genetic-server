@@ -6,6 +6,9 @@
 												<%= gravatar_for(micropost.creator) %>
 											</div>
 											<div class="content span11">
+												<% if current_user?(micropost.creator) %>
+												<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" data-title="Eaque expedita corrupti repellendus perspiciatis accusamus." class="delete"><i class="icon-remove"></i></a>
+												<% end %>
 												<%= micropost.content %>
 											<div>
 										</div>
@@ -16,11 +19,6 @@
 										</div>
 										<div class="timestamp">
 												<%= time_ago_in_words(micropost.created_at) %> ago
-												<span class="text-links">
-												<% if current_user?(micropost.creator) %>
-														<%= link_to "[Delete]", micropost, :data => { :method => :delete, :confirm => "You sure?", :title => micropost.content } %>
-												<% end %>
-												</span>
 										</div>
 										
 										

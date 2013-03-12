@@ -4,10 +4,10 @@
 				<h3>Select Group Members</h3>
 			</div>
 			<div class="modal-body">
-			<%= simple_form_for(:modified_member, :html => { :id => 'group_management_form', :class => 'form-horizontal', :style => 'margin:0px; width: 100%;' } ) do |f| %>
-				<%= render 'shared/multi_select', items: users, type: type, preselected_ids: preselected_ids %>
+			<%= simple_form_for(:modified, :url => 'modify_members', :html => { :class => 'form-horizontal', :style => 'margin:0px; width: 100%;' } ) do |f| %>
+				<%= render 'shared/multi_select', items: users, type: type, preselected_ids: preselected_ids, show_current_user: false %>
 				<%= f.input :users, :as => :hidden %>
-
+				<%= f.input :group_id, :as => :hidden, :input_html => { :value => group_id }%>
 			<div class="modal-footer">
 				<input type="submit" class="btn btn-primary" value="Modify">
 			</div>

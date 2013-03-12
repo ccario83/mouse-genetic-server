@@ -14,7 +14,7 @@
 					<div class="row-fluid">
 						<div class="span12">
 							<ul class="users">
-								<%= render groups %>
+								<%= render groups, current_user: current_user %>
 							</ul>
 							<%= will_paginate groups, :param_name => 'groups_paginate' %>
 						</div>

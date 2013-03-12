@@ -2,16 +2,23 @@ require 'will_paginate/array'
 
 class User < ActiveRecord::Base
 	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation
+	before_save { |user| user.email = user.email.downcase }
+	before_save :create_remember_token
 	has_secure_password
+	
+	# Micropost relations
 	has_many :recieved_posts, :class_name => 'Micropost', :as => :recipient # A user can have microposts through micropost recipients
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id'
-	has_and_belongs_to_many :groups
+
+	# Group/membership relations
+	has_many :memberships
+	has_many :groups, :through => :memberships
+
+	# Task relations
 	has_many :created_tasks, :class_name => 'Task', :foreign_key => 'creator_id'
 	has_many :assigned_tasks, :class_name => 'Task', :foreign_key => 'assignee_id'
 
-	before_save { |user| user.email = user.email.downcase }
-	before_save :create_remember_token
-
+	# Validations
 	validates :first_name,	:presence => true, :length => { :maximum => 50 }
 	validates :last_name, 	:presence => true, :length => { :maximum => 50 }
 	validates :institution,	:presence => true, :length => { :maximum => 50 }
@@ -41,6 +48,12 @@ class User < ActiveRecord::Base
 		microposts = self.recieved_posts + self.groups.map(&:microposts).flatten
 		microposts.sort_by(&:created_at)
 		return microposts
+	end
+	
+	def confirm_membership(group)
+		if group.is_member?(user)
+			self.memberships.where(:group_id => group.id)[0].update_attributes(:confirmed => true)
+		end
 	end
 
 	private

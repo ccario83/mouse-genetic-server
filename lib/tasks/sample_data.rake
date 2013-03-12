@@ -39,16 +39,18 @@ def make_users
 end
 
 def make_groups
-	users = User.all(:limit => 6)
-	10.times do |n|
+	# A group created by Clint, Annerose and person 3 are members, tasks will appear here
+	Group.create!(:creator => User.find(1), :name => 'Owned test group 1', :description => 'To make sure that owned group functions work', :users => users = User.all(:limit => 5))
+
+	# Another group created by Clint
+	Group.create!(:creator => User.find(1), :name => 'Owned test group 2', :description => 'Another owned group with no tasks', :users => users = User.all(:limit => 5))
+	
+	# 15 more groups with random creators and members
+	15.times do |n|
 		name		= Faker::Company.name[0..24]
 		description = Faker::Lorem.sentence(1)
-		Group.create!(:creator => User.find([*1..6].sample), :name => name, :description => description, :users => users)
+		Group.create!(:creator => User.all.sample(1)[0], :name => name, :description => description, :users => User.all.sample(6))
 	end
-	# A group created by Clint
-	name		= Faker::Company.name[0..24]
-	description = Faker::Lorem.sentence(1)
-	Group.create!(:creator => User.find(1), :name => name, :description => description, :users => User.all)
 end
 
 

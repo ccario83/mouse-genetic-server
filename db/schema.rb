@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130307204956) do
+ActiveRecord::Schema.define(:version => 20130312192904) do
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -21,13 +21,13 @@ ActiveRecord::Schema.define(:version => 20130307204956) do
     t.datetime "updated_at",  :null => false
   end
 
-  create_table "groups_users", :id => false, :force => true do |t|
+  create_table "memberships", :force => true do |t|
     t.integer "group_id"
     t.integer "user_id"
     t.boolean "confirmed", :default => false
   end
 
-  add_index "groups_users", ["group_id", "user_id"], :name => "index_groups_users_on_group_id_and_user_id", :unique => true
+  add_index "memberships", ["group_id", "user_id"], :name => "index_groups_users_on_group_id_and_user_id", :unique => true
 
   create_table "microposts", :force => true do |t|
     t.string   "content"

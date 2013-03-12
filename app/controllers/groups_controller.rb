@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
 	before_filter :correct_user, 	:only => [:show]
+	before_filter :not_suspicious?, :only => [:modify_members] # Verify hidden fields weren't altered
 
 	def new
 		@group = Group.new
@@ -8,24 +9,36 @@ class GroupsController < ApplicationController
 	end
 
 	def create
-		# Get a list of requested group members (users) if it isn't empty (a group will always have at least one member -- the creator)
-		if params[:group][:users]=="[]" # The odd way that the form returns an emtpy list
-			params[:group][:users] = []
-		else
-			params[:group][:users] = User.find(params[:group][:users].split(',').map(&:to_i))
+		@user_ids = []
+		@users = []
+		if not (params[:group][:users]=="[]")
+			@user_ids = params[:group][:users].split(',').map(&:to_i)
+			@user_ids.delete(0) if @user_ids.include?(0)
 		end
-				
-		#Set the group creator and make them a group member
-		params[:group][:creator] = User.find(current_user.id)
-		params[:group][:users].prepend(params[:group][:creator]) if not params[:group][:users].include?params[:group][:creator]
+
+		if @user_ids.empty? # No users were selected and we don't allow groups with only the creator as a member
+			flash[:error] = "You cannot create group with no non-creator members."
+			redirect_to :back and return
+		else
+			@users = User.find(@user_ids)
+		end
+		puts @users
+		@creator = current_user
+		# Set the group creator and make them a group member (this are not passed in params[:group][:users] if the show_current_user flag is false in the user form
+		# Since a user MUST be a member of their own group, this assures they are kept in any case
+		@users.prepend(@creator) if not @users.include?@creator
 
 		# Create the new group
-		@group = Group.new(params[:group])
+		@group = Groups.new(:creator_id => @creator.id, :name => params[:group][:name], :description => params[:group][:description], :users => @users)
 		if @group.save
 			flash[:notice] = "The new group was successfully created."
-			redirect_to @group # Same as render 'show' with group_id (POST /group/show/id)
+			# Auto confirm the creator to his/her own group
+			current_user.confirm_membership(@group)
+			redirect_to @group and return # Same as render 'show' with group_id (POST /group/show/id)
 		else
+			puts @group.errors.messages
 			# Regenerate the user list
+			flash[:error] = "Group creation failed, please check the form for errors."
 			@users = User.all
 			@preselected = @group.users.map(&:id).to_s
 			@group.users = []
@@ -52,12 +65,49 @@ class GroupsController < ApplicationController
 		@member_ids = @members.map(&:id)
 	end
 	
+	def modify_members
+		@group = Group.find(params[:modified][:group_id].to_i)
+	
+		@modified_user_ids = params[:modified][:users].split(',').map(&:to_i)
+		@modified_user_ids.delete(0) if @modified_user_ids.include?(0)
+		@modified_users = []
+		
+		if @modified_user_ids.empty? # All non-owner users were removed. This prevents letting the user from making a group that only he/she belongs to
+			flash[:error] = "You cannot remove everyone from a group. Delete the group instead."
+			redirect_to :back and return
+		else
+			@modified_users = User.find(@modified_user_ids)
+		end
+				
+		# Set the group creator and make them a group member (this are not passed in params[:modified][:users] if the show_current_user flag is false in the form
+		# Since a user MUST be a member of their own group, this assures they are kept in any case
+		@modified_users.prepend(@group.creator) if not @modified_users.include?@group.creator
+		
+		if @group.update_attributes(:users => @modified_users)
+			flash[:notice] = "The group's members were successfully modified."
+			redirect_to :back # Same as render 'show' with group_id (POST /group/show/id)
+		else
+			flash[:error] = "There was an error modifying the group's members"
+			redirect_to @group
+		end
+	end
+	
+	
 	private
 		def correct_user
 			@group = Group.find(params[:id])
 			if !(@group.members.include?current_user)
 				flash[:error] = "You don't appear to be a member of that group."
 				redirect_to current_user
+			end
+		end
+		
+		def not_suspicious?
+			@group = Group.find(params[:modified][:group_id].to_i)
+			if not (@group.creator == current_user)
+				flash[:error] = "You shouldn't play with hidden fields..."
+				redirect_to :back
+				return
 			end
 		end
 end

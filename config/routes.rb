@@ -3,7 +3,7 @@ require 'sidekiq/web'
 RorWebsite::Application.routes.draw do
 
   resources :users
-  resources :groups, :only => [:new, :create, :show, :destroy]
+  resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
   resources :tasks, :only => [:create, :destroy, :check]

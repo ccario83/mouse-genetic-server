@@ -1,11 +1,15 @@
-
+ 					<% if group.confirmed_member?(current_user) %>
 						<li id="<%=group.id%>" class="ui-selectee">
 						<div class="group-info-small">
+							<% if current_user == group.creator %>
+							<i class="icon-star-empty"></i>
+							<% else %>	
 							<i class="icon-group"></i>
+							<% end %>
 							<a href="/groups/<%= group.id %>"><%= group.name %></a>
-							<span class="gray"> by <%= group.creator.name %></span>
+							<span class="gray"> by <% if current_user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
 						</div>
 						</li>
-
+					<% end %>
 
 

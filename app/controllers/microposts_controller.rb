@@ -1,7 +1,7 @@
 class MicropostsController < ApplicationController
 	before_filter :signed_in_user
 	before_filter :correct_user, :only => :destroy
-	before_filter :suspicious?, :only => :create # Verify hidden fields weren't altered
+	before_filter :not_suspicious?, :only => [:create] # Verify hidden fields weren't altered
 
 	def create
 		#@micropost = current_user.authored_posts.build(params[:micropost])
@@ -32,7 +32,7 @@ class MicropostsController < ApplicationController
 			end
 		end
 		
-		def suspicious?
+		def not_suspicious?
 			@micropost = current_user.authored_posts.build(params[:micropost])
 			if @micropost.recipient_type == 'Group'
 				if !(@micropost.creator.groups.map(&:id).include?(@micropost.recipient_id))

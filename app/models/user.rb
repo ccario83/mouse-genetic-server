@@ -51,9 +51,13 @@ class User < ActiveRecord::Base
 	end
 	
 	def confirm_membership(group)
-		if group.is_member?(user)
+		if group.is_member?(self)
 			self.memberships.where(:group_id => group.id)[0].update_attributes(:confirmed => true)
 		end
+	end
+
+	def confirmed_groups
+		Group.find(self.memberships.where(:confirmed => true).map(&:group_id))
 	end
 
 	private

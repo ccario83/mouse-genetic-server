@@ -2,21 +2,23 @@
 
 					<div class="row-fluid">
 						<div class="span5">
-							<span class="title"> Groups (<%= groups.count %>)</span>
+							<span class="title"> Groups (<%= confirmed_groups.count %>)</span>
 						</div>
 						<div class="span5 icon-panel">
 							<i id="add-group" class="icon-plus"></i>
-							<i id="manage-groups" class="icon-edit"></i>
+							<i class="icon-edit" onclick="$('#manage-members').modal('show'); return false;"></i>
 						</div>
-
+						<div id="manage-members" class="modal hide">
+							<%= render 'group_management_form', groups: @all_groups, type: 'groups' %>
+						</div>
 					</div>
 					
 					<div class="row-fluid">
 						<div class="span12">
 							<ul class="users">
-								<%= render groups, current_user: current_user %>
+								<%= render confirmed_groups, current_user: current_user %>
 							</ul>
-							<%= will_paginate groups, :param_name => 'groups_paginate' %>
+							<%= will_paginate confirmed_groups, :param_name => 'confirmed_groups_paginate' %>
 						</div>
 					</div>
 					<hr>

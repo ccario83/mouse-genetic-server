@@ -29,7 +29,8 @@ class GroupsController < ApplicationController
 		@users.prepend(@creator) if not @users.include?@creator
 
 		# Create the new group
-		@group = Groups.new(:creator_id => @creator.id, :name => params[:group][:name], :description => params[:group][:description], :users => @users)
+		@group = Group.create!(:creator => @creator, :name => params[:group][:name], :description => params[:group][:description])
+		@group.users << @users
 		if @group.save
 			flash[:notice] = "The new group was successfully created."
 			# Auto confirm the creator to his/her own group

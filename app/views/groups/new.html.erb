@@ -13,7 +13,7 @@
 					<%= simple_form_for(@group, :html => { :class => 'form-horizontal' } ) do |f| %>
 						<%= f.input :name, :label => 'Name', :required => false %>
 						<%= f.input :description, :label => 'Description', :required => false, :input_html => { :rows => 5 } %>
-						<%= render 'shared/multi_select', items: @users, type: 'users', preselected_ids: @preselected_ids %>
+						<%= render 'shared/multi_select', items: @users, type: 'users', preselected_ids: @preselected_ids, show_current_user: false %>
 						<%= f.input :users, :as => :hidden %>
 						<%= f.button :wrapped, 'Create' %>
 					<% end %>

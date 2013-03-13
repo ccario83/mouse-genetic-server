@@ -25,7 +25,7 @@ class Group < ActiveRecord::Base
 	end
 	
 	def is_member?(user)
-		self.memberships.include?(user)
+		self.users.include?(user)
 	end
 	
 	def confirmed_member?(user)

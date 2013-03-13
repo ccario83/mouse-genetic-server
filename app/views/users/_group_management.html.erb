@@ -1,0 +1,33 @@
+ 					
+						<li id="<%=group.id%>" class="group-management-panel">
+						<div class="group-info-small" style="">
+						<% if current_user == group.creator %>
+							<i class="icon-star-empty"></i>	
+						<% elsif group.confirmed_member?(current_user) %>
+							<i class="icon-group"></i>
+						<% else %> 
+							<i class="icon-group faded"></i>
+						<% end %>
+							<a href="/groups/<%= group.id %>"><%= group.name %></a>
+							<span class="gray"> by <% if current_user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
+						</div>
+						
+						<div class="icon-panel">
+						<% if not group.confirmed_member?(current_user) %>
+							<i class="icon-thumbs-up"></i>
+							<i class="icon-thumbs-down"></i>
+							<i class="icon-signout disabled"></i>
+						<% else %>
+							<i class="icon-thumbs-up disabled"></i>
+							<i class="icon-thumbs-down disabled"></i>
+							<i class="icon-signout"></i>
+						<% end %>
+						<% if current_user == group.creator %>
+							<i class="icon-remove"></i>
+						<% else %>
+							<i class="icon-remove disabled"></i>
+						<% end %>
+						</div>
+						</li>
+
+

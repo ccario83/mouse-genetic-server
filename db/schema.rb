@@ -46,6 +46,25 @@ ActiveRecord::Schema.define(:version => 20130312192904) do
     t.datetime "updated_at",    :null => false
   end
 
+  create_table "sequencers", :force => true do |t|
+    t.string   "name"
+    t.string   "address"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.string   "description"
+    t.integer  "owner"
+    t.string   "website"
+    t.string   "type"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "resource_type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
   create_table "tasks", :force => true do |t|
     t.string   "description"
     t.integer  "group_id"

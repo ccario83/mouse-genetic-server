@@ -11,7 +11,8 @@ class UsersController < ApplicationController
 		@user = User.find(params[:id])
 		@microposts = @user.all_recieved_posts.paginate(:page => params[:microposts_paginate], :per_page => 5)
 		@micropost = current_user.authored_posts.new
-		@groups = @user.groups.paginate(:page => params[:groups_paginate], :per_page => 5)
+		@all_groups = @user.groups
+		@confirmed_groups = @user.confirmed_groups.paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 	end
 
 	def new

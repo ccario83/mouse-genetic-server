@@ -7,11 +7,11 @@
 			
 				<div id="page_container" class="controls">
 					<div class="page_navigation pagination"></div>
-					<ul id="managed-<%= type %>" class="<%= type %> content" style="display:none;">
+					<table id="managed-<%= type %>" class="<%= type %> content" style="display:none;">
 					<% for group in groups do %>
 						<%= render :partial => 'group_management', :locals => { :group => group } %>
 					<% end %>
-					</ul>
+					</table>
 				</div>
 				
 				<div class="modal-footer" style="padding: 10px;">

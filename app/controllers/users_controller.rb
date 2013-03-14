@@ -3,9 +3,11 @@ class UsersController < ApplicationController
 	before_filter :correct_user, 	:only => [:edit, :update]
 	before_filter :admin_user, 		:only => :destroy
 	
+
 	def index
 		@users = User.paginate(:page => params[:page], :per_page => 28)
 	end
+
 
 	def show
 		@user = User.find(params[:id])
@@ -15,9 +17,11 @@ class UsersController < ApplicationController
 		@confirmed_groups = @user.confirmed_groups.paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 	end
 
+
 	def new
 		@user = User.new
 	end
+
 
 	def create
 		@user = User.new(params[:user])
@@ -30,8 +34,10 @@ class UsersController < ApplicationController
 		end
 	end
 
+
 	def edit
 	end
+
 
 	def update
 		if @user.update_attributes(params[:user])
@@ -43,12 +49,74 @@ class UsersController < ApplicationController
 		end
 	end
 	
+
 	def destroy
 		User.find(params[:id]).destroy
 		flash[:notice] = "User deleted"
 		redirect_to :back
 	end
 
+
+	# AJAX handlers for group-management clicks
+	def accept_group
+		@id = params[:id].to_i
+		@group = Group.find(@id)
+		
+		# Verify the user has permissions to do this
+		if (not current_user.is_member?(@group)) || (current_user.confirmed_member?(@group))
+			flash[:error] = "Nice try..."
+			redirect_to :back
+		else
+			#current_user.confirm_membership(@group)
+			# Return the data to the client so jQuery can update page
+			render :json => { :type => 'accept', :id => @id }.to_json
+		end
+	end
+	
+	def decline_group
+		@id = params[:id].to_i
+		@group = Group.find(@id)
+		
+		# Verify the user has permissions to do this
+		if (not current_user.is_member?(@group)) || (current_user.confirmed_member?(@group))
+			flash[:error] = "Nice try..."
+			redirect_to :back
+		else
+			# current_user.delete_membership(@group)
+			# Return the data to the client so jQuery can update page
+			render :json => { :type => 'decline', :id => @id }.to_json
+		end
+	end
+	
+	def leave_group
+		@id = params[:id].to_i
+		@group = Group.find(@id)
+		
+		# Verify the user has permissions to do this
+		if not current_user.is_member?(@group)
+			flash[:error] = "Nice try..."
+			redirect_to :back
+		else
+			# current_user.delete_membership(@group)
+			# Return the data to the client so jQuery can update page
+			render :json => { :type => 'leave', :id => @id }.to_json
+		end
+	end
+	
+	def delete_group
+		@id = params[:id].to_i
+		@group = Group.find(@id)
+		
+		# Verify the user has permissions to do this
+		if @group.creator != current_user
+			flash[:error] = "Nice try..."
+			redirect_to :back
+		else
+			# @group.delete
+			# Return the data to the client so jQuery can update page
+			render :json => { :type => 'delete', :id => @id }.to_json
+		end
+	end
 
 	private
 		def correct_user

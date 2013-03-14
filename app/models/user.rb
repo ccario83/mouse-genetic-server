@@ -59,6 +59,15 @@ class User < ActiveRecord::Base
 	def confirmed_groups
 		Group.find(self.memberships.where(:confirmed => true).map(&:group_id))
 	end
+	
+	def is_member?(group)
+		group.users.include?(self)
+	end
+	
+	def confirmed_member?(group)
+		@confirmation = group.memberships.select(:confirmed).where(:user_id => self.id)[0]
+		return (defined?(@confirmation.confirmed).nil?)? false : @confirmation.confirmed
+	end
 
 	private
 		def create_remember_token

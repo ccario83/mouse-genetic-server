@@ -670,6 +670,7 @@ h3 span.btn
 .icon-panel i.disabled { color: #eee; }
 
 .icon-panel i.icon-remove:hover { color: red; }
+.icon-panel i.disabled.icon-remove:hover { color: #eee; }
 /* The group partial                                           */
 /* ----------------------------------------------------------- */
 .groups
@@ -907,19 +908,26 @@ img.gravatar
 /* =========================================================== */
 /*   users/show view styles                                    */
 /* =========================================================== */
-.group-management-panel 
+tr.group-management-panel
 {
 	height: 30px;
 	overflow:hidden;
+	border-bottom: 1px dashed #eee;
 }
-.group-management-panel div.group-info-small
+tr.group-management-panel:last-child
 {
-	float:left; 
-	width:70%;
+	height: 30px;
+	overflow:hidden;
+	border-bottom: none;
 }
-.group-management-panel div.icon-panel
+
+
+.group-management-panel td.group-info-small
 {
-	float:right; 
-	width:20%;
+	width:80%;
 }
-.group-management-panel div.icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }
+.group-management-panel td.icon-panel
+{
+	width:15%;
+}
+.group-management-panel td.icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }

@@ -3,6 +3,7 @@ class MicropostsController < ApplicationController
 	before_filter :correct_user, :only => :destroy
 	before_filter :not_suspicious?, :only => [:create] # Verify hidden fields weren't altered
 
+
 	def create
 		#@micropost = current_user.authored_posts.build(params[:micropost])
 		if @micropost.save
@@ -13,7 +14,8 @@ class MicropostsController < ApplicationController
 			redirect_to :back
 		end
 	end
-
+	
+	
 	def destroy
 		if @micropost.destroy
 			flash[:notice] = "The micropost was successfully deleted."
@@ -22,6 +24,7 @@ class MicropostsController < ApplicationController
 			flash[:error] = "The micropost deletion failed!"
 		end
 	end
+
 
 	private
 		def correct_user

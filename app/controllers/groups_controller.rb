@@ -2,11 +2,13 @@ class GroupsController < ApplicationController
 	before_filter :correct_user, 	:only => [:show]
 	before_filter :not_suspicious?, :only => [:modify_members] # Verify hidden fields weren't altered
 
+
 	def new
 		@group = Group.new
 		@users = User.all
 		@preselected_ids = []
 	end
+
 
 	def create
 		@user_ids = []
@@ -47,6 +49,7 @@ class GroupsController < ApplicationController
 		end
 	end
 	
+	
 	def show
 		@users = User.all
 		@group = Group.find(params[:id])
@@ -65,6 +68,7 @@ class GroupsController < ApplicationController
 		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 7)
 		@member_ids = @members.map(&:id)
 	end
+	
 	
 	def modify_members
 		@group = Group.find(params[:modified][:group_id].to_i)

@@ -24,7 +24,6 @@ class GroupsController < ApplicationController
 		else
 			@users = User.find(@user_ids)
 		end
-		puts @users
 		@creator = current_user
 		# Set the group creator and make them a group member (this are not passed in params[:group][:users] if the show_current_user flag is false in the user form
 		# Since a user MUST be a member of their own group, this assures they are kept in any case

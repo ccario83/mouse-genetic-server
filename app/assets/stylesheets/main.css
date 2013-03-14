@@ -659,6 +659,7 @@ h3 span.btn
 	text-align: center;
 	vertical-align:middle;
 	margin-top: 4px;
+	cursor:pointer;
 }
 
 .icon-panel [class^="icon-"]:hover,.icon-panel [class*=" icon-"]:hover
@@ -669,7 +670,7 @@ h3 span.btn
 .icon-panel i.disabled:hover { color: #eee; font-size:14px; }
 .icon-panel i.disabled { color: #eee; }
 
-.icon-panel i.icon-remove:hover { color: red; }
+.icon-panel i.icon-remove:hover { color: #E62C29; }
 .icon-panel i.disabled.icon-remove:hover { color: #eee; }
 /* The group partial                                           */
 /* ----------------------------------------------------------- */

@@ -40,7 +40,7 @@ end
 
 def make_groups
 	# A group created by Clint, Annerose and person 3 are members, tasks will appear here
-	group = Group.create!(:creator => User.find(1), :name => 'Owned test group 1', :description => 'To make sure that owned group functions work')
+	group = Group.create!(:creator => User.find(1), :name => 'Clint owned group 1', :description => 'To make sure that owned group functions work')
 	group.users << User.all(:limit => 5)
 	group.save
 	# Confirm Clint's membership for this group
@@ -48,7 +48,7 @@ def make_groups
 	
 	
 	# Another group created by Clint
-	group = Group.create!(:creator => User.find(1), :name => 'Owned test group 2', :description => 'Another owned group with no tasks')
+	group = Group.create!(:creator => User.find(1), :name => 'Clint owned group 2', :description => 'Another owned group with no tasks')
 	group.users << User.all(:limit => 5)
 	group.save
 	# Confirm Clint's membership for this group
@@ -58,9 +58,11 @@ def make_groups
 	15.times do |n|
 		name		= Faker::Company.name[0..24]
 		description = Faker::Lorem.sentence(1)
-		group = Group.create!(:creator => User.all.sample(1)[0], :name => name, :description => description)
+		creator = User.all.sample(1)[0]
+		group = Group.create!(:creator => creator, :name => name, :description => description)
 		group.users << User.all.sample(6)
 		group.save
+		creator.confirm_membership(group)
 	end
 end
 

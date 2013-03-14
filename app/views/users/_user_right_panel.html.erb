@@ -6,7 +6,7 @@
 						</div>
 						<div class="span5 icon-panel">
 							<i id="add-group" class="icon-plus"></i>
-							<i class="icon-edit" onclick="$('#manage-members').modal('show'); return false;"></i>
+							<i class="icon-edit <% if @confirmed_groups.length != @all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
 						</div>
 						<div id="manage-members" class="modal hide">
 							<%= render 'group_management_form', groups: @all_groups, type: 'groups' %>
@@ -28,12 +28,12 @@
 							<span class="title"> Microposts (<%= microposts.count %>)</span>
 						</div>
 						<div class="span5 icon-panel">
-							<i id="add-micropost" class="icon-plus"></i>
+							<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
 							<i id="add-micropost" class="icon-filter"></i>
 						</div>
 
 					</div>
-					<div id="new-micropost" class="modal hide fade">
+					<div id="new-post" class="modal hide fade">
 						<%= render 'shared/micropost_form', micropost: micropost %>
 					</div>
 

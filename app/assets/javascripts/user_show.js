@@ -6,6 +6,17 @@ $(window).bind("load", function()
 
 	$('#add-group').click(function() { location.href = "/groups/new"; });
 	
+	
+	$('#group-management-modal-close').click(function() { location.reload();  });
+	
+	$(function()
+	{
+		// Self-executing recursive animation
+		(function pulse(){
+			$('.pulsate').delay(200).fadeOut('slow').delay(50).fadeIn('slow',pulse);
+		})();
+	});
+	
 	$('.accept').click(function()
 	{
 		var id = $(this)[0].id;
@@ -85,11 +96,42 @@ function process_response(response)
 	switch(response['type'])
 	{
 		case 'accept':
+			// Disable Accept
 			$('#'+response['id']+'.accept').addClass('disabled');
 			$('#'+response['id']+'.accept').unbind('click');
 			$('#'+response['id']+'.accept').removeClass('accept');
+			
+			// Disable Decline
+			$('#'+response['id']+'.decline').addClass('disabled');
+			$('#'+response['id']+'.decline').unbind('click');
+			$('#'+response['id']+'.decline').removeClass('decline');
+			
+			// Enable Leave
+			$('#'+response['id']+'.icon-signout').addClass('leave');
+			$('#'+response['id']+'.leave').removeClass('disabled');
+			$('#'+response['id']+'.leave').click(function()
+			{
+				var id = $(this)[0].id;
+				$.ajax(
+				{
+					// Send the request as a get to the url /phenotypes/query
+					//async: false,
+					type:'post',
+					url: '/users/leave_group',
+					headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+					data: {id: id},
+					dataType: 'json',
+					success: function(response) {process_response(response)},
+					error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+				});
+		
+			});
+			
+			// Solidify group icon
 			$('#'+response['id']+'.icon-group').removeClass('faded');
 			var row = $('#'+response['id']+'.group-management-panel')[0];
+			
+			// Flash success
 			$(row).animate({backgroundColor:'#DFF0D8'},'fast');
 			$(row).animate({backgroundColor:'white'},'fast');
 		break;

@@ -67,7 +67,7 @@ class UsersController < ApplicationController
 			flash[:error] = "Nice try..."
 			redirect_to :back
 		else
-			#current_user.confirm_membership(@group)
+			current_user.confirm_membership(@group)
 			# Return the data to the client so jQuery can update page
 			render :json => { :type => 'accept', :id => @id }.to_json
 		end
@@ -82,7 +82,7 @@ class UsersController < ApplicationController
 			flash[:error] = "Nice try..."
 			redirect_to :back
 		else
-			# current_user.delete_membership(@group)
+			current_user.memberships.where(:group_id => @group.id)[0].destroy
 			# Return the data to the client so jQuery can update page
 			render :json => { :type => 'decline', :id => @id }.to_json
 		end
@@ -92,12 +92,12 @@ class UsersController < ApplicationController
 		@id = params[:id].to_i
 		@group = Group.find(@id)
 		
-		# Verify the user has permissions to do this
-		if not current_user.is_member?(@group)
+		# Verify the user has permissions to do this and also that the current_user isn't a creator
+		if (not current_user.is_member?(@group)) || (current_user == @group.creator)
 			flash[:error] = "Nice try..."
 			redirect_to :back
 		else
-			# current_user.delete_membership(@group)
+			current_user.memberships.where(:group_id => @group.id)[0].destroy
 			# Return the data to the client so jQuery can update page
 			render :json => { :type => 'leave', :id => @id }.to_json
 		end
@@ -112,7 +112,7 @@ class UsersController < ApplicationController
 			flash[:error] = "Nice try..."
 			redirect_to :back
 		else
-			# @group.delete
+			# @group.destroy
 			# Return the data to the client so jQuery can update page
 			render :json => { :type => 'delete', :id => @id }.to_json
 		end

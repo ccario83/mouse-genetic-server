@@ -3,9 +3,13 @@ class GroupsController < ApplicationController
 	before_filter :not_suspicious?, :only => [:modify_members] # Verify hidden fields weren't altered
 
 
+	def index
+		@groups = Group.order(:name).paginate(:page => params[:page], :per_page => 24)
+	end
+
 	def new
 		@group = Group.new
-		@users = User.all
+		@users = User.order(:last_name)
 		@preselected_ids = []
 	end
 
@@ -50,7 +54,7 @@ class GroupsController < ApplicationController
 	
 	
 	def show
-		@users = User.all
+		@users = User.order(:last_name)
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:recipient_id => @group.id, :recipient_type => 'Group'})
 		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
@@ -64,7 +68,7 @@ class GroupsController < ApplicationController
 
 		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 7)
 
-		@members = @group.members.paginate(:page => params[:members_paginate], :per_page => 7)
+		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 7)
 		@member_ids = @members.map(&:id)
 	end
 	

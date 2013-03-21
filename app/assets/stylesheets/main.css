@@ -711,6 +711,24 @@ h3 span.btn
 
 /* The group-info partial                                      */
 /* ----------------------------------------------------------- */
+#group-index div.group-info-large 
+{
+	border: solid 3px #eee;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	width: 325px;
+}
+#group-index div.group-info-large:hover { background: #eee; }
+#group-index div.group-info-large i { border: none; }
+
+
+.group-info-large 
+{
+	margin: 2px;
+	float: left;
+	width: 100%;
+}
 .group-info-large #group-name
 {
 	font-size: 1.1em;
@@ -770,6 +788,7 @@ a i.icon-group:hover { text-decoration: none; }
 	float: left;
 	width: 100%;
 }
+
 #user-index div.user-info-large 
 {
 	border: solid 3px #eee;
@@ -779,6 +798,8 @@ a i.icon-group:hover { text-decoration: none; }
 	width: 325px;
 }
 #user-index div.user-info-large:hover { background: #eee; }
+#user-index div.user-info-large .gravatar { border: none; }
+
 
 .user-info-large #user-name
 {
@@ -812,10 +833,6 @@ a i.icon-group:hover { text-decoration: none; }
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
-}
-#user-index div.user-info-large .gravatar
-{
-	border: none;
 }
 
 

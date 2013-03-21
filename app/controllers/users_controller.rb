@@ -5,7 +5,7 @@ class UsersController < ApplicationController
 	
 
 	def index
-		@users = User.paginate(:page => params[:page], :per_page => 28)
+		@users = User.order(:last_name).paginate(:page => params[:page], :per_page => 28)
 	end
 
 
@@ -13,8 +13,8 @@ class UsersController < ApplicationController
 		@user = User.find(params[:id])
 		@microposts = @user.all_recieved_posts.paginate(:page => params[:microposts_paginate], :per_page => 5)
 		@micropost = current_user.authored_posts.new
-		@all_groups = @user.groups
-		@confirmed_groups = @user.confirmed_groups.paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
+		@all_groups = @user.groups.order(:name)
+		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 	end
 
 

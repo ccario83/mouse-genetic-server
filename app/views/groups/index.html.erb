@@ -1,0 +1,16 @@
+<% @page_title = "All groups" %>
+
+<% content_for :page_css do %>
+<% end %>
+<% content_for :page_js do %>
+<% end %>
+
+			<div class="span11 offset1">
+				<div id="group-index">
+					<h1>All groups</h1>
+					<%= will_paginate %>
+					<%= render :partial => 'group_info', :collection => @groups, :as => :group %>
+				</div>
+			</div>
+
+

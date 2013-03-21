@@ -32,5 +32,9 @@ class Group < ActiveRecord::Base
 		@confirmation = self.memberships.select(:confirmed).where(:user_id => user.id)[0]
 		return (defined?(@confirmation.confirmed).nil?)? false : @confirmation.confirmed
 	end
+	
+	def confirmed_members
+		return User.find(self.memberships.where(:confirmed => true).map(&:user_id))
+	end
 end
 

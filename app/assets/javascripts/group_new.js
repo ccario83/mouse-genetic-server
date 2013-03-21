@@ -26,6 +26,27 @@ $(window).bind("load", function()
 	{
 		$('#selectable-users li#'+userIds[i]).addClass("ui-selected");
 	}
+	
+	/*
+	var user_list=[];
+	var users = $('.ui-selectee > div > a')
+	for (var i = 0; i < users.length; i++)
+		var term = node.data.title + "  [ID=" + node.data.key + "]";
+		list.push({ 'label': term, 'value': node.data.key});
+	make_autocomplete_list(mpath_first_node, user_list);
+	$('#mpath_search').autocomplete(
+	{ 
+		source: mpath_term_list, 
+		minLength: 3, 
+		select: function(event, ui)
+		{ 
+			$('#mpath_tree').dynatree('getTree').activateKey(ui.item.value);
+			$('#mpath_search').val(ui.item.label);
+			return false; // Return false to cancel the event, which prevents jQuery from replacing the field with the 'value' (which is just the ID)
+		}
+	});
+	*/
+
 });
 
 

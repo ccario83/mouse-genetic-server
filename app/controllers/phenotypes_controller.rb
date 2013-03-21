@@ -134,11 +134,11 @@ class PhenotypesController < ApplicationController
 
     # Update the filters based on actual results
     @selected_strains = @mice.select(:name).map(&:name).uniq.sort
-    #@youngest = @mice.minimum(:age)
-    #@oldest = @mice.maximum(:age)
-    #if @mice.map(&:sex).uniq.length == 2
-    #    @sex = 'B'
-    #end
+    @youngest = @mice.minimum(:age)
+    @oldest = @mice.maximum(:age)
+    if @mice.map(&:sex).uniq.length == 2
+        @sex = 'B'
+    end
 
     # Make a mapping of strain names to results (empty at the moment)
     @results = Hash[@selected_strains.zip(@selected_strains.map { |v| [] })]

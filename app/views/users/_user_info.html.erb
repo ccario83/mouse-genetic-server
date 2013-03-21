@@ -5,8 +5,8 @@
 								<% if current_user.admin? && !current_user?(user) %>
 									<a href="/users/<%=user.id%>" data-confirm="You sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
 								<% end %>
-								
-								<%= user.name %></span>
+									<%= user.name %>
+								</span>
 								<span id="user-institution"><%= user.institution %></span>
 								<span id="user-email"><%= user.email %></span>
 						</div>

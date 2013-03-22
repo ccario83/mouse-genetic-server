@@ -3,10 +3,11 @@
 						<div class="control-group optional">
 							<label class="text optional control-label">Select Members</label>
 							<div id="page_container" class="controls">
-								<input type="text" id="user_search" class="small search-query" placeholder="Search for a user">
+								<input type="text" id="user_search" class="string optional" style="width:300px" placeholder="Start typing to search for a name">
 								<ul id="selectable-<%= type %>" class="selectable <%= type %> content" style="display:none;">
 									<%= render items, show_current_user: show_current_user %>
 								</ul>
+								<p class="help-block">Selected members will appear in the box above.<br/> Clicking on their names will remove them.</p>
 								<!--<div class="page_navigation pagination"></div>-->
 							</div>
 							<input id="preselected-<%= type %>" type="hidden" value="<%= preselected_ids %>">

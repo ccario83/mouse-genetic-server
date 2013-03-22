@@ -886,7 +886,16 @@ img.gravatar
 /* The shared/multi_select partial                             */
 /* ----------------------------------------------------------- */
 .selectable li .user-info-small a { pointer-events: none; } 
-
+#selectable-users
+{
+	border: 1px solid #ccc;
+	height: 100px;
+	margin: 0px;
+	margin-top: 10px;
+	width: 308px;
+	padding: 2px;
+	overflow-y: auto;
+}
 
 
 

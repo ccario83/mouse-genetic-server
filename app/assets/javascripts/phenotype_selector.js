@@ -14,9 +14,15 @@ $(function()
 		checkbox: true,
 		selectMode: 3,
 		onSelect: function(select, node) {
+			// Fix to prevent parent node from becomming selected if singleton child
+			if (node.parent.childList.length==1)
+			{
+				node.parent.bSelected=false;
+				$($(node.parent.li).find('span')[0]).removeClass('dynatree-selected')
+			}
 			// Display list of selected nodes
 			var selNodes = node.tree.getSelectedNodes();
-			// Set the selected array to the selected nodes
+			// Set the selected array to the selected nodes'
 			selected = $.map(selNodes, function(node){
 				   return node.data.key;
 			});
@@ -64,6 +70,12 @@ $(function()
 		checkbox: true,
 		selectMode: 3,
 		onSelect: function(select, node) {
+			// Fix to prevent parent node from becomming selected if singleton child
+			if (node.parent.childList.length==1)
+			{
+				node.parent.bSelected=false;
+				$($(node.parent.li).find('span')[0]).removeClass('dynatree-selected')
+			}
 			// Display list of selected nodes
 			var selNodes = node.tree.getSelectedNodes();
 			// Set the selected array to the selected nodes

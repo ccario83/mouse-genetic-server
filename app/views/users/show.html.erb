@@ -1,11 +1,14 @@
 <% @page_title = @user.name %>
 
 <% content_for :page_css do %>
+
+		<%= stylesheet_link_tag('chosen/chosen') %>
 <% end %>
 <% content_for :page_js do %>
 
 		<%= javascript_include_tag('user_show') %>
 		<%= javascript_include_tag('jquery.pajinate') %>
+		<%= javascript_include_tag('chosen.jquery.min') %>
 <% end %>
 
 				<div class="container-fluid span3">
@@ -17,5 +20,5 @@
 				</div>
 				
 				<div class="container-fluid span4">
-					<%= render 'user_right_panel', all_groups: @all_groups, confirmed_groups: @confirmed_groups, micropost: @micropost, microposts: @microposts %>
+					<%= render 'user_right_panel', all_groups: @all_groups, confirmed_groups: @confirmed_groups, associated_users: @associated_users, micropost: @micropost, microposts: @microposts %>
 				</div>

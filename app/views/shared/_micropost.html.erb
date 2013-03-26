@@ -14,8 +14,17 @@
 										</div>
 										<div class="display-<%= micropost.recipient_type %>">
 												<% if micropost.creator == current_user %> You <% else %><%= micropost.creator.name %><% end %>
-												 to 
-												<% if micropost.recipient == current_user %> You <% else %><%= micropost.recipient.name %><% end %>
+												<% if micropost.user_recipients.length == 1 && micropost.user_recipients[0] == current_user %>
+													directly to you.
+												<% else %>
+													<% if micropost.group_recipients.length == 1 %>
+														to <%= micropost.group_recipients[0].name %>
+													<% elsif micropost.user_recipients.length == 1 %>
+														to <%= micropost.user_recipients[0].name %>
+													<% else %>
+														to many groups and or users.
+													<% end %>
+												<% end %>
 										</div>
 										<div class="timestamp">
 												<%= time_ago_in_words(micropost.created_at) %> ago

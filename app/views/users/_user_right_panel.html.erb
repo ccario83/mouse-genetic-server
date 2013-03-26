@@ -31,10 +31,9 @@
 							<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
 							<i id="add-micropost" class="icon-filter"></i>
 						</div>
-
 					</div>
 					<div id="new-post" class="modal hide fade">
-						<%= render 'shared/micropost_form', micropost: micropost %>
+						<%= render 'shared/micropost_form', micropost: micropost, confirmed_groups: confirmed_groups, associated_users: associated_users, show_filters: true %>
 					</div>
 
 					<div class="row-fluid">

@@ -44,7 +44,7 @@ $(window).bind("load", function()
 	$('#user_search').autocomplete(
 	{ 
 		source: user_list, 
-		minLength: 3, 
+		minLength: 1, 
 		select: function(event, ui)
 		{
 			var user_container = $(users[ui.item.value]).parent().parent();

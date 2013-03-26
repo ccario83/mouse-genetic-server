@@ -11,10 +11,11 @@ class UsersController < ApplicationController
 
 	def show
 		@user = User.find(params[:id])
-		@microposts = @user.all_recieved_posts.paginate(:page => params[:microposts_paginate], :per_page => 5)
+		@microposts = @user.all_received_posts.paginate(:page => params[:microposts_paginate], :per_page => 5)
 		@micropost = current_user.authored_posts.new
 		@all_groups = @user.groups.order(:name)
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
+		@associated_users = @confirmed_groups.map(&:users).flatten
 	end
 
 
@@ -48,7 +49,7 @@ class UsersController < ApplicationController
 			render 'edit'
 		end
 	end
-	
+
 
 	def destroy
 		User.find(params[:id]).destroy
@@ -72,7 +73,8 @@ class UsersController < ApplicationController
 			render :json => { :type => 'accept', :id => @id }.to_json
 		end
 	end
-	
+
+
 	def decline_group
 		@id = params[:id].to_i
 		@group = Group.find(@id)
@@ -87,7 +89,8 @@ class UsersController < ApplicationController
 			render :json => { :type => 'decline', :id => @id }.to_json
 		end
 	end
-	
+
+
 	def leave_group
 		@id = params[:id].to_i
 		@group = Group.find(@id)
@@ -102,7 +105,8 @@ class UsersController < ApplicationController
 			render :json => { :type => 'leave', :id => @id }.to_json
 		end
 	end
-	
+
+
 	def delete_group
 		@id = params[:id].to_i
 		@group = Group.find(@id)
@@ -117,6 +121,7 @@ class UsersController < ApplicationController
 			render :json => { :type => 'delete', :id => @id }.to_json
 		end
 	end
+
 
 	private
 		def correct_user

@@ -11,7 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312192904) do
+ActiveRecord::Schema.define(:version => 20130326143711) do
+
+  create_table "communications", :force => true do |t|
+    t.integer "recipient_id"
+    t.string  "recipient_type"
+    t.integer "micropost_id"
+  end
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -31,14 +37,21 @@ ActiveRecord::Schema.define(:version => 20130312192904) do
 
   create_table "microposts", :force => true do |t|
     t.string   "content"
+    t.string   "recipient_type"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "creator_id"
-    t.integer  "recipient_id"
-    t.string   "recipient_type"
   end
 
-  add_index "microposts", ["recipient_id", "recipient_type", "created_at"], :name => "index_microposts_on_recipient"
+  add_index "microposts", ["created_at"], :name => "index_microposts_on_recipient"
+
+  create_table "recipients", :force => true do |t|
+    t.integer  "recipient_id"
+    t.string   "recipient_type"
+    t.integer  "micropost_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
 
   create_table "resources", :force => true do |t|
     t.string   "resource_type"

@@ -6,9 +6,12 @@ class User < ActiveRecord::Base
 	before_save :create_remember_token
 	has_secure_password
 	
-	# Micropost relations
-	has_many :recieved_posts, :class_name => 'Micropost', :as => :recipient # A user can have microposts through micropost recipients
-	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id'
+
+	# A user has many microposts using the communication polymorphic relationship (recipient_id, recipient_type columns)
+	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id', :dependent => :destroy
+	# Microposts are called received_posts (of type Micropost) and are found through the communication model
+	has_many :communications, :as => :recipient
+	has_many :received_posts, :source => :micropost, :through => :communications, :dependent => :destroy
 
 	# Group/membership relations
 	has_many :memberships
@@ -31,21 +34,52 @@ class User < ActiveRecord::Base
 		"#{self.first_name} #{self.last_name}"
 	end
 
+
+	#def post_message(message, *p )
+		#if (groups.empty? and users.empty?)
+		#	return # Or should let model validation fail?
+		#end
+	#	groups = groups.is_a?(Array) ? groups : [groups]
+	#	users = users.is_a?(Array) ? users : [users]
+	#	Micropost.create!(:creator => self, :content => message, :user_recipients => users, :group_recipients => groups)
+	#end
+
+
+	## THESE SHOULD BE DEPRECIATED ONCE ALL VIEWS USE post_message FUNCTION
+	# A function alias to make the calls more comfortable to the user
 	def post_message_to_group(group, message)
-		self.authored_posts.create!(:content => message, :recipient_id => group.id, :recipient_type => 'Group')
-	end
-	
-	def post_message_to_user(user, message)
-		self.authored_posts.create!(:content => message, :recipient_id => user.id, :recipient_type => 'User')
+		post_message_to_groups(group, message)
 	end
 
-	def group_recieved_posts
-		microposts = self.groups.map(&:microposts).flatten
+	# Takes a message as a string and posts it to a group or list groups
+	def post_message_to_groups(groups, message)
+		groups = groups.is_a?(Array) ? groups : [groups]
+		Micropost.create!(:creator => self, :content => message, :group_recipients => groups)
+	end
+	
+	# A function alias to make the calls more comfortable to the user
+	def post_message_to_user(user, message)
+		post_message_to_users(user, message)
+	end
+
+	# Takes a message as a string and posts it to a user or list users
+	def post_message_to_users(users, message)
+		users = users.is_a?(Array) ? users : [users]
+		Micropost.create!(:creator => self, :content => message, :user_recipients => users)
+	end
+
+
+
+
+
+	def group_received_posts
+		microposts = self.groups.map(&:received_posts).flatten
+		microposts.sort_by(&:created_at)
 		return microposts
 	end
 
-	def all_recieved_posts
-		microposts = self.recieved_posts + self.groups.map(&:microposts).flatten
+	def all_received_posts
+		microposts = self.received_posts + self.group_received_posts
 		microposts.sort_by(&:created_at)
 		return microposts
 	end

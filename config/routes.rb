@@ -15,7 +15,6 @@ RorWebsite::Application.routes.draw do
   match '/signin',  :to => 'sessions#new'
   match '/signout', :to => 'sessions#destroy', :via => :delete
 
-  
   match '/home' => 'static_pages#home'
   match '/about' => 'static_pages#about'
   match '/contact' => 'static_pages#contact'

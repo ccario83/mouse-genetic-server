@@ -6,7 +6,6 @@ gem 'mysql'
 # Gems for UI (Do manually, way too bloated)
 #gem 'less-rails-bootstrap'
 #gem 'jquery-ui-rails'
-#gem 'therubyracer'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -15,6 +14,8 @@ gem 'mysql'
 # in production environments by default.
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
+  gem 'less-rails'
+  gem 'therubyracer'
   gem 'coffee-rails', '~> 3.2.1'
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platform => :ruby

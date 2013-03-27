@@ -4,11 +4,17 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h3>New Micropost</h3>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body" style="overflow-y: hidden;">
 				<%= simple_form_for micropost, :html => { :class => '' } do |f| %>
 				<% if show_filters == true %>
-					<%= f.association :group_recipients, :collection => confirmed_groups, :label => 'To Groups', :input_html => { 'data-placeholder'=> 'All groups currently selected', :style => "width:510px;" } %>
-					<%= f.association :user_recipients,  :collection => associated_users, :label => 'To Users', :input_html => { 'data-placeholder'=> 'All users currently selected', :style => "width:510px;" } %>
+					<div id="to-box">
+						<span style="float: left; margin-right: 10px;">To:</span>
+						<span id="to-group" class="highlighted"><i class="icon-group"></i>Group(s)</span>
+						<span id="to-user"><i class="icon-user"></i>User(s)</span>
+					</div>
+					
+					<%= f.association :group_recipients, :collection => confirmed_groups, :label => false, :input_html => { 'data-placeholder'=> 'All groups currently selected', :style => "width:510px;" } %>
+					<%= f.association :user_recipients,  :collection => associated_users, :label => false, :input_html => { 'data-placeholder'=> 'All users currently selected', :style => "width:510px;" } %>
 				<% end %>
 					<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:500px; margin:0px; padding:5px 5px;' }, :required => false %>
 				<div class="modal-footer">

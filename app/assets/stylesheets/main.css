@@ -958,3 +958,22 @@ tr.group-management-panel:last-child
 	width:15%;
 }
 .group-management-panel td.icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }
+
+#to-box { padding-bottom: 10px; }
+#to-group, #to-user
+{
+	padding: 5px;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	cursor: pointer;
+}
+#to-group.highlighted, #to-user.highlighted
+{
+	background: #fcf8e3;
+}
+#to-group i.icon-group, #to-user i.icon-user
+{
+	float:none;
+	margin: 0px 5px;
+}
+#new_micropost div.control-group.select { margin-bottom: 0px; }

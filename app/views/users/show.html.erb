@@ -3,12 +3,13 @@
 <% content_for :page_css do %>
 
 		<%= stylesheet_link_tag('chosen/chosen') %>
+		<%= stylesheet_link_tag('chosen/chosen-bootstrap-overrides') %>
 <% end %>
 <% content_for :page_js do %>
 
 		<%= javascript_include_tag('user_show') %>
 		<%= javascript_include_tag('jquery.pajinate') %>
-		<%= javascript_include_tag('chosen.jquery.min') %>
+		<%= javascript_include_tag('chosen.jquery') %>
 <% end %>
 
 				<div class="container-fluid span3">

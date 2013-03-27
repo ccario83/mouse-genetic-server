@@ -87,14 +87,33 @@ $(window).bind("load", function()
 		
 	});
 	
+	/// CODE FOR CHOSEN BOXES
+	
 	// To handle user and group token passing 
-	$("#micropost_group_recipient_ids").chosen();
+	$("#micropost_group_recipient_ids").chosen({disable_search_threshold: 3});
 	
 		// To handle user and group token passing 
-	$("#micropost_user_recipient_ids").chosen();
-
+	$("#micropost_user_recipient_ids").chosen({disable_search: true});
+	
+	$("#micropost_user_recipient_ids_chzn").hide();
+	$('#to-group').click(function() 
+	{
+		$('#to-group').toggleClass("highlighted");
+		$('#to-user').toggleClass("highlighted");
+		$("#micropost_group_recipient_ids_chzn").toggle();
+		$("#micropost_user_recipient_ids_chzn").toggle();
+		
+	});
+	$('#to-user').click(function() 
+	{
+		$('#to-group').toggleClass("highlighted");
+		$('#to-user').toggleClass("highlighted");
+		$("#micropost_group_recipient_ids_chzn").toggle();
+		$("#micropost_user_recipient_ids_chzn").toggle();
+	});
 
 });
+
 
 
 function process_response(response)

@@ -15,7 +15,7 @@ $(window).bind("load", function()
 		})();
 	});
 	
-	$('.accept').click(function()
+	$('.icon-panel i.accept').click(function()
 	{
 		var id = $(this)[0].id;
 		$.ajax(
@@ -33,7 +33,7 @@ $(window).bind("load", function()
 		
 	});
 	
-	$('.decline').click(function()
+	$('.icon-panel i.decline').click(function()
 	{
 		var id = $(this)[0].id;
 		$.ajax(
@@ -51,7 +51,7 @@ $(window).bind("load", function()
 		
 	});
 	
-	$('.leave').click(function()
+	$('.icon-panel i.leave').click(function()
 	{
 		var id = $(this)[0].id;
 		$.ajax(
@@ -69,7 +69,7 @@ $(window).bind("load", function()
 		
 	});
 	
-	$('.delete').click(function()
+	$('.icon-panel i.delete').click(function()
 	{
 		var id = $(this)[0].id;
 		$.ajax(
@@ -90,19 +90,21 @@ $(window).bind("load", function()
 	/// CODE FOR CHOSEN BOXES
 	
 	// To handle user and group token passing 
-	$("#micropost_group_recipient_ids").chosen({disable_search_threshold: 3});
+	$('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
 	
 		// To handle user and group token passing 
-	$("#micropost_user_recipient_ids").chosen({disable_search: true});
+	$('#micropost_user_recipient_ids').chosen({ min_search_term_length: 2 });
 	
-	$("#micropost_user_recipient_ids_chzn").hide();
+	$('#micropost_user_recipient_ids_chzn').hide();
+	$('#micropost_recipient_type').val('group');
+	
 	$('#to-group').click(function() 
 	{
 		$('#to-group').toggleClass("highlighted");
 		$('#to-user').toggleClass("highlighted");
 		$("#micropost_group_recipient_ids_chzn").toggle();
 		$("#micropost_user_recipient_ids_chzn").toggle();
-		
+		$('#micropost_recipient_type').val('group');
 	});
 	$('#to-user').click(function() 
 	{
@@ -110,6 +112,7 @@ $(window).bind("load", function()
 		$('#to-user').toggleClass("highlighted");
 		$("#micropost_group_recipient_ids_chzn").toggle();
 		$("#micropost_user_recipient_ids_chzn").toggle();
+		$('#micropost_recipient_type').val('user');
 	});
 
 });

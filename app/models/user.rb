@@ -35,16 +35,6 @@ class User < ActiveRecord::Base
 	end
 
 
-	#def post_message(message, *p )
-		#if (groups.empty? and users.empty?)
-		#	return # Or should let model validation fail?
-		#end
-	#	groups = groups.is_a?(Array) ? groups : [groups]
-	#	users = users.is_a?(Array) ? users : [users]
-	#	Micropost.create!(:creator => self, :content => message, :user_recipients => users, :group_recipients => groups)
-	#end
-
-
 	## THESE SHOULD BE DEPRECIATED ONCE ALL VIEWS USE post_message FUNCTION
 	# A function alias to make the calls more comfortable to the user
 	def post_message_to_group(group, message)
@@ -54,7 +44,12 @@ class User < ActiveRecord::Base
 	# Takes a message as a string and posts it to a group or list groups
 	def post_message_to_groups(groups, message)
 		groups = groups.is_a?(Array) ? groups : [groups]
-		Micropost.create!(:creator => self, :content => message, :group_recipients => groups)
+		post = Micropost.new(:creator => self, :content => message, :group_recipients => groups)
+		if post.save
+			return true
+		else
+			return false
+		end
 	end
 	
 	# A function alias to make the calls more comfortable to the user
@@ -65,11 +60,13 @@ class User < ActiveRecord::Base
 	# Takes a message as a string and posts it to a user or list users
 	def post_message_to_users(users, message)
 		users = users.is_a?(Array) ? users : [users]
-		Micropost.create!(:creator => self, :content => message, :user_recipients => users)
+		post = Micropost.new(:creator => self, :content => message, :user_recipients => users)
+		if post.save
+			return true
+		else
+			return false
+		end
 	end
-
-
-
 
 
 	def group_received_posts

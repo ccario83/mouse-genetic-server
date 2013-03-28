@@ -38,5 +38,9 @@ class Group < ActiveRecord::Base
 	def confirmed_members
 		return User.find(self.memberships.where(:confirmed => true).map(&:user_id))
 	end
+	
+	def microposts
+		return self.received_posts
+	end
 end
 

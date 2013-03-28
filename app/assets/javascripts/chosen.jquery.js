@@ -131,13 +131,15 @@ Copyright (c) 2011 by Harvest
       this.result_highlighted = null;
       this.result_single_selected = null;
       this.allow_single_deselect = (this.options.allow_single_deselect != null) && (this.form_field.options[0] != null) && this.form_field.options[0].text === "" ? this.options.allow_single_deselect : false;
-      this.disable_search_threshold = this.options.disable_search_threshold || 3;
+      this.disable_search_threshold = this.options.disable_search_threshold || 0;
       this.disable_search = this.options.disable_search || false;
       this.enable_split_word_search = this.options.enable_split_word_search != null ? this.options.enable_split_word_search : true;
       this.search_contains = this.options.search_contains || false;
       this.choices = 0;
       this.single_backstroke_delete = this.options.single_backstroke_delete || false;
       this.max_selected_options = this.options.max_selected_options || Infinity;
+      this.max_dropdown_length = this.options.max_dropdown_length || Infinity;
+      this.min_search_term_length = this.options.min_search_term_length || 0;
       return this.inherit_select_classes = this.options.inherit_select_classes || false;
     };
 
@@ -613,6 +615,22 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.results_show = function() {
+
+      // Support for lookahead length or list length
+      if (this.search_results.find(".active-result").length > this.max_dropdown_length || this.search_field.val().length < this.min_search_term_length){
+        /*if (this.search_results.find(".active-result").length > this.max_dropdown_length){
+          console.log("# results (" + this.search_results.find(".active-result").length + ")" + " is > max_dropdown_length threshold (" + this.max_dropdown_length + ")");
+          console.log("===>" + this.search_results.find(".active-result").length);
+        }
+        if (this.search_field.val().length < this.min_search_term_length){
+          console.log("# typed search term letters (" + this.search_field.val().length + ") is < min_search_term_length threshold (" + this.min_search_term_length + ")"); 
+        }*/
+        if (this.results_showing){
+          this.results_hide();
+        }
+        return this.winnow_results();
+      }
+      
       var dd_top;
       if (!this.is_multiple) {
         this.selected_item.addClass("chzn-single-with-drop");
@@ -1008,6 +1026,7 @@ Copyright (c) 2011 by Harvest
       var stroke, _ref;
       stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
       this.search_field_scale();
+      
       if (stroke !== 8 && this.pending_backstroke) {
         this.clear_backstroke();
       }
@@ -1032,6 +1051,7 @@ Copyright (c) 2011 by Harvest
           this.keydown_arrow();
           break;
       }
+      this.results_show();
     };
 
     Chosen.prototype.search_field_scale = function() {
@@ -1073,6 +1093,10 @@ Copyright (c) 2011 by Harvest
       }
       return string;
     };
+    
+    Chosen.prototype.intercept_results_show = function() {
+    
+    }
 
     return Chosen;
 

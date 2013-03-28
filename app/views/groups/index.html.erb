@@ -9,7 +9,7 @@
 				<div id="group-index">
 					<h1>All groups</h1>
 					<%= will_paginate %>
-					<%= render :partial => 'group_info', :collection => @groups, :as => :group %>
+					<%= render :partial => 'group_info', :collection => @groups, :as => :group, :locals => { delete_allowed: true } %>
 				</div>
 			</div>
 

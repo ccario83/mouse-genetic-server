@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
 	def post_message_to_groups(groups, message)
 		groups = groups.is_a?(Array) ? groups : [groups]
 		post = Micropost.new(:creator => self, :content => message, :group_recipients => groups)
+
 		if post.save
 			return true
 		else

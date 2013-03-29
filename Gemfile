@@ -49,4 +49,4 @@ gem 'bootstrap-will_paginate', '0.0.6'
 # gem 'capistrano'
 
 # To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
+gem 'ruby-debug19', :require => 'ruby-debug'

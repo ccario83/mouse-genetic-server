@@ -68,17 +68,34 @@ end
 
 
 def make_microposts
-	users = User.all(:limit => 6)
-	10.times do
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 1, :recipient_type => 'Group') }
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 2, :recipient_type => 'Group') }
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 3, :recipient_type => 'Group') }
+	users = User.all.sample(5)
+	users << User.first
+	# single group
+	users.each do |user| 
+		group = user.groups.sample(1)[0]
+		user.confirm_membership(group)
+		user.post_message_to_group(group, 'Test: ' + user.name + ' posting to single group ' + group.name )
 	end
-	5.times do
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 1, :recipient_type => 'User') }
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 2, :recipient_type => 'User') }
-		users.each { |user| user.authored_posts.create!(:content => Faker::Lorem.sentence(1), :recipient_id => 3, :recipient_type => 'User') }
+	# multiple groups
+	users.each do |user| 
+		groups = user.groups.sample(3)
+		groups.each { |group| user.confirm_membership(group) }
+		user.post_message_to_groups(groups, 'Test: ' + user.name + ' posting to 3 groups at once')
 	end
+	
+	# single user
+	users.each do |poster| 
+		user = User.all.sample(1)[0]
+		poster.post_message_to_user(user, 'Test: ' + poster.name + ' posting to single user ' + user.name )
+	end
+	# multiple users
+	users.each { |poster| poster.post_message_to_users(User.all.sample(3), 'Test: ' + poster.name + ' posting to 3 users at once') }
+		
+	user = User.all.sample(1)[0]
+	group = user.groups.sample(1)[0]
+	user.confirm_membership(group)
+	user.post_message_to_group(group, 'Test: ' + user.name + ' posting to first group' )
+	user.post_message_to_user(User.first, 'Test: ' + user.name + ' posting to Clint directly' )
 end
 
 

@@ -1,4 +1,5 @@
 require 'erb'
+
 class CircosWorker
     
     include Sidekiq::Worker

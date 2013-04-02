@@ -11,13 +11,31 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326143711) do
+ActiveRecord::Schema.define(:version => 20130402194705) do
 
   create_table "communications", :force => true do |t|
     t.integer "recipient_id"
     t.string  "recipient_type"
     t.integer "micropost_id"
   end
+
+  create_table "datafiles", :force => true do |t|
+    t.integer  "owner_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "filename"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "datafiles", ["owner_id"], :name => "index_datafiles_on_owner_id"
+
+  create_table "datafiles_groups", :id => false, :force => true do |t|
+    t.integer "datafile_id"
+    t.integer "group_id"
+  end
+
+  add_index "datafiles_groups", ["datafile_id", "group_id"], :name => "index_datafiles_groups_on_datafile_id_and_group_id", :unique => true
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -26,6 +44,27 @@ ActiveRecord::Schema.define(:version => 20130326143711) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  create_table "groups_jobs", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "job_id"
+  end
+
+  add_index "groups_jobs", ["group_id", "job_id"], :name => "index_groups_jobs_on_group_id_and_job_id", :unique => true
+
+  create_table "jobs", :force => true do |t|
+    t.integer  "creator_id"
+    t.integer  "datafile_id"
+    t.string   "name"
+    t.text     "description"
+    t.string   "algorithm"
+    t.string   "snpset"
+    t.string   "location"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "jobs", ["creator_id"], :name => "index_jobs_on_creator_id"
 
   create_table "memberships", :force => true do |t|
     t.integer "group_id"
@@ -37,13 +76,13 @@ ActiveRecord::Schema.define(:version => 20130326143711) do
 
   create_table "microposts", :force => true do |t|
     t.string   "content"
-    t.string   "recipient_type"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "creator_id"
+    t.string   "recipient_type"
   end
 
-  add_index "microposts", ["created_at"], :name => "index_microposts_on_recipient"
+  add_index "microposts", ["recipient_type", "created_at"], :name => "index_microposts_on_recipient"
 
   create_table "recipients", :force => true do |t|
     t.integer  "recipient_id"
@@ -99,6 +138,7 @@ ActiveRecord::Schema.define(:version => 20130326143711) do
     t.boolean  "admin",           :default => false
     t.string   "last_name"
     t.string   "institution"
+    t.string   "directory"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

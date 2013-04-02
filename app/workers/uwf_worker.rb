@@ -1,4 +1,4 @@
-require 'jobber'
+#require 'jobber'
 require 'erb'
 
 class UwfWorker

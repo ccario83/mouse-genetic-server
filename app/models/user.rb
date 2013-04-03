@@ -1,11 +1,13 @@
 require 'will_paginate/array'
+require 'find'
 
 class User < ActiveRecord::Base
-	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation
+	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation, :directory
 	before_save { |user| user.email = user.email.downcase }
 	before_save :create_remember_token
 	has_secure_password
-	
+	before_create :create_user_directory
+
 
 	# A user has many microposts using the communication polymorphic relationship (recipient_id, recipient_type columns)
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id', :dependent => :destroy
@@ -14,19 +16,25 @@ class User < ActiveRecord::Base
 	has_many :received_posts, :source => :micropost, :through => :communications, :dependent => :destroy
 
 	# Group/membership relations
-	has_many :memberships
+	has_many :memberships, :dependent => :destroy
 	has_many :groups, :through => :memberships
 
 	# Task relations
-	has_many :created_tasks, :class_name => 'Task', :foreign_key => 'creator_id'
-	has_many :assigned_tasks, :class_name => 'Task', :foreign_key => 'assignee_id'
+	has_many :created_tasks, :class_name => 'Task', :foreign_key => 'creator_id', :dependent => :destroy
+	has_many :assigned_tasks, :class_name => 'Task', :foreign_key => 'assignee_id', :dependent => :destroy
+
+	# Job relation
+	has_many :jobs, :class_name => 'Job', :foreign_key => 'creator_id', :dependent => :destroy
+	
+	# Data relation
+	has_many :datafiles, :class_name => 'Datafile', :foreign_key => 'owner_id', :dependent => :destroy
 
 	# Validations
 	validates :first_name,	:presence => true, :length => { :maximum => 50 }
 	validates :last_name, 	:presence => true, :length => { :maximum => 50 }
 	validates :institution,	:presence => true, :length => { :maximum => 50 }
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-	validates :email, :presence => true, :format => { :with => VALID_EMAIL_REGEX }, :uniqueness => { :case_sensitive => false}
+	validates :email, :presence => true, :format => { :with => VALID_EMAIL_REGEX }, :uniqueness => { :case_sensitive => false}, :uniqueness => true
 	validates :password, :length => { :minimum => 6 }
 	validates :password_confirmation, :presence => true 
 
@@ -101,10 +109,31 @@ class User < ActiveRecord::Base
 		return (defined?(@confirmation.confirmed).nil?)? false : @confirmation.confirmed
 	end
 
+	def used_quota?
+		total = 0
+		Find.find(self.directory) {|f| total += File.directory?(f) ? 0 : File.size(f)}
+		total = total.to_f / 2**30 
+		total /= USER_DISK_QUOTA
+		return total >= 100.0
+	end
+
+
 	private
 		def create_remember_token
 			self.remember_token = SecureRandom.base64
 		end
 
+		def create_user_directory
+			# Create a subdirectory that is a combination of the user name alpha characters and a small hex key
+			subdir = self.last_name.downcase.gsub(/[^a-z]/, '') + '.' + self.first_name.downcase.gsub(/[^a-z]/, '') + '.' + SecureRandom.hex(3)
+			# Try to create a directory for this job using the id as a directory name
+			directory = File.join(USER_DATA_path, subdir)
+			begin
+				Dir.mkdir(directory) unless File.directory?(directory)
+			rescue
+				errors.add_to_base('There was an issue creating this user account. Please contact the web administrator.')
+			end
+			self.directory = directory
+		end
 end
 

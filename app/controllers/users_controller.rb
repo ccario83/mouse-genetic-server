@@ -16,6 +16,8 @@ class UsersController < ApplicationController
 		@all_groups = @user.groups.order(:name)
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
+		
+		@jobs = current_user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 5)
 	end
 
 

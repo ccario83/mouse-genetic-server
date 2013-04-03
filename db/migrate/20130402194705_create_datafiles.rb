@@ -2,9 +2,9 @@ class CreateDatafiles < ActiveRecord::Migration
   def up
     create_table :datafiles do |t|
       t.integer :owner_id
-      t.string :name
-      t.text :description
       t.string :filename
+      t.text :description
+      t.string :directory
     
       t.timestamps
     end

@@ -2,6 +2,8 @@ require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
 
+  resources :jobs
+
   resources :users
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   resources :sessions, :only => [:new, :create, :destroy]

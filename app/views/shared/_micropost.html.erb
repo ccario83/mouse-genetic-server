@@ -7,7 +7,7 @@
 											</div>
 											<div class="content span11">
 												<% if current_user?(micropost.creator) %>
-												<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" data-title="Eaque expedita corrupti repellendus perspiciatis accusamus." class="delete"><i class="icon-remove"></i></a>
+												<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
 												<% end %>
 												<%= micropost.content %>
 											<div>

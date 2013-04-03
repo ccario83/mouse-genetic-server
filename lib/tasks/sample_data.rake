@@ -5,6 +5,7 @@ namespace :db do
 		make_groups
 		make_microposts
 		make_tasks
+		make_jobs
 	end
 end
 
@@ -12,16 +13,16 @@ def make_users
 	admin = User.create!(:first_name 			=> "Clint",
 						 :last_name				=> "Cario",
 						 :institution			=> "University of Pittsburgh",
-				 		 :email 				=> "clint.cario@gmail.com",
-				 		 :password 				=> "foobar",
-				 		 :password_confirmation => "foobar")
+						 :email 				=> "clint.cario@gmail.com",
+						 :password 				=> "foobar",
+						 :password_confirmation => "foobar")
 	admin.toggle!(:admin)
 	admin = User.create!(:first_name 			=> "Annerose",
 						 :last_name				=> "Berndt",
 						 :institution			=> "University of Pittsburgh",
-				 		 :email 				=> "anb128@pitt.edu",
-				 		 :password 				=> "foobar",
-				 		 :password_confirmation => "foobar")
+						 :email 				=> "anb128@pitt.edu",
+						 :password 				=> "foobar",
+						 :password_confirmation => "foobar")
 	admin.toggle!(:admin)
 	20.times do |n|
 		first_name	= Faker::Name.name.split()[0]
@@ -108,6 +109,14 @@ def make_tasks
 )
 	Task.create!(:creator_id => 3, :description => 'Can I have the latest data', :group_id => 1, :assignee_id => 2, :due_date => Time.now+rand(10000000)
 )
+end
+
+def make_jobs
+	user = User.first
+	user.jobs.create!(:name => 'Job starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting')
+	user.jobs.create!(:name => 'Bronchial Adenoma Severity', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing')
+	user.jobs.create!(:name => 'Bronchial Adenoma Frequency', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed')
+	user.jobs.create!(:name => 'Uterine Carcinoma Severity', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed')
 end
 
 

@@ -3,11 +3,12 @@ class CreateJobs < ActiveRecord::Migration
     create_table :jobs do |t|
       t.integer :creator_id
       t.integer :datafile_id
+      t.string :directory
       t.string :name
       t.text :description
-      t.string :algorithm
-      t.string :snpset
-      t.string :location
+      t.string :state
+      t.string :runner
+      t.text :parameters
     
       t.timestamps
     end

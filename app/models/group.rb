@@ -16,6 +16,12 @@ class Group < ActiveRecord::Base
 	# Task relations
 	has_many :tasks, :dependent => :destroy
 
+	# Job relation
+	has_and_belongs_to_many :jobs
+	
+	# Data relation
+	has_and_belongs_to_many :datafiles
+
 	# Validations
 	validates :creator_id, :presence => true
 	validates :name, :presence => true, :length => {:maximum => 25 }, :uniqueness => { :case_sensitive => true}

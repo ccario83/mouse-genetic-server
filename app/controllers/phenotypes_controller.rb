@@ -1,5 +1,4 @@
 require 'securerandom'
-require 'jobber'
 
 class PhenotypesController < ApplicationController
 
@@ -243,13 +242,10 @@ class PhenotypesController < ApplicationController
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @severities = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
 
-
-    # Start a new UFW job using Jobber
-    @job = Job.new('UWF')
+    file_prefix = SecureRandom.hex(3)
+    pheno_file = "/tmp/#{file_prefix}_UWF_pheno.txt"
     sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
-    # Create a phenotype file called pheno.txt in the new job directory and populate it with the database data
-    @pheno_file = @job.location + '/pheno.txt'
-    File.open(@pheno_file, 'w') do |pheno_file|
+    File.open(pheno_file, 'w') do |pheno_file|
         if @measure == 'severity'
             pheno_file.printf "Strain\tAnimal_Id\tSex\tSeverity\n"
             # To do individual mice instead of averages
@@ -270,14 +266,14 @@ class PhenotypesController < ApplicationController
             end
         end    
     end
-    # Save the variables into a serialized file in the job directory with Jobber
-    @job.track_var('@pheno_file', binding)
-    @job.save()
 
-    # Set some parameters for the UWF view
+    # Create a new UFW job
+    job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure
+    parameters = {:sex => @sex, :measure => @measure, :selected_strains => @selected_strains, :youngest => @youngest, :oldest => @oldest, :code => @code}.to_json
+    @job = current_user.jobs.new(:runner => 'UWF', :datafile => pheno_file, :name => job_name, :parameters => parameters)
+
+    # Flag that this job is not new
     @new_job = false
-    @job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure
-    @job_id = @job.ID
     render :template => "uwf/index"
   end
   

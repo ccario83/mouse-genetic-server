@@ -1,12 +1,12 @@
 class Datafile < ActiveRecord::Base
 	attr_accessible :owner, :filename, :description, :directory
-	before_create :create_file
+	#before_create :create_file
 	before_save :verify_quota
 	
 	belongs_to :owner, :class_name => 'User', :foreign_key => 'owner_id'
 	has_and_belongs_to_many :groups
 
-	validates :,	:presence => true
+	#validates :presence => true
 
 	def get_filehandle(flag)
 		File.open(@pheno_file, flag)

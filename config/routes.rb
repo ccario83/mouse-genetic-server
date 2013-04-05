@@ -1,22 +1,42 @@
 require 'sidekiq/web'
 
 RorWebsite::Application.routes.draw do
-
-  resources :jobs
-
+  # Route to the sidekiq manager
+  mount Sidekiq::Web => '/sidekiq'
+  
+  # Redirect the root url to the uwf page
+  root :to => 'static_pages#home'
+  
+  # Aliases 
+  match '/signup',  :to => 'users#new'
+  match '/signin',  :to => 'sessions#new'
+  match '/signout', :to => 'sessions#destroy', :via => :delete
+  match '/phenotypes', :to => 'phenotypes#index'
+  
+  # General routes
   resources :users
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
   resources :tasks, :only => [:create, :destroy, :check]
-
-  # Redirect the root url to the uwf page
-  root :to => 'static_pages#home'
-
-  match '/signup',  :to => 'users#new'
-  match '/signin',  :to => 'sessions#new'
-  match '/signout', :to => 'sessions#destroy', :via => :delete
-
+  resources :jobs
+  # UWF routes
+  match '/uwf/new'
+  match '/uwf/create'
+  match '/uwf/show'
+  match '/uwf/progress'
+  match '/uwf/generate'
+  # Phenotype routes
+  get '/phenotypes/index'
+  post '/phenotypes/show'
+  post '/phenotypes/query'
+  post '/phenotypes/check_stats'
+  post '/phenotypes/submit'
+  post '/phenotypes/analyze'
+  get '/phenotypes/get_mpath_tree'
+  get '/phenotypes/get_anat_tree'
+  
+  # Static Pages
   match '/home' => 'static_pages#home'
   match '/about' => 'static_pages#about'
   match '/contact' => 'static_pages#contact'
@@ -24,22 +44,10 @@ RorWebsite::Application.routes.draw do
   match '/screencasts' => 'static_pages#screencasts'
   match '/tool_descriptions' => 'static_pages#tool_descriptions'
   
-  # Phenotype generator routes
-  get "/phenotypes/show"
-  post "/phenotypes/query"
-  post "/phenotypes/stats"
-
-  
   # Static handlers for development mode
-  #get 'data/:path', :controller => 'static', :action => 'show'
   match 'data/*path' => 'static#show'
   match 'exists/data/*path' => 'static#exists'
-  
-  #get 'uwf/show/:job_id/circos.svg' 
-  
-  # Route to the sidekiq manager
-  mount Sidekiq::Web => '/sidekiq'
-  
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -87,7 +95,7 @@ RorWebsite::Application.routes.draw do
   #     resources :products
   #   end
 
-  # You can have the root of your site routed with "root"
+  # You can have the root of your site routed with 'root"
   # just remember to delete public/index.html.
   # root :to => 'welcome#index'
 
@@ -95,5 +103,5 @@ RorWebsite::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  match ':controller(/:action(/:id))(.:format)'
+  # match ':controller(/:action(/:id))(.:format)'
 end

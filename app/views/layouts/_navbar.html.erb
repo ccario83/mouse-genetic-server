@@ -7,7 +7,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</a>
-					<a class="brand" href="/phenotypes">Mouse Genetics Server</a>
+					<a class="brand" href="/home">Mouse Genetics Server</a>
 					<% if signed_in? %>
 					<div class="btn-group pull-right">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -37,17 +37,18 @@
 					
 					<div class="nav-collapse">
 						<ul class="nav">
-							<li><%= link_to('Home', '/home') %></li>
+							<% if signed_in? %>
+							<li><a href="/users/<%= current_user.id %>"><i class="icon-home"></i></i>Home</a>
+							<% end %>
 							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">About<b class="caret"></b></a>
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-info-sign"></i>About<b class="caret"></b></a>
 									<ul class="dropdown-menu">
 										<li><%= link_to('Publications', '/publications') %></li>
 										<li><%= link_to('Screencasts', '/screencasts') %></li>
 										<li><%= link_to('Tool Description', '/tool_descriptions') %></li>
 									</ul>
 							</li>
-							
-							<li><%= link_to_function('Contact',"$('#contact').modal('show')") %></li>
+							<li><a href="#" onclick="$('#contact').modal('show'); return false;"><i class="icon-comment"></i>Contact</a></li>
 						</ul>
 					</div>
 				</div>

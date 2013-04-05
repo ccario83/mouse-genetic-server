@@ -116,6 +116,11 @@ class User < ActiveRecord::Base
 		total /= USER_DISK_QUOTA
 		return total >= 100.0
 	end
+	
+	def get_redis_key
+		# A good UNIX filename expression: /^.*\/(.[^\/`"':]+)$/
+		return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
+	end
 
 
 	private
@@ -130,6 +135,8 @@ class User < ActiveRecord::Base
 			directory = File.join(USER_DATA_path, subdir)
 			begin
 				Dir.mkdir(directory) unless File.directory?(directory)
+				Dir.mkdir(File.join(directory,'data')) unless File.directory?(File.join(directory,'data'))
+				Dir.mkdir(File.join(directory,'jobs')) unless File.directory?(File.join(directory,'jobs'))
 			rescue
 				errors.add_to_base('There was an issue creating this user account. Please contact the web administrator.')
 			end

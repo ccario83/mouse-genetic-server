@@ -124,6 +124,10 @@ class UsersController < ApplicationController
 		end
 	end
 
+	def load_job
+		@id = params[:id].to_i
+		
+	end
 
 	private
 		def correct_user

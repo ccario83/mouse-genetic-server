@@ -51,7 +51,7 @@ class UwfController < ApplicationController
     @ready = $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
     # Also display the circos plot thumbnail if it is ready
     if @ready
-        @circos_thumb = File.join('/data/', @job_ID, "/Plots/circos.png")
+        @circos_thumb = File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/circos.png')
     end
   end
   

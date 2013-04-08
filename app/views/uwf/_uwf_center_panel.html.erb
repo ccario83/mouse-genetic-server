@@ -1,0 +1,71 @@
+
+				<% if @ready %>
+					<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
+					This causes the check_progress() JS function to stop the timer as an error function
+					-->
+					<div class="row-fluid">
+						<div id="fs-container" class="img-polaroid" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
+							<center>
+							<div id="fs">
+									<%= image_tag(@circos_thumb, :id => 'circos_thumb', :width => '75%')%>
+							</div>
+							</center>
+							<center><h3>Click here for full screen interactive mode</h3></center>
+						</div>
+					</div>
+
+					<br/>
+					<div class="row-fluid">
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Parameter</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Job ID</td><td><%= @job.id %></td>
+								</tr>
+								<tr>
+									<td>Phenotype</td><td><%= @pheno_file %></td>
+								</tr>
+								<tr>
+									<td>Algorithm</td><td><%= @emma_type %></td>
+								</tr>
+								<tr>
+									<td>SNP Set</td><td><%= @snp_set %></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+				<% else %>
+					<div class="row span12">
+						<h3>Job Status: Running...</h3>
+						<script type="text/javascript"> window.job_id = '<%= @job.id %>';</script>
+						<div id="job-progress">
+							<ul>
+								<li id="starting" class="incomplete">Starting</li>
+								<li id="configuring-gwa" class="incomplete">Configuring <%= @emma_type %></li>
+								<li id="starting-gwa" class="incomplete">Starting <%= @emma_type %>
+									<ul>
+										<li id="reading-phenotypes" class="incomplete">Reading phenotypes</li>
+										<li id="processing-phenotypes" class="incomplete">Processing phenotypes</li>
+										<li id="processing-genotypes" class="incomplete">Processing genotypes</li>
+										<li id="running-associations" class="incomplete">Running associations</li>
+										<li id="post-processing" class="incomplete">Post processing</li>
+									</ul>
+								</li>
+								<li id="configuring-circos" class="incomplete">Configuring Circos</li>
+								<li id="starting-circos" class="incomplete"> Starting Circos</li>
+									<ul>
+										<li id="populating-tracks" class="incomplete">Populating tracks</li>
+										<li id="generating-datapoints" class="incomplete">Generating datapoints</li>
+										<li id="drawing-image" class="incomplete">Drawing the full genome Circos plot</li>
+										<li id="completed" class="incomplete">Completed!</li>
+									</ul>
+								<li>
+						</div>
+					</div>
+				<% end %>

@@ -114,7 +114,7 @@ redis_key = None
 use_redis = False
 try:
     redis_key = gen_conf.get('general','redis_key')
-    use_redis = (False if job_id == -1 else True)
+    use_redis = (False if redis_key == -1 else True)
 except:
     use_redis = False
 

@@ -9,7 +9,7 @@ function check_progress()
 		url:'/uwf/progress/' + job_id, // job_id is passed from the show and progress actions in the uwf controller
 		datatype:"json", 
 		success:write_progress,
-		error: function(){clearInterval(timerID); alert('job error')}
+		error: function(){clearInterval(timerID);}
 	});
 	
 }

@@ -28,6 +28,7 @@
 #  2012 08 30 --    Added redis support for logging
 #  2012 08 30 --    Removed BEerror, replaced with write_error and sys.exit(1)
 #  2012 11 28 --    Modified write_error to also echo to command line for easier debugging.
+#  2013 04 08 --    Redis key now passed as an argument in the configuration file
 #===============================================================================
 
 import sys              # for various system functions
@@ -100,15 +101,15 @@ class EmmaRunner(object):
     def set_error_file(self, infile):
         self._error_file = infile
 
-    def set_redis_log(self, job_id):
+    def set_redis_log(self, key):
         if self._redis_channel == None:
             self._redis_channel = redis.StrictRedis(host='localhost',port=6379,db=0)
-        self._redis_log = "%s:progress:log" % job_id
+        self._redis_log = "%s:progress:log" % key
 
-    def set_redis_error(self, job_id):
+    def set_redis_error(self, key):
         if self._redis_channel == None:
             self._redis_channel = redis.StrictRedis(host='localhost',port=6379,db=0)
-        self._redis_error = "%s:progress:errors" % job_id
+        self._redis_error = "%s:error:log" % key
 
     def write_log(self, entry):
         try:
@@ -307,7 +308,7 @@ class EmmaRunner(object):
             self.write_error("Phenotype values should float coercible (ie. a number)")
             sys.exit(1)
         if self.verbose:
-            self.write_log("phenos-read")
+            self.write_log("reading-phenotypes")
     
     
     def process_phenotypes(self, snp_set, sex_subset='NA'):
@@ -378,7 +379,7 @@ class EmmaRunner(object):
         self._phenos_were_processed = True
         self._chosen_snp_set = snp_set
         if self.verbose:
-            self.write_log("phenos-processed")
+            self.write_log("processing-phenotypes")
     
     
     def generate_genotype_files(self, snp_set, outdir=None):
@@ -800,7 +801,7 @@ class EmmaRunner(object):
         
         elif snp_set == "1.2M_UNC" or snp_set == "1.2M_NIEHS":
             if self.verbose:
-                self.write_log("The 1.2M SNP sets are derived from other emma/emmax SNP input files using shell and awk scripts and are not created with Berndt Emma. Please run these instead... ")
+                self.write_error("The 1.2M SNP sets are derived from other emma/emmax SNP input files using shell and awk scripts and are not created with Berndt Emma. Please run these instead... ")
                 print "The 1.2M SNP sets are derived from other emma/emmax SNP input files using shell and awk scripts and are not created with Berndt Emma. Please run these instead... "
         
         geno_ifh.close()
@@ -813,12 +814,10 @@ class EmmaRunner(object):
         #    self.write_log("Generating emmax kinship matrix...")
         #kinship_cmd = EmmaRunner.emmax_code_dir + 'emmax-kin -h -s -d 20 ' + EmmaRunner.snp_database_dir + snp_set + '_for_emmax'
         #subprocess.call(kinship_cmd, shell=True)   
-
         
         self._genos_were_processed = True
         if self.verbose:
-            self.write_log("genos-processed")
-    
+            self.write_log("genotypes-processed")
     
     def generate_phenotype_files(self, outdir=None):
         ''' This function saves the processed phenotype information into a file in the required formats for emma and emmax to outdir'''
@@ -874,7 +873,7 @@ class EmmaRunner(object):
         emmax_pheno_ofh.close()
         emma_pheno_ofh.close()
         if self.verbose:
-            self.write_log("phenos-processed")
+            self.write_log("phenotypes-generated")
 
     
     def run(self, snp_set=None, emma_type=None, geno_indir=None, phenos_indir=None, outdir=None):
@@ -906,7 +905,7 @@ class EmmaRunner(object):
         if not geno_indir:
             # Update the SNP database location for this SNP set
             geno_indir = EmmaRunner.snp_database_dir + snp_set + '/'
-        self.write_log("genos-processed")
+        self.write_log("processing-genotypes")
 
         # Make sure directories were specified
         if not snp_set or not emma_type or not phenos_indir or not outdir:
@@ -944,7 +943,7 @@ class EmmaRunner(object):
                 sys.exit(1)
             
             if self.verbose:
-                    self.write_log("emma-started")
+                    self.write_log("running-associations")
             job_ifh = open(outdir + 'EMMA_job.Rscript', 'w')
             job_ifh.write('source("'+EmmaRunner.emma_code_dir+'emma.R")\n\n'
             + 'geno.infile = "' + geno_indir + snp_set + '_for_emma.tab'+'"\n' \
@@ -1020,7 +1019,7 @@ class EmmaRunner(object):
                 for idx in range(0,4):
                     # Run Emmax
                     if self.verbose:
-                        self.write_log("emma-started")
+                        self.write_log("running-associations")
                     emmax_cmd = outdir + 'emmax -d 40 -t ' + outdir + '65M_for_emmax_part' + part[idx] + ' -p ' + phenos_indir + '65M_for_emmax_phenos.tab -k ' + outdir + '65M_for_emmax.hIBS.kinf -o ' + outdir + 'emmax_run'
                     subprocess.call(emmax_cmd, shell=True)
                     pafex_cmd = EmmaRunner.emmax_code_dir + 'PAFEX 150000 .1 0 0 ' + outdir + 'emmax_run.ps ' + outdir + 'emmax_run_'+part[idx]
@@ -1071,7 +1070,7 @@ class EmmaRunner(object):
 
                 # Run Emmax
                 if self.verbose:
-                    self.write_log("emma-started")
+                    self.write_log("running-associations")
                 subprocess.call(emmax_cmd, shell=True)
                 
                 self.write_log("post-processing")
@@ -1126,7 +1125,7 @@ class EmmaRunner(object):
 
             # Run gemma
             if self.verbose:
-                self.write_log("emma-started")
+                self.write_log("running-associations")
             subprocess.call(gemma_cmd, shell=True)
             
             self.write_log("post-processing")
@@ -1264,6 +1263,7 @@ if __name__ == "__main__":
     pheno_file = try_and_load('general', 'pheno_file', None)
     emma_type =try_and_load('general', 'emma_type', None)
     snp_dir = try_and_load('general', 'snp_dir', '/raid/Genotype Data/')
+    redis_key = try_and_load('general', 'redis_key', None)
     
     EmmaRunner.emma_code_dir = try_and_load('general', 'emma_code_dir', '/raid/WWW/ror_website/lib/EMMA/')
     EmmaRunner.emmax_code_dir = try_and_load('general', 'emmax_code_dir', '/raid/WWW/ror_website/lib/EMMA/')
@@ -1272,8 +1272,8 @@ if __name__ == "__main__":
     EmmaRunner.official_names_dir = try_and_load('general', 'official_names_dir', '/raid/WWW/ror_website/lib/EMMA/')
     
     obj = EmmaRunner()
-    obj.set_redis_log(os.path.split(os.path.dirname(args.project_dir))[1])
-    obj.set_redis_error(os.path.split(os.path.dirname(args.project_dir))[1])
+    obj.set_redis_log(redis_key)
+    obj.set_redis_error(redis_key)
     obj.load_phenotypes(pheno_file)
     obj.process_phenotypes(snp_set)
     obj.generate_phenotype_files(args.project_dir)

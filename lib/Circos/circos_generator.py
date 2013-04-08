@@ -20,6 +20,7 @@
 #  2012 09 27 --    Cleaned up how paths are handled a bit (use os.path functions instead of string concat)
 #  2012 10 01 --    Updated command line call for image_mapper.py
 #  2012 12 12 --    Added gene track
+#  2013 04 08 --    Redis key now passed as an argument in the configuration file
 #===============================================================================
 
 import sys              # General system functions
@@ -109,10 +110,10 @@ except:
 
 
 # Attempt to get the job id for redis communication
-job_id = None
+redis_key = None
 use_redis = False
 try:
-    job_id = gen_conf.get('general','job_id')
+    redis_key = gen_conf.get('general','redis_key')
     use_redis = (False if job_id == -1 else True)
 except:
     use_redis = False
@@ -138,7 +139,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         with open(MHP_of) as f: pass
     except IOError as e:
         if use_redis:
-            redis_channel.sadd("%s:progress:log" % job_id, "gen-datapoint")
+            redis_channel.sadd("%s:progress:log" % redis_key, "generating-datapoint")
         else:
             print "Generating SNP datapoints..."
         #print "\nGenerating MHP track"
@@ -189,7 +190,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
 
 # Try to open communication with redis
 if use_redis:
-    redis_channel.sadd("%s:progress:log" % job_id, "pop-tracks")
+    redis_channel.sadd("%s:progress:log" % redis_key, "populating-tracks")
 else:
     print "Populating Tracks..."
 
@@ -360,7 +361,7 @@ template.render_context(ctx)
 circos_buf = buf.getvalue()
 
 if use_redis:
-    redis_channel.sadd("%s:progress:log" % job_id, "draw-image")
+    redis_channel.sadd("%s:progress:log" % redis_key, "drawing-image")
 else:
     print "Drawing the image..."
     

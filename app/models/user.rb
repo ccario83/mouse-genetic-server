@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
 		return total >= 100.0
 	end
 	
-	def get_redis_key
+	def redis_key
 		# A good UNIX filename expression: /^.*\/(.[^\/`"':]+)$/
 		return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
 	end
@@ -132,7 +132,7 @@ class User < ActiveRecord::Base
 			# Create a subdirectory that is a combination of the user name alpha characters and a small hex key
 			subdir = self.last_name.downcase.gsub(/[^a-z]/, '') + '.' + self.first_name.downcase.gsub(/[^a-z]/, '') + '.' + SecureRandom.hex(3)
 			# Try to create a directory for this job using the id as a directory name
-			directory = File.join(USER_DATA_path, subdir)
+			directory = File.join(USER_DATA_PATH, subdir)
 			begin
 				Dir.mkdir(directory) unless File.directory?(directory)
 				Dir.mkdir(File.join(directory,'data')) unless File.directory?(File.join(directory,'data'))

@@ -21,11 +21,9 @@ RorWebsite::Application.routes.draw do
   resources :tasks, :only => [:create, :destroy, :check]
   resources :jobs
   # UWF routes
-  match '/uwf/new'
-  match '/uwf/create'
-  match '/uwf/show'
-  match '/uwf/progress'
-  match '/uwf/generate'
+  resources :uwf, :only => [:new, :create, :show]
+  get '/uwf/progress/:id' => 'uwf#progress'
+  get '/uwf/generate/:id' => 'uwf#generate'
   # Phenotype routes
   get '/phenotypes/index'
   post '/phenotypes/show'

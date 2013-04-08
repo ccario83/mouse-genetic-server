@@ -1,12 +1,10 @@
 <% @page_title = "Unified Workflow Results" %>
 <% content_for :page_js do %>
 		<%= javascript_include_tag('interactive_circos_plot') %>
+		<%= javascript_include_tag('uwf_show') %>
 <% end %>
-<span id="job_ID" style="display:none;"><%= @job_ID %></span>
-				<!-- Left Panel -->
-				<!--<div class="span2 offset1 job-panel">
-					<%= render(:partial => "jobs_panel") %>
-				</div>-->
+<span id="job_id" style="display:none;"><%= @job.id %></span>
+
 				
 				<!-- Center Panel-->
 				<div class="span8 offset2 main-panel">
@@ -36,7 +34,7 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td>Job ID</td><td><%= @job.ID %></td>
+									<td>Job ID</td><td><%= @job.id %></td>
 								</tr>
 								<tr>
 									<td>Phenotype</td><td><%= @pheno_file %></td>
@@ -54,28 +52,27 @@
 				<% else %>
 					<div class="row span12">
 						<h3>Job Status: Running...</h3>
-						<%= javascript_include_tag('job_progress') %>
-						<script type="text/javascript"> window.job_id = '<%= @job_ID %>';</script>
+						<script type="text/javascript"> window.job_id = '<%= @job.id %>';</script>
 						<div id="job-progress">
 							<ul>
-								<li id="started" class="incomplete">Started</li>
-								<li id="config-emma" class="incomplete">Configuring <%= @emma_type %></li>
-								<li id="run-emma" class="incomplete">Running <%= @emma_type %>
+								<li id="starting" class="incomplete">Starting</li>
+								<li id="configuring-gwa" class="incomplete">Configuring <%= @emma_type %></li>
+								<li id="starting-gwa" class="incomplete">Starting <%= @emma_type %>
 									<ul>
-										<li id="phenos-read" class="incomplete">Reading phenotypes</li>
-										<li id="phenos-processed" class="incomplete">Processing phenotypes</li>
-										<li id="genos-processed" class="incomplete">Reading genotypes</li>
-										<li id="emma-started" class="incomplete">Running algorithm</li>
+										<li id="reading-phenotypes" class="incomplete">Reading phenotypes</li>
+										<li id="processing-phenotypes" class="incomplete">Processing phenotypes</li>
+										<li id="processing-genotypes" class="incomplete">Processing genotypes</li>
+										<li id="running-associations" class="incomplete">Running associations</li>
 										<li id="post-processing" class="incomplete">Post processing</li>
 									</ul>
 								</li>
-								<li id="config-circos" class="incomplete">Configuring Circos</li>
-								<li id="run-circos" class="incomplete"> Starting Circos</li>
+								<li id="configuring-circos" class="incomplete">Configuring Circos</li>
+								<li id="starting-circos" class="incomplete"> Starting Circos</li>
 									<ul>
-										<li id="pop-tracks" class="incomplete">Populating tracks</li>
-										<li id="gen-datapoint" class="incomplete">Generating datapoints</li>
-										<li id="draw-image" class="incomplete">Drawing full genome Circos plot</li>
-										<li class="incomplete">Finished!</li>
+										<li id="populating-tracks" class="incomplete">Populating tracks</li>
+										<li id="generating-datapoints" class="incomplete">Generating datapoints</li>
+										<li id="drawing-image" class="incomplete">Drawing the full genome Circos plot</li>
+										<li id="completed" class="incomplete">Completed!</li>
 									</ul>
 								<li>
 						</div>
@@ -83,8 +80,4 @@
 				<% end %>
 				</div>
 
-				<!-- Right Panel -->
-				<!--<div class="span2 user-panel">
-					<%= render(:partial => "user_panel") %>
-				</div>-->
 

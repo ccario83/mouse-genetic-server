@@ -158,7 +158,7 @@ class PhenotypesController < ApplicationController
     
     
     # Prepare the data for and start the StatWorker
-    @job_id = SecureRandom.hex(3)
+    @job_id = 'stat.' + SecureRandom.hex(2)
     @strains = []
     @values = []
     @results.each do |strain, strain_values|
@@ -167,8 +167,8 @@ class PhenotypesController < ApplicationController
             @values.push(value)
         end 
     end
-    StatWorker.perform_async(@job_id, @values, @strains)
     
+    StatWorker.perform_async(current_user.redis_key, @job_id, @values, @strains)
     
     # For the view, calculate the frequencies and ns for each strain add a lookup table for friendlier sex descriptions
     @ns = Hash[@results.map { |k,v| [k, v.length] }]
@@ -180,14 +180,15 @@ class PhenotypesController < ApplicationController
 
   # This is an AJAX JSON action just checks if the stat worker is done and returns the values if it is
   def check_stats
+    user_key = current_user.redis_key
     @id = params['id']
-    if !($redis.exists("#{@id}:letters"))
+    if !($redis.exists("#{user_key}:#{@id}:letters"))
         render :json => { :status => 'Not ready.', :id => @id}.to_json
     else
-        @strains = $redis.smembers("#{@id}:strains")[0]
-        @means   = $redis.smembers("#{@id}:means")[0]
-        @stderrs = $redis.smembers("#{@id}:stderrs")[0]
-        @letters = $redis.smembers("#{@id}:letters")[0]
+        @strains = $redis.smembers("#{user_key}:#{@id}:strains")[0]
+        @means   = $redis.smembers("#{user_key}:#{@id}:means")[0]
+        @stderrs = $redis.smembers("#{user_key}:#{@id}:stderrs")[0]
+        @letters = $redis.smembers("#{user_key}:#{@id}:letters")[0]
         render :json => { :status => 'Ready.', :strains => @strains, :means => @means, :stderrs => @stderrs, :letters => @letters, :id => @id}.to_json
     end
   end

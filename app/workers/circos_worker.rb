@@ -24,7 +24,7 @@ class CircosWorker
 
         # Run the Circos Generator Script
         #puts "Circos running with job [#{job_location}, #{emma_result_file}, #{chromosome}, #{start_position}, #{stop_position}, #{bin_size}]"
-        cmd = "python #{CIRCOS_path}circos_generator.py -p #{job_location}"
+        cmd = "python #{CIRCOS_PATH}circos_generator.py -p #{job_location}"
         system(cmd)
         
         # All done!

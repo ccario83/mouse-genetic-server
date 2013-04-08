@@ -1,7 +1,7 @@
 class Job < ActiveRecord::Base
 	attr_accessible :creator, :groups, :directory, :name, :description, :datafile, :state, :runner, :parameters 
 	before_create :create_job_directory
-	before_create :default_values
+	after_initialize :default_values
 	before_save :ensure_paramaters_are_JSON
 	
 	belongs_to :creator, :class_name => 'User', :foreign_key => 'creator_id'
@@ -10,10 +10,57 @@ class Job < ActiveRecord::Base
 	
 	validates :creator,	:presence => true
 	validates :runner,	:presence => true, :inclusion => { :in => ['UWF'], :message => "Invalid job type" }
-	validates :state, :presence => true, :inclusion => { :in => ['Starting', 'Progressing', 'Completed', 'Failed'], :message => "Invalid job state" }
-	#validates :datafile, :presence => true
-	#validates_associated :datafile
-		
+	validates :state, :inclusion => { :in => ['Starting', 'Progressing', 'Completed', 'Failed'], :message => "Invalid job state" }
+	validates :datafile, :presence => true
+	validates_associated :datafile
+	
+	def redis_key
+			return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
+	end
+	
+	def get_parameter(parameter)
+		return JSON.parse(self.parameters)[parameter]
+	end
+	
+	def store_parameters(parameters)
+		self.parameters = JSON.parse(self.parameters)
+		parameters.each {|key,value| self.parameters[key] = value }
+		self.parameters = self.parameters.to_json
+	end
+	
+	def progress
+		begin
+			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:progress:log"
+				return ($redis.scard "#{self.creator.redis_key}:#{self.redis_key}:progress:log")/16.0*100
+			else
+				if self.name == 'Starting'
+					return 5
+				elsif self.name == 'Progressing'
+					return 68
+				elsif self.name == 'Completed'
+					return 100
+				elsif self.name == 'Failed'
+					return 25
+				else
+					return nil
+				end
+			end
+		rescue
+			return nil
+		end
+	end
+	
+	def runtime_errors
+		error_log = []
+		begin
+			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:error:log"
+				error_log = $redis.smembers "#{redis_key}:error:log"
+			end
+		rescue
+			return nil
+		end
+	end
+	
 	private
 		def create_job_directory
 			# Create a subdirectory that is a combination of the user name alpha characters and a small hex key
@@ -36,12 +83,8 @@ class Job < ActiveRecord::Base
 			begin
 				JSON.parse(self.parameters)
 				return
-			rescue JSON::ParserError
+			rescue
 				self.parameters = self.parameters.to_json
 			end
-		end
-		
-		def get_redis_key
-			return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
 		end
 end

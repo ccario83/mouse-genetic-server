@@ -24,7 +24,7 @@
 												<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
 										</div>
 										<div class="progress <%= progress_classes %>">
-											<div class="bar <%= bar_classes %>" style="width: 60%;"></div>
+											<div class="bar <%= bar_classes %>" style="width: <%= job.progress %>%;"></div>
 										</div>
 										<div class="timestamp">
 												<%= time_ago_in_words(job.created_at) %> ago

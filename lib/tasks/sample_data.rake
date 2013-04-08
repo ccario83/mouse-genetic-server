@@ -113,10 +113,11 @@ end
 
 def make_jobs
 	user = User.first
-	user.jobs.create!(:name => 'Job starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting')
-	user.jobs.create!(:name => 'Bronchial Adenoma Severity', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing')
-	user.jobs.create!(:name => 'Bronchial Adenoma Frequency', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed')
-	user.jobs.create!(:name => 'Uterine Carcinoma Severity', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed')
+	datafile = user.datafiles.new(:filename => '/tmp/no.txt')
+	user.jobs.create!(:name => 'Starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting', :datafile => datafile)
+	user.jobs.create!(:name => 'Progressing', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing', :datafile => datafile)
+	user.jobs.create!(:name => 'Failed', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed', :datafile => datafile)
+	user.jobs.create!(:name => 'Completed', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed', :datafile => datafile)
 end
 
 

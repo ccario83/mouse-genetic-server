@@ -103,73 +103,78 @@ $(function()
 
 $(document).ready(function()
 {
-var loadTimer = setInterval(function(){check_trees()}, 200);
+	var loadTimer = setInterval(function(){check_trees()}, 200);
 
-function check_trees()
-{
-	var mpath_isLoading = $("#mpath_tree").dynatree("getRoot").isLoading();
-	var anat_isLoading = $("#anat_tree").dynatree("getRoot").isLoading();
-
-	if (!mpath_isLoading && !anat_isLoading) 
+	function check_trees()
 	{
-		clearInterval(loadTimer);
-		// Expand the first nodes	
-		$("#mpath_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
-		$("#anat_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
-		
-		var mpath_first_node = $("#mpath_tree").dynatree("getRoot").childList[0];
-		var anat_first_node = $("#anat_tree").dynatree("getRoot").childList[0];
-		var mpath_term_list=[];
-		var anat_term_list=[];
-		make_autocomplete_list(mpath_first_node, mpath_term_list);
-		make_autocomplete_list(anat_first_node, anat_term_list);
+		var mpath_isLoading = $("#mpath_tree").dynatree("getRoot").isLoading();
+		var anat_isLoading = $("#anat_tree").dynatree("getRoot").isLoading();
 
-		
-		$('#mpath_search').autocomplete(
-		{ 
-			source: mpath_term_list, 
-			minLength: 3, 
-			select: function(event, ui)
-			{ 
-				$('#mpath_tree').dynatree('getTree').activateKey(ui.item.value);
-				$('#mpath_search').val(ui.item.label);
-				return false; // Return false to cancel the event, which prevents jQuery from replacing the field with the 'value' (which is just the ID)
-			}
-		});
-		
-		$("#anat_search").autocomplete(
+		if (!mpath_isLoading && !anat_isLoading) 
 		{
-			source: anat_term_list, 
-			minLength: 3, 
-			select: function(event, ui)
+			clearInterval(loadTimer);
+			// Expand the first nodes	
+			$("#mpath_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
+			$("#anat_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
+			
+			var mpath_first_node = $("#mpath_tree").dynatree("getRoot").childList[0];
+			var anat_first_node = $("#anat_tree").dynatree("getRoot").childList[0];
+			var mpath_term_list=[];
+			var anat_term_list=[];
+			make_autocomplete_list(mpath_first_node, mpath_term_list);
+			make_autocomplete_list(anat_first_node, anat_term_list);
+
+			
+			$('#mpath_search').autocomplete(
 			{ 
-				$('#anat_tree').dynatree('getTree').activateKey(ui.item.value);
-				$('#anat_search').val(ui.item.label);
-				return false; // Return false to cancel the event, which prevents jQuery from replacing the field with the 'value' (which is just the ID)
-			} 
-		});
-	}
-};
+				source: mpath_term_list, 
+				minLength: 3, 
+				select: function(event, ui)
+				{ 
+					$('#mpath_tree').dynatree('getTree').activateKey(ui.item.value);
+					$('#mpath_search').val(ui.item.label);
+					return false; // Return false to cancel the event, which prevents jQuery from replacing the field with the 'value' (which is just the ID)
+				}
+			});
+			
+			$("#anat_search").autocomplete(
+			{
+				source: anat_term_list, 
+				minLength: 3, 
+				select: function(event, ui)
+				{ 
+					$('#anat_tree').dynatree('getTree').activateKey(ui.item.value);
+					$('#anat_search').val(ui.item.label);
+					return false; // Return false to cancel the event, which prevents jQuery from replacing the field with the 'value' (which is just the ID)
+				} 
+			});
+		}
+	};
 
-$('#mpath_search').keypress(function (e)
-{
-	if (e.which == 13)
+	$('#mpath_search').keypress(function (e)
 	{
-		search_tree($("#mpath_tree").dynatree("getRoot").childList[0], $('#mpath_search').val());
-		return false;	//Prevent page refresh by returning false
-	}
-});
+		if (e.which == 13)
+		{
+			search_tree($("#mpath_tree").dynatree("getRoot").childList[0], $('#mpath_search').val());
+			return false;	//Prevent page refresh by returning false
+		}
+	});
 
-$('#anat_search').keypress(function (e)
-{
-	if (e.which == 13)
+	$('#anat_search').keypress(function (e)
 	{
-		search_tree($("#anat_tree").dynatree("getRoot").childList[0], $('#anat_search').val());
-		return false;	//Prevent page refresh by returning false
-	}
+		if (e.which == 13)
+		{
+			search_tree($("#anat_tree").dynatree("getRoot").childList[0], $('#anat_search').val());
+			return false;	//Prevent page refresh by returning false
+		}
+	});
+// Fix for height issue
+$('.dynatree-container').height($(window).height() - $('.dynatree-container').position().top - 75 );
 });
 
-});
+// Fix for height issue on window resize or container resize
+$(window).resize(function() { $('.dynatree-container').height( $(window).height() - $('.dynatree-container').position().top - 75 ) });
+$('.dynatree-container').resize(function() { $('.dynatree-container').height( $(window).height() - $('.dynatree-container').position().top - 75 ) });
 
 function make_autocomplete_list(node, list)
 {

@@ -1,54 +1,28 @@
 
-				<% if @ready %>
+				<% if job.state == 'Completed' %>
 					<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
 					This causes the check_progress() JS function to stop the timer as an error function
 					-->
-					<div class="row-fluid">
-						<div id="fs-container" class="img-polaroid" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
+					<div class="row-fluid" style = "border: 1px solid #CCC;">
+						<div id="fs-container" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
 							<center>
 							<div id="fs">
-									<%= image_tag(@circos_thumb, :id => 'circos_thumb', :width => '75%')%>
+									<%= image_tag(circos_thumb, :id => 'circos_thumb', :width => '75%')%>
 							</div>
 							</center>
 							<center><h3>Click here for full screen interactive mode</h3></center>
 						</div>
 					</div>
-
-					<br/>
-					<div class="row-fluid">
-						<table class="table table-bordered table-striped">
-							<thead>
-								<tr>
-									<th>Parameter</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Job ID</td><td><%= @job.id %></td>
-								</tr>
-								<tr>
-									<td>Phenotype</td><td><%= @pheno_file %></td>
-								</tr>
-								<tr>
-									<td>Algorithm</td><td><%= @emma_type %></td>
-								</tr>
-								<tr>
-									<td>SNP Set</td><td><%= @snp_set %></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
 				<% else %>
-					<div class="row span12">
-						<h3>Job Status: Running...</h3>
-						<script type="text/javascript"> window.job_id = '<%= @job.id %>';</script>
-						<div id="job-progress">
+
+					<div class="row-fluid" style = "border: 1px solid #CCC;">
+						<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
+						<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>
+						<div id="job-progress" style="padding-left: 20px">
 							<ul>
 								<li id="starting" class="incomplete">Starting</li>
-								<li id="configuring-gwa" class="incomplete">Configuring <%= @emma_type %></li>
-								<li id="starting-gwa" class="incomplete">Starting <%= @emma_type %>
+								<li id="configuring-gwa" class="incomplete">Configuring <%= job.get_parameter('emma_type') %></li>
+								<li id="starting-gwa" class="incomplete">Starting <%= job.get_parameter('emma_type') %>
 									<ul>
 										<li id="reading-phenotypes" class="incomplete">Reading phenotypes</li>
 										<li id="processing-phenotypes" class="incomplete">Processing phenotypes</li>
@@ -69,3 +43,30 @@
 						</div>
 					</div>
 				<% end %>
+				<br/>
+					<div class="row-fluid">
+						<table class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Parameter</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Name</td><td><%= job.name %></td>
+								</tr>
+								<tr>
+									<td>Description</td><td><%= job.description %></td>
+								</tr>
+								<% job.get_parameters.each do |parameter, value| %>
+								<tr>
+									<% if parameter.titlecase == 'Chromosome' and value == -1%><% value = 'All' %><% end %>
+									<% if parameter.titlecase == 'Start Position' and value == -1 %><% value = 0 %><% end %>
+									<% if parameter.titlecase == 'Stop Position' and value == -1 %><% value = 'Full' %><% end %>
+									<td><%= parameter.titlecase %></td><td><%= value %></td>
+								</tr>
+								<% end %>
+							</tbody>
+						</table>
+					</div>

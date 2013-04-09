@@ -11,7 +11,7 @@
 									<% when 'otherjob'    %><% label_classes = ""              %>
 								<% end %>
 								
-								<li id="<%= job.id %>" class="clear-fix">
+								<li class="clear-fix">
 									<div class="container-fluid" style="padding:0px;">
 										<div class="row-fluid">
 											<div class="content span11">
@@ -20,7 +20,7 @@
 												<% end %>
 											<div>
 										</div>
-										<div class="display-<%= job.state %>">
+										<div id="<%= job.id %>" class="display display-<%= job.state %>">
 												<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
 										</div>
 										<div class="progress <%= progress_classes %>">

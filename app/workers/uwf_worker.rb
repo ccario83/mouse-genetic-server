@@ -27,7 +27,7 @@ class UwfWorker
         $redis.expire "#{redis_key}:completed", 86400
         
         # Set the additional parameters in the job ActiveRecord
-        job.store_parameters({ :chomosome => chromosome, :start_position => start_position, :stop_position => stop_position, :bin_size => bin_size })
+        job.store_parameters({ :chromosome => chromosome, :start_position => start_position, :stop_position => stop_position, :bin_size => bin_size })
         
 
         job.state = 'Progressing'

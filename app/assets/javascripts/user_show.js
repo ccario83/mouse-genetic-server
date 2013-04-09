@@ -20,7 +20,6 @@ $(window).bind("load", function()
 		var id = $(this)[0].id;
 		$.ajax(
 		{
-			// Send the request as a get to the url /phenotypes/query
 			//async: false,
 			type:'post',
 			url: '/users/accept_group',
@@ -38,7 +37,6 @@ $(window).bind("load", function()
 		var id = $(this)[0].id;
 		$.ajax(
 		{
-			// Send the request as a get to the url /phenotypes/query
 			//async: false,
 			type:'post',
 			url: '/users/decline_group',
@@ -56,7 +54,6 @@ $(window).bind("load", function()
 		var id = $(this)[0].id;
 		$.ajax(
 		{
-			// Send the request as a get to the url /phenotypes/query
 			//async: false,
 			type:'post',
 			url: '/users/leave_group',
@@ -74,7 +71,6 @@ $(window).bind("load", function()
 		var id = $(this)[0].id;
 		$.ajax(
 		{
-			// Send the request as a get to the url /phenotypes/query
 			//async: false,
 			type:'post',
 			url: '/users/delete_group',
@@ -85,6 +81,24 @@ $(window).bind("load", function()
 			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
 		});
 		
+	});
+	
+	
+	$('.jobs .display').click(function() {
+		var id = this.id;
+		$.ajax(
+		{
+			//async: false,
+			type:'post',
+			url: '/users/job',
+			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+			data: {id: id},
+			dataType: 'HTML',
+			success: function(html){ $("#center-panel").html(html); },
+			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+		});
+
+
 	});
 	
 	/// CODE FOR CHOSEN BOXES

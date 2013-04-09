@@ -997,3 +997,6 @@ tr.group-management-panel:last-child
 	margin: 0px 5px;
 }
 #new_micropost div.control-group.select { margin-bottom: 0px; }
+
+
+.jobs .display { cursor: pointer;}

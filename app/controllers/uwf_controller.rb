@@ -42,15 +42,8 @@ class UwfController < ApplicationController
   def show
     # Get the id of the job to show
     @job = Job.find(params['id']) # id is what comes after the slash in 'uwf/show/#' by default
-    
-    @pheno_file = @job.datafile.get_path
-    @emma_type = @job.get_parameter('emma_type')
-    @snp_set = @job.get_parameter('snp_set')
-    
-    # Check if the job is finished and pass the state to the view
-    @ready = $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
     # Also display the circos plot thumbnail if it is ready
-    if @ready
+    if $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
         @circos_thumb = File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/circos.png')
     end
   end
@@ -59,12 +52,7 @@ class UwfController < ApplicationController
   def progress
     @job = Job.find(params['id'])
     @log = $redis.smembers("#{current_user.redis_key}:#{@job.redis_key}:progress:log")
-    @ready = $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
-    if @ready
-        render :json => 'completed'
-    else
-        render :json => @log.to_json
-    end
+    render :json => @log.to_json
   end
   
   

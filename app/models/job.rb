@@ -22,6 +22,14 @@ class Job < ActiveRecord::Base
 		return JSON.parse(self.parameters)[parameter]
 	end
 	
+	def get_parameters()
+		return JSON.parse(self.parameters)
+	end
+	
+	def store_parameter(parameter)
+		store_parameters(parameter)
+	end
+	
 	def store_parameters(parameters)
 		self.parameters = JSON.parse(self.parameters)
 		parameters.each {|key,value| self.parameters[key] = value }

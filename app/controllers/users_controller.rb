@@ -124,9 +124,16 @@ class UsersController < ApplicationController
 		end
 	end
 
-	def load_job
-		@id = params[:id].to_i
+	def job
+		# Get the id of the job to show
+		@job = Job.find(params['id']) # id is what comes after the slash in 'uwf/show/#' by default
+		# Also display the circos plot thumbnail if it is ready
+		if $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
+			@circos_thumb = File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/circos.png')
+		end
 		
+		render :partial => 'uwf/uwf_center_panel', :locals => { job: @job, circos_thumb: @circos_thumb }, :as => :json
+		#render 'jobs.js'
 	end
 
 	private

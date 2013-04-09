@@ -14,6 +14,7 @@ RorWebsite::Application.routes.draw do
   match '/phenotypes', :to => 'phenotypes#index'
   
   # General routes
+  post '/users/job' => 'users#job'
   resources :users
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   resources :sessions, :only => [:new, :create, :destroy]

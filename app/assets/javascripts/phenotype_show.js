@@ -1,5 +1,6 @@
 //Debug temp;
 var data;
+var load;
 
 /* =============================================================================== */ 
 /* =     Set all on change events on page load                                   = */
@@ -36,7 +37,7 @@ $(window).bind("load", function()
 	$("#F_mouse").click(function() { change_sexes('F'); });
 	// The age_range on change is set by set_age_selection() on the initial lookup call; it doesn't work when it is set here
 	$("#code").change(function() { change_code(); });
-	
+	load = $('#chart').html();
 	
 	var youngest = get_age_range()[0];
 	var oldest = get_age_range()[1];
@@ -50,6 +51,7 @@ $(window).bind("load", function()
 function lookup(mpath_id_list, anat_id_list, selected_strains, youngest, oldest, code, sex)
 {
 
+	$('#chart').html(load);
 	console.log("AJAX: Requesting new filtered strain data...");
 	// Send the request for new data to the server
 	$.ajax(
@@ -71,7 +73,7 @@ function process_data(response)
 {
 	// set the data globally for debugging
 	data = response;
-	
+
 	// Get the responding values
 	//selected_strains = response['strains'];
 	var youngest = response['youngest'];
@@ -234,7 +236,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	}
 	
 	
-	if ((sex == 'B' || sex == 'M') && !(typeof(frequencies['F']) === "undefined"))
+	if ((sex == 'B' || sex == 'F') && !(typeof(frequencies['F']) === "undefined"))
 	{
 		var freq_f = frequencies['F'];
 		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:parseFloat(freq_f[strain].toFixed(2)); });
@@ -259,7 +261,7 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 		});
 	}
 	
-	
+
 	// Create the chart
 	chart = new Highcharts.Chart(
 	{

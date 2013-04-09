@@ -139,7 +139,7 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         with open(MHP_of) as f: pass
     except IOError as e:
         if use_redis:
-            redis_channel.sadd("%s:progress:log" % redis_key, "generating-datapoint")
+            redis_channel.sadd("%s:progress:log" % redis_key, "generating-datapoints")
         else:
             print "Generating SNP datapoints..."
         #print "\nGenerating MHP track"

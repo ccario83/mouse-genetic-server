@@ -39,7 +39,7 @@ class Job < ActiveRecord::Base
 	def progress
 		begin
 			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:progress:log"
-				return ($redis.scard "#{self.creator.redis_key}:#{self.redis_key}:progress:log")/12.0*100
+				return ($redis.scard "#{self.creator.redis_key}:#{self.redis_key}:progress:log")/15.0*100
 			else
 				if self.name == 'Starting'
 					return 5

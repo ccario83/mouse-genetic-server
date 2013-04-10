@@ -1,28 +1,8 @@
 
-					<div class="row-fluid">
-						<span class="title"> Tools </span>
-					</div>
-					<% if is_admin? %>
-					<a href="/phenotypes">
-						<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
-
-							<div style="float:left; padding-left: 10px;">
-								<%= image_tag '/phenotype.png' %>
-							</div>
-							<div style="padding: 2px 85px;">
-								<h3> Phenotype Explorer </h3>
-							</div>
-						</div>
-					</a>
-					<% end %>
-					<a href="/uwf">
-						<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
-
-							<div style="float:left; padding-left: 10px;">
-								<%= image_tag '/uwf.png' %>
-							</div>
-							<div style="padding: 2px 85px;">
-								<h3> Unified Workflow </h3>
-							</div>
-						</div>
-					</a>
+<% if not job.nil? %>
+	<% if @job.runner == 'UWF' %>
+		<%= render 'uwf/uwf_job', job: job %>
+	<% end %>
+<% else %>
+	<%= render 'tools_panel' %>
+<% end %>

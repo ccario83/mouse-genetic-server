@@ -1,83 +1,42 @@
 class JobsController < ApplicationController
-  # GET /jobs
-  # GET /jobs.json
-  def index
-    @jobs = Job.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @jobs }
-    end
-  end
-
-  # GET /jobs/1
-  # GET /jobs/1.json
+  before_filter :signed_in_user, :only => [:show, :edit, :destroy]
+  
+  # GET /user/:user_id/jobs/:id
   def show
+    #@user = User.find(params[:user_id])
+    @user = current_user
     @job = Job.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @job }
+    
+    # Verify the user owns the job
+    if not @job.creator == @user
+      flash[:error] = "You don't own this job."
+      redirect_to :back
     end
+    
+    if @job.runner == 'UWF' and @job.state == 'Completed'
+      @job.store_parameter(:circos_root => File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/'))
+      @job.save!
+    end
+    
+    redirect_to :controller => :users, :action => :show, :id => @user.id, :job_id => @job.id
+    return
   end
 
-  # GET /jobs/new
-  # GET /jobs/new.json
-  def new
-    @job = Job.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @job }
-    end
-  end
-
-  # GET /jobs/1/edit
+  # GET /user/:user_id/jobs/:id/edit
   def edit
-    @job = Job.find(params[:id])
+    #@job = Job.find(params[:id])
   end
 
-  # POST /jobs
-  # POST /jobs.json
-  def create
-    @job = Job.new(params[:job])
-
-    respond_to do |format|
-      if @job.save
-        format.html { redirect_to @job, notice: 'Job was successfully created.' }
-        format.json { render json: @job, status: :created, location: @job }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @job.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /jobs/1
-  # PUT /jobs/1.json
-  def update
-    @job = Job.find(params[:id])
-
-    respond_to do |format|
-      if @job.update_attributes(params[:job])
-        format.html { redirect_to @job, notice: 'Job was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @job.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /jobs/1
-  # DELETE /jobs/1.json
+  # DELETE /user/:user_id/jobs/:id
   def destroy
     @job = Job.find(params[:id])
-    @job.destroy
-
-    respond_to do |format|
-      format.html { redirect_to jobs_url }
-      format.json { head :no_content }
+    
+    # Verify the user owns the job
+    if not @job.creator == current_user
+      flash[:error] = "You don't own this job."
     end
+    
+    @job.destroy
+    redirect_to '/users/#{current_user.id}'
   end
 end

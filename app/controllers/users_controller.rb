@@ -1,8 +1,6 @@
 class UsersController < ApplicationController
-	before_filter :signed_in_user,	:only => [:index, :edit, :update, :destroy]
-	before_filter :correct_user, 	:only => [:edit, :update]
+	before_filter :signed_in_user,	:only => [:index, :edit, :update, :destroy, :edit, :update]
 	before_filter :admin_user, 		:only => :destroy
-	
 
 	def index
 		@users = User.order(:last_name).paginate(:page => params[:page], :per_page => 28)
@@ -10,7 +8,8 @@ class UsersController < ApplicationController
 
 
 	def show
-		@user = User.find(params[:id])
+		#@user = User.find(params[:id])
+		@user = current_user
 		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 5)
 		@micropost = current_user.authored_posts.new
 		@all_groups = @user.groups.order(:name)
@@ -18,6 +17,7 @@ class UsersController < ApplicationController
 		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
 		
 		@jobs = current_user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 5)
+		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
 	end
 
 
@@ -124,6 +124,7 @@ class UsersController < ApplicationController
 		end
 	end
 
+=begin AJAX job loading
 	def job
 		# Get the id of the job to show
 		@job = Job.find(params['id']) # id is what comes after the slash in 'uwf/show/#' by default
@@ -133,15 +134,10 @@ class UsersController < ApplicationController
 		end
 		
 		render :partial => 'uwf/uwf_center_panel', :locals => { job: @job, circos_thumb: @circos_thumb }, :as => :json
-		#render 'jobs.js'
 	end
+=end 
 
 	private
-		def correct_user
-			@user = User.find(params[:id])
-			redirect_to root_path unless current_user?(@user)
-		end
-
 		def admin_user
 			redirect_to root_path unless current_user.admin?
 		end

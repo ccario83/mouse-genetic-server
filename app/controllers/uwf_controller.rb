@@ -1,10 +1,14 @@
-#require 'jobber'
-
 class UwfController < ApplicationController
+  before_filter :signed_in_user, :only => [:index, :new, :create, :progress, :generate]
 
+  def index
+    redirect_to :action => :new
+  end
+  
   def new
     @enabled_upload = true
     @job = current_user.jobs.new
+    @datafile = Datafile.new
     @job_name = "Enter a job name"
   end
   
@@ -35,17 +39,8 @@ class UwfController < ApplicationController
 
     UwfWorker.perform_async(@job.id)
 
-    redirect_to :action => :show, :id => @job.id
-  end
-  
-  
-  def show
-    # Get the id of the job to show
-    @job = Job.find(params['id']) # id is what comes after the slash in 'uwf/show/#' by default
-    # Also display the circos plot thumbnail if it is ready
-    if $redis.get("#{current_user.redis_key}:#{@job.redis_key}:completed") == 'true'
-        @circos_thumb = File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/circos.png')
-    end
+    redirect_to '/users/#{current_user.id}/jobs/#{@job.id}'
+    return
   end
   
   

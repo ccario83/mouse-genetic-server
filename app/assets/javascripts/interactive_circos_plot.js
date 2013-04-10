@@ -5,8 +5,8 @@ function unfull()
 	if (document.mozFullScreen) { return; }
 	if (document.webkitIsFullScreen) { return; }
 	
-	var job_ID = $('#job_ID').text();
-	image = "/data/"+job_ID+"/Plots/circos.png";
+	var job_root_path = $('#job_root_path').text();
+	image = "/data/"+job_root_path+"/Plots/circos.png";
 	var newElement = "<img alt='Circos' id='circos_thumb' src="+image+" width='75%' />"
 
 	var parent = document.getElementById('fs');
@@ -31,8 +31,8 @@ function full(el)
 	}
 	
 	// Get the path of the SVG image
-	var job_ID = $('#job_ID').text();
-	image_path = "/data/"+job_ID+"/Plots/circos_im.svg";
+	var job_root_path = $('#job_root_path').text();
+	image_path = "/data/"+job_root_path+"/Plots/circos_im.svg";
 	
 	
 	// Replace the PNG thumbnail with the SVG image
@@ -51,7 +51,7 @@ function full(el)
 
 function image_tag_to_path(image_tag)
 {
-	var job_ID = $('#job_ID').text();
+	var job_root_path = $('#job_root_path').text();
 	var location = image_tag.split('_');
 	var chromosome = location[0];
 	var start_pos = location[1];
@@ -71,7 +71,7 @@ function image_tag_to_path(image_tag)
 		image = 'Chr'+chromosome+'/'+start_pos+'_'+stop_pos+'/circos_im.svg';
 	}
 
-	image_path = "/data/"+job_ID+"/Plots/"+image;
+	image_path = "/data/"+job_root_path+"/Plots/"+image;
 	return image_path;
 };
 
@@ -129,7 +129,7 @@ function generate_circos_image(image_tag)
 		return;
 	}
 
-	var job_ID = $('#job_ID').text();
+	var job_id = $('#job_id').text();
 	pulsate($("#circos_img").contents().find("#"+image_tag));
 	
 	// Send an ajax request to start generating the requested image
@@ -137,7 +137,7 @@ function generate_circos_image(image_tag)
 	{
 		// Send the request as a get to the url /generate/job_id?image_tag
 		type:"get",
-		url:"/uwf/generate/" + job_ID + "?image_tag=" + image_tag,
+		url:"/uwf/generate/" + job_id + "?image_tag=" + image_tag,
 		datatype:"json",
 	});
 	

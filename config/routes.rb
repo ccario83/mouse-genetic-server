@@ -14,17 +14,21 @@ RorWebsite::Application.routes.draw do
   match '/phenotypes', :to => 'phenotypes#index'
   
   # General routes
-  post '/users/job' => 'users#job'
+  #post '/users/job' => 'users#job'
   resources :users
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   resources :sessions, :only => [:new, :create, :destroy]
   resources :microposts, :only => [:create, :destroy]
   resources :tasks, :only => [:create, :destroy, :check]
-  resources :jobs
+  resources :users do
+    resources :jobs
+  end
+  
   # UWF routes
-  resources :uwf, :only => [:new, :create, :show]
+  resources :uwf, :only => [:index, :new, :create]
   get '/uwf/progress/:id' => 'uwf#progress'
   get '/uwf/generate/:id' => 'uwf#generate'
+  
   # Phenotype routes
   get '/phenotypes/index'
   post '/phenotypes/show'

@@ -1,33 +1,35 @@
 
-								<% case job.state.downcase
-									   when 'starting'     %><% bar_classes = "bar-warning" %>
-									<% when 'progressing'  %><% bar_classes = "bar-success" %><%  progress_classes = "progress-striped active" %>
-									<% when 'completed'    %><% bar_classes = ""            %>
-									<% when 'failed'       %><% bar_classes = "bar-danger"  %>
-								<% end %>
-								
-								<% case job.runner.downcase
-									   when 'uwf'         %><% label_classes = "label-info"    %>
-									<% when 'otherjob'    %><% label_classes = ""              %>
-								<% end %>
-								
-								<li class="clear-fix">
-									<div class="container-fluid" style="padding:0px;">
-										<div class="row-fluid">
-											<div class="content span11">
-												<% if current_user?(job.creator) %>
-												<a href="/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
-												<% end %>
-											<div>
-										</div>
-										<div id="<%= job.id %>" class="display display-<%= job.state %>">
-												<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
-										</div>
-										<div class="progress <%= progress_classes %>">
-											<div class="bar <%= bar_classes %>" style="width: <%= job.progress %>%;"></div>
-										</div>
-										<div class="timestamp">
-												<%= time_ago_in_words(job.created_at) %> ago
-										</div>
-									</div>
-								</li>
+<% case job.state.downcase
+	   when 'starting'     %><% bar_classes = "bar-warning" %><%  progress_classes = "progress-striped active" %>
+	<% when 'progressing'  %><% bar_classes = "bar-success" %><%  progress_classes = "progress-striped active" %>
+	<% when 'completed'    %><% bar_classes = ""            %>
+	<% when 'failed'       %><% bar_classes = "bar-danger"  %>
+<% end %>
+
+<% case job.runner.downcase
+	   when 'uwf'         %><% label_classes = "label-info"    %>
+	<% when 'otherjob'    %><% label_classes = ""              %>
+<% end %>
+
+<li class="clear-fix">
+	<div class="container-fluid" style="padding:0px;">
+		<div class="row-fluid">
+			<div class="content span11">
+				<% if current_user?(job.creator) %>
+				<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+				<% end %>
+			<div>
+		</div>
+		<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>">
+			<div id="<%= job.id %>" class="display display-<%= job.state %>">
+					<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
+			</div>
+		</a>
+		<div class="progress <%= progress_classes %>">
+			<div class="bar <%= bar_classes %>" style="width: <%= job.progress %>%;"></div>
+		</div>
+		<div class="timestamp">
+				<%= time_ago_in_words(job.created_at) %> ago
+		</div>
+	</div>
+</li>

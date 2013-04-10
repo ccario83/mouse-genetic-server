@@ -83,7 +83,7 @@ $(window).bind("load", function()
 		
 	});
 	
-	
+	/* Jobs AJAX call
 	$('.jobs .display').click(function() {
 		var id = this.id;
 		$.ajax(
@@ -97,9 +97,8 @@ $(window).bind("load", function()
 			success: function(html){ $("#center-panel").html(html); },
 			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
 		});
-
-
 	});
+	*/
 	
 	/// CODE FOR CHOSEN BOXES
 	

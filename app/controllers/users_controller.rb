@@ -118,7 +118,7 @@ class UsersController < ApplicationController
 			flash[:error] = "Nice try..."
 			redirect_to :back
 		else
-			# @group.destroy
+			@group.destroy
 			# Return the data to the client so jQuery can update page
 			render :json => { :type => 'delete', :id => @id }.to_json
 		end

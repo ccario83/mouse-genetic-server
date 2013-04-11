@@ -1,0 +1,8 @@
+<div id= "group_listing" class="row-fluid">
+	<div class="span12">
+		<ul class="groups">
+			<%= render confirmed_groups, current_user: current_user %>
+		</ul>
+		<%= will_paginate confirmed_groups, :param_name => 'confirmed_groups_paginate' %>
+	</div>
+</div>

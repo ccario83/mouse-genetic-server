@@ -13,19 +13,39 @@ RorWebsite::Application.routes.draw do
   match '/signout', :to => 'sessions#destroy', :via => :delete
   match '/phenotypes', :to => 'phenotypes#index'
   
-  # General routes
-  #post '/users/job' => 'users#job'
+  # User routes
   resources :users
+  # User AJAX calls
+  post '/users/accept_group'
+  post '/users/decline_group'
+  post '/users/leave_group'
+  post '/users/delete_group'
+  
+  # Group routes
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
-  resources :sessions, :only => [:new, :create, :destroy]
-  resources :microposts, :only => [:create, :destroy]
-  resources :tasks, :only => [:create, :destroy, :check]
+  # Group AJAX calls
+  post '/groups/reload'
+  
+  # Job routes
   resources :users do
     resources :jobs
   end
+  # Job AJAX calls
+  post '/jobs/percentages'
+  #post '/jobs/reload'
+  
+  # Micropost routs
+  resources :microposts, :only => [:create, :destroy]
+  # Micropost AJAX calls
+  #post '/microposts/reload'
+  
+  # Other app routes
+  resources :sessions, :only => [:new, :create, :destroy]
+  resources :tasks, :only => [:create, :destroy, :check]
   
   # UWF routes
   resources :uwf, :only => [:index, :new, :create]
+  # UWF AJAX calls
   get '/uwf/progress/:id' => 'uwf#progress'
   get '/uwf/generate/:id' => 'uwf#generate'
   

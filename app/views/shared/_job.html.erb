@@ -21,12 +21,12 @@
 			<div>
 		</div>
 		<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>">
-			<div id="<%= job.id %>" class="display display-<%= job.state %>">
+			<div class="display display-<%= job.state %>">
 					<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
 			</div>
 		</a>
 		<div class="progress <%= progress_classes %>">
-			<div class="bar <%= bar_classes %>" style="width: <%= job.progress %>%;"></div>
+			<div id="<%= job.id %>" class="bar <%= bar_classes %>"></div>
 		</div>
 		<div class="timestamp">
 				<%= time_ago_in_words(job.created_at) %> ago

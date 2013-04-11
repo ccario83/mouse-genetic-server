@@ -39,4 +39,12 @@ class JobsController < ApplicationController
     @job.destroy
     redirect_to '/users/#{current_user.id}'
   end
+  
+  def percentages
+    job_ids = JSON.parse(params[:ids])
+    percentages = Hash[job_ids.sort.zip(Job.find(job_ids).map(&:progress))]
+    # replace nils with 0
+    percentages.each{|k,v| percentages[k] = 0 if v.nil?}
+    render :json => percentages.to_json
+  end
 end

@@ -20,6 +20,7 @@ class UwfController < ApplicationController
         if current_user.datafiles.map(&:id).include?(id)
             params['job']['datafile'] = Datafile.find(id)
         else
+            debugger
             flash[:error] = "Nice try..."
             redirect_to :back
         end
@@ -39,7 +40,7 @@ class UwfController < ApplicationController
 
     UwfWorker.perform_async(@job.id)
 
-    redirect_to '/users/#{current_user.id}/jobs/#{@job.id}'
+    redirect_to "/users/#{current_user.id}/jobs/#{@job.id}"
     return
   end
   

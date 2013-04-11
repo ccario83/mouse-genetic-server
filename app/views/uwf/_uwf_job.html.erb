@@ -70,8 +70,8 @@
 			<% job.get_parameters.each do |parameter, value| %>
 			<tr>
 				<% if parameter.titlecase == 'Chromosome' and value == -1%><% value = 'All' %><% end %>
-				<% if parameter.titlecase == 'Start Position' and value == -1 %><% value = 0 %><% end %>
-				<% if parameter.titlecase == 'Stop Position' and value == -1 %><% value = 'Full' %><% end %>
+				<% if parameter.titlecase == 'Start Position' and value == -1 %><% next %><% end %>
+				<% if parameter.titlecase == 'Stop Position' and value == -1 %><% next%><% end %>
 				<% if parameter.titlecase == 'Circos Thumb' %>
 					<td>Circos Image (SVG)</td><td><a href="<%= value %>">Download</a></td>
 				<% else %>

@@ -1,11 +1,17 @@
 
+var user_jobs_timer_id;
+
 $(window).bind("load", function()
 {
+
+	check_user_jobs_progress();
+	// Keep polling the server to update bars
+	user_jobs_timer_id = setInterval('check_user_jobs_progress()', 5000);
 
 	$('#add-group').click(function() { location.href = "/groups/new"; });
 	$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
 	$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
-	$('#group-management-modal-close').click(function() { location.reload();  });
+	$('.pulsate').click(function() { $(this).removeClass('pulsate')  });
 	
 	$(function()
 	{
@@ -130,7 +136,42 @@ $(window).bind("load", function()
 
 });
 
+function check_user_jobs_progress()
+{
+	// Get the job ids
+	var job_ids = []
+	$('.jobs li .bar').each(function() { job_ids.push(parseInt(this.id)) });
+	
+	$.ajax(
+	{
+		// Send the request as a get to the url /progress/job_id (routes.rb will send this to uwf#progress with :data = id
+		type:'post',
+		url: '/jobs/percentages/', // job_id embedded as a hidden span
+		datatype: 'json',
+		data: {ids: JSON.stringify(job_ids)},
+		success: update_bars,
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert('Error: ' + errorThrown); clearInterval(uwf_timer_id);},
+	});
+	
+}
 
+function update_groups(html)
+{
+	$('#group_listing').html(html)
+	return;
+}
+
+function update_bars(percentages)
+{
+	$.each(percentages, function(k,v)
+	{
+		var selector = '.jobs li .bar#' + k.toString();
+		var width = v.toString() + '%'
+		$(selector).css("width",width)
+	});
+	
+	return;
+}
 
 function process_response(response)
 {
@@ -165,7 +206,6 @@ function process_response(response)
 					success: function(response) {process_response(response)},
 					error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
 				});
-		
 			});
 			
 			// Solidify group icon
@@ -206,4 +246,17 @@ function process_response(response)
 			$(row).fadeOut('slow');
 		break;
 	}
+	
+	// Update groups AJAX
+	$.ajax(
+	{
+		//async: false,
+		type:'post',
+		url: '/groups/reload_groups',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		dataType: 'html',
+		success: function(response) {update_groups(response)},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+	});
+	return;
 }

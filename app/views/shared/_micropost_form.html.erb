@@ -20,10 +20,11 @@
 					<%= f.association :group_recipients, :collection => [group], :label => false, :as => :hidden %>
 					<%= f.association :user_recipients, :collection => [], :label => false, :as => :hidden %>
 				<% end %>
-					<%= f.input :content, :label => false, :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:500px; margin:0px; padding:5px 5px;' }, :required => false %>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-primary" value="Post">
-				</div>
-				<% end %>
+					<%= f.input :content, :label => "Message:", :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:500px; margin:0px; padding:5px 5px;' }, :required => false %>
 			</div>
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Post">
+			</div>
+				<% end %>
+
 

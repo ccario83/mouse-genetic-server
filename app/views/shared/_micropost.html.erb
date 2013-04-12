@@ -1,36 +1,42 @@
 
-								<li id="<%= micropost.id %>" class="clear-fix">
-									<div class="container-fluid" style="padding:0px;">
-										<div class="row-fluid">
-											<div class="span1">
-												<%= gravatar_for(micropost.creator) %>
-											</div>
-											<div class="content span11">
-												<% if current_user?(micropost.creator) %>
-												<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
-												<% end %>
-												<%= micropost.content %>
-											<div>
-										</div>
-										<div class="display-<%= micropost.recipient_type %>">
-												<% if micropost.creator == current_user %> You <% else %><%= micropost.creator.name %><% end %>
-												<% if micropost.user_recipients.length == 1 && micropost.user_recipients[0] == current_user %>
-													directly to you.
-												<% else %>
-													<% if micropost.group_recipients.length == 1 %>
-														to <%= micropost.group_recipients[0].name %>
-													<% elsif micropost.user_recipients.length == 1 %>
-														to <%= micropost.user_recipients[0].name %>
-													<% else %>
-														to many groups and or users.
-													<% end %>
-												<% end %>
-										</div>
-										<div class="timestamp">
-												<%= time_ago_in_words(micropost.created_at) %> ago
-										</div>
-										
-										
+<li id="<%= micropost.id %>" class="clear-fix">
+	<div class="container-fluid" style="padding:0px;">
+		<div class="row-fluid">
+			<div class="span1">
+				<%= gravatar_for(micropost.creator) %>
+			</div>
+			<div class="content span11">
+				<% if current_user?(micropost.creator) %>
+				<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+				<% end %>
+				<%= micropost.content %>
+			<div>
+		</div>
+		<div class="display-<%= micropost.recipient_type %>">
+				<% num_users  = micropost.user_recipients.length %>
+				<% num_groups = micropost.group_recipients.length %>
+				<% if micropost.creator == current_user %> You <% else %><%= micropost.creator.name %><% end %>
+				<% if num_users == 1 && micropost.user_recipients[0] == current_user %>
+					directly to you.
+				<% else %>
+					<% if num_groups == 1 %>
+						to <%= micropost.group_recipients[0].name %>
+					<% elsif num_users == 1 %>
+						to <%= micropost.user_recipients[0].name %>
+					<% elsif num_groups == 0 %>
+						to many users.
+					<% elsif num_users == 0 %>
+						to many groups.
+					<% else %>
+						to many groups and or users.
+					<% end %>
+				<% end %>
+		</div>
+		<div class="timestamp">
+				<%= time_ago_in_words(micropost.created_at) %> ago
+		</div>
+		
+		
 
-									</div>
-								</li>
+	</div>
+</li>

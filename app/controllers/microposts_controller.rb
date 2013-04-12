@@ -76,8 +76,16 @@ class MicropostsController < ApplicationController
 			flash[:error] = "The micropost deletion failed!"
 		end
 	end
-
-
+	
+	def reload
+		user = params[:user_id]
+		page = params[:microposts_paginate]
+		user ||= current_user
+		page = 1 if page==""
+		microposts = user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 5)
+		render :partial => 'shared/micropost_listing', :locals => { microposts: microposts }
+	end
+	
 	private
 		def correct_user
 			@micropost = current_user.authored_posts.find_by_id(params[:id])

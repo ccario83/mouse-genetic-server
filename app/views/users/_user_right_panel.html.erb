@@ -11,8 +11,9 @@
 		<%= render 'group_management_form', groups: @all_groups, type: 'groups' %>
 	</div>
 </div>
-
-<%= render 'group_listing', confirmed_groups: confirmed_groups, current_user: current_user %>
+<div id="group-listing" class="row-fluid">
+	<%= render 'group_listing', confirmed_groups: confirmed_groups, user: current_user %>
+</div>
 <hr>
 
 <div class="row-fluid">
@@ -26,15 +27,6 @@
 <div id="new-post" class="modal hide fade">
 	<%= render 'shared/micropost_form', micropost: micropost, groups: confirmed_groups, users: associated_users, show_filters: true %>
 </div>
-
-<div class="row-fluid">
-	<div class="span12">
-	<% if microposts.any? %>
-		<ol class="microposts">
-			<%= render :partial =>'shared/micropost', :collection => microposts %>
-		</ol>
-	<%= will_paginate microposts, :param_name => 'microposts_paginate' , :inner_window => 1, :outer_window => 1 %>
-	<% end %>
-	</div>
+<div id="micropost-listing" class="row-fluid">
+	<%= render 'shared/micropost_listing', microposts: microposts %>
 </div>
-

@@ -1,16 +1,16 @@
  					
-						<li id="<%=group.id%>" class="ui-selectee">
-						<div class="group-info-small">
-						<% if current_user == group.creator %>
-							<i class="icon-star-empty"></i>	
-						<% elsif group.confirmed_member?(current_user) %>
-							<i class="icon-group"></i>
-						<% else %> 
-							<i class="icon-group faded"></i>
-						<% end %>
-							<a href="/groups/<%= group.id %>"><%= group.name %></a>
-							<span class="gray"> by <% if current_user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
-						</div>
-						</li>
+<li id="<%=group.id%>" class="ui-selectee">
+<div class="group-info-small">
+<% if user == group.creator %>
+	<i class="icon-star-empty"></i>	
+<% elsif group.confirmed_member?(user) %>
+	<i class="icon-group"></i>
+<% else %> 
+	<i class="icon-group faded"></i>
+<% end %>
+	<a href="/groups/<%= group.id %>"><%= group.name %></a>
+	<span class="gray"> by <% if user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
+</div>
+</li>
 
 

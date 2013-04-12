@@ -32,12 +32,12 @@ RorWebsite::Application.routes.draw do
   end
   # Job AJAX calls
   post '/jobs/percentages'
-  #post '/jobs/reload'
+  post '/jobs/reload'
   
   # Micropost routs
   resources :microposts, :only => [:create, :destroy]
   # Micropost AJAX calls
-  #post '/microposts/reload'
+  post '/microposts/reload'
   
   # Other app routes
   resources :sessions, :only => [:new, :create, :destroy]

@@ -1,0 +1,9 @@
+
+<div class="span12">
+	<% if microposts.any? %>
+	<ol class="microposts">
+		<%= render :partial =>'shared/micropost', :collection => microposts %>
+	</ol>
+	<%= will_paginate microposts, :param_name => 'microposts_paginate' , :inner_window => 1, :outer_window => 1 %>
+	<% end %>
+</div>

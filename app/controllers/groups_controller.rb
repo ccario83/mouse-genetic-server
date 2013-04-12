@@ -101,8 +101,12 @@ class GroupsController < ApplicationController
 	end
 	
 	def reload
-		confirmed_groups = current_user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
-		render :partial => 'users/group_listing', :locals => { confirmed_groups: confirmed_groups, current_user: current_user }
+		user = params[:user_id]
+		page = params[:groups_paginate]
+		user ||= current_user
+		page = 1 if page==""
+		confirmed_groups = user.confirmed_groups.sort_by(&:name).paginate(:page => page, :per_page => 5)
+		render :partial => 'users/group_listing', :locals => { confirmed_groups: confirmed_groups, user: user }
 	end
 	
 	private

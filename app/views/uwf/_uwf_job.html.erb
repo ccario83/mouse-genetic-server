@@ -12,7 +12,7 @@
 		<div id="fs-container" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
 			<center>
 			<div id="fs">
-					<%= image_tag(job.get_parameter('circos_root')+'circos.png', :id => 'circos_thumb', :width => '75%')%>
+				<%= image_tag(File.join(job.get_parameter('circos_root_url'),'circos.png'), :id => 'circos_thumb', :width => '75%')%>
 			</div>
 			</center>
 			<center><h3>Click here for full screen interactive mode</h3></center>

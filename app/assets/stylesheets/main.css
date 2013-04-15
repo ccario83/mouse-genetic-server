@@ -196,6 +196,8 @@ html { height: 100%; }
 
 /* BOOTSTRAP OVERRIDES */
 /*#circos_img { height:650px; }*/
+.modal-backdrop, .modal-backdrop.fade.in { opacity: 0.4; }
+
 a:hover { text-decoration: none; }
 
 /* Fix for cerulean alert window */

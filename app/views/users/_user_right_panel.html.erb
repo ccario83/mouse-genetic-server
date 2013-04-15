@@ -4,12 +4,16 @@
 		<span class="title"> Groups (<%= confirmed_groups.count %>)</span>
 	</div>
 	<div class="span5 icon-panel">
-		<i id="add-group" class="icon-plus"></i>
+		<!--<i id="add-group" class="icon-plus"></i>-->
+		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
 		<i class="icon-edit <% if @confirmed_groups.length != @all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
 	</div>
 	<div id="manage-members" class="modal hide">
-		<%= render 'group_management_form', groups: @all_groups, type: 'groups' %>
+		<%= render 'group_management_form', groups: all_groups, type: 'groups' %>
 	</div>
+</div>
+<div id="new-group" class="modal hide fade">
+	<%= render 'groups/group_form', group: group, users: users %>
 </div>
 <div id="group-listing" class="row-fluid">
 	<%= render 'group_listing', confirmed_groups: confirmed_groups, user: current_user %>

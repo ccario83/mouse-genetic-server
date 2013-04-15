@@ -37,6 +37,9 @@ class Job < ActiveRecord::Base
 	end
 	
 	def progress
+		if self.state  == 'Completed'
+			return 100.0
+		end
 		begin
 			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:progress:log"
 				return ($redis.scard "#{self.creator.redis_key}:#{self.redis_key}:progress:log")/15.0*100

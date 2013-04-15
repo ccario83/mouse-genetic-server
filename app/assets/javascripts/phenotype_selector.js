@@ -231,6 +231,7 @@ function post_to_url(path, params, method)
 	var form = document.createElement("form");
 	form.setAttribute("method", method);
 	form.setAttribute("action", path);
+	$(form).css({ position: 'absolute', top: '0px', left: '0px', display: 'none'});
 
 	for(var key in params)
 	{

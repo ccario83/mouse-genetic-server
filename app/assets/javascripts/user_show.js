@@ -8,11 +8,11 @@ $(window).bind("load", function()
 	// Keep polling the server to update bars
 	user_jobs_timer_id = setInterval('check_user_jobs_progress()', 5000);
 
-	$('#add-group').click(function() { location.href = "/groups/new"; });
-	$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
-	$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
-	$('.pulsate').click(function() { $(this).removeClass('pulsate')  });
+	//$('#add-group').click(function() { location.href = "/groups/new"; });
+	//$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
+	//$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
 	
+	$('.pulsate').click(function() { $(this).removeClass('pulsate')  });
 	$(function()
 	{
 		// Self-executing recursive animation
@@ -107,6 +107,7 @@ $(window).bind("load", function()
 	*/
 	
 	/// CODE FOR CHOSEN BOXES
+	$('#group_user_ids').chosen({ min_search_term_length: 2 });
 	
 	// To handle user and group token passing 
 	$('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
@@ -133,22 +134,116 @@ $(window).bind("load", function()
 		$("#micropost_user_recipient_ids_chzn").toggle();
 		$('#micropost_recipient_type').val('user');
 	});
-});
-
-// Force the pagination links to use AJAX methods
-$(function()
-{
+	
+	// Pagination link overrides
 	$('#micropost-listing .pagination a').live('click', function () { update_microposts(this.href); return false;});
 	$('#job-listing .pagination a').live('click', function () { update_jobs(this.href); return false;});
 	$('#group-listing .pagination a').live('click', function () { update_groups(this.href); return false;});
 });
 
-function check_user_jobs_progress(url)
+// A function to parse url encoded parameters into a post data param associative array 
+decode_url = function (url)
 {
-	// Get the page number from the url
-	var page_num = null
-	if (!(typeof(url)==='undefined')) page_num = url.split('=')[1];
+	// The disabled pagination 'previous' and 'next' still have active links ending with #. Ignore them
+	if (url[url.length-1]=='#') { return null; }
+	// url = url.replace('#','');
+	params = {};
+	terms = url.split('?')[1].split('&');
+	for( i=0; i < terms.length; i++) 
+	{
+		pair = terms[i];
+		term  = pair.split('=')[0];
+		value = pair.split('=')[1];
+		params[term] = value;
+	};
+	return params;
+}
 
+function update_groups(url)
+{
+	// Get url parameters
+	var params = {};
+	if (!(typeof(url)==='undefined'))
+	{
+		params = decode_url(url);
+		// Dont try to post bad urls
+		if (params == null) { return false; }
+	}
+	
+	// Update groups AJAX
+	$.ajax(
+	{
+		//async: false,
+		type:'post',
+		url: '/groups/reload',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: params,
+		dataType: 'html',
+		success: function(response) { reload_effect($('#group-listing'), response) },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+	});
+	return;
+}
+
+function update_microposts(url)
+{
+	// Get url parameters
+	var params = {};
+	if (!(typeof(url)==='undefined'))
+	{
+		params = decode_url(url);
+		// Dont try to post bad urls
+		if (params == null) { return false; }
+	}
+
+	// Update microposts AJAX
+	$.ajax(
+	{
+		//async: false,
+		type:'post',
+		url: '/microposts/reload',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: params,
+		dataType: 'html',
+		success: function(response) { reload_effect($('#micropost-listing'), response) },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+	});
+	return false;
+}
+
+function update_jobs(url)
+{
+	// Get url parameters
+	var params = {};
+	if (!(typeof(url)==='undefined'))
+	{
+		params = decode_url(url);
+		// Dont try to post bad urls
+		if (params == null) { return false; }
+	}
+	
+	// Update microposts AJAX
+	$.ajax(
+	{
+		//async: false,
+		type:'post',
+		url: '/jobs/reload',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: params,
+		dataType: 'html',
+		success: function(response)
+		{
+			reload_effect($('#job-listing'), response);
+			check_user_jobs_progress(); 
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+	});
+
+	return;
+}
+
+function check_user_jobs_progress()
+{
 	// Get the job ids
 	var job_ids = []
 	$('.jobs li .bar').each(function() { job_ids.push(parseInt(this.id)) });
@@ -166,69 +261,6 @@ function check_user_jobs_progress(url)
 	
 }
 
-function update_groups(url)
-{
-	// Get the page number from the url
-	var page_num = null
-	if (!(typeof(url)==='undefined')) page_num = url.split('=')[1];
-
-	// Update groups AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/groups/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: { 'groups_paginate': page_num},
-		dataType: 'html',
-		success: function(response) { reload_effect($('#group-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
-	});
-	return;
-}
-
-function update_microposts(url)
-{
-	// Get the page number from the url
-	var page_num = null
-	if (!(typeof(url)==='undefined')) page_num = url.split('=')[1];
-
-	// Update microposts AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/microposts/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: { 'microposts_paginate': page_num},
-		dataType: 'html',
-		success: function(response) { reload_effect($('#micropost-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
-	});
-	return false;
-}
-
-function update_jobs(url)
-{
-	// Get the page number from the url
-	var page_num = null
-	if (!(typeof(url)==='undefined')) page_num = url.split('=')[1];
-
-	// Update microposts AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/jobs/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: { 'jobs_paginate': page_num},
-		dataType: 'html',
-		success: function(response) { reload_effect($('#jobs-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
-	});
-	return;
-}
-
 function update_job_bars(percentages)
 {
 	$.each(percentages, function(k,v)
@@ -243,8 +275,6 @@ function update_job_bars(percentages)
 
 function reload_effect(div, new_html)
 {
-	
-	//div.toggle('slide', { direction : 'left' });
 	div.html(new_html);
 	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
 	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
@@ -327,7 +357,7 @@ function process_response(response)
 		break;
 	}
 	
-	update_data();
+	//update_data();
 	update_jobs();
 	update_groups();
 	update_microposts();

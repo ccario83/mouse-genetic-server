@@ -1,0 +1,16 @@
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>New Group</h3>
+			</div>
+			<div class="modal-body" style="overflow: visible;">
+				<%= simple_form_for @group, :html => { :class => '' } do |f| %>
+					<%= f.input :name, :label => 'Name', :required => false, :input_html => { :style => 'width:500px', } %>
+					<%= f.input :description, :label => 'Description', :required => false, :input_html => { :style => 'width:500px;', :rows => 5 } %>
+					<%= f.association :users, :collection => users, :label => 'Members', :input_html => { 'data-placeholder'=> 'Please start typing a member\'s name', :style => "width:515px;" } %>
+
+			</div>
+			<div class="modal-footer">
+				<input type="submit" class="btn btn-primary" value="Create">
+			</div>
+				<% end %>

@@ -109,6 +109,11 @@ def make_tasks
 )
 	Task.create!(:creator_id => 3, :description => 'Can I have the latest data', :group_id => 1, :assignee_id => 2, :due_date => Time.now+rand(10000000)
 )
+	10.times do |n|
+		description = Faker::Lorem.sentence(1)
+		Task.create!(:creator_id => 1, :description => description, :group_id => 1, :assignee_id => 2, :due_date => Time.now+rand(10000000)
+)
+	end
 end
 
 def make_jobs

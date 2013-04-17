@@ -1,3 +1,91 @@
+function custom_select(select, node) 
+{
+	var parent_li = $($(node.parent.li).find('span')[0]);
+	var node_li = $(node.li);
+	var node_li_span = $(node_li.find('span')[0]);
+	// Fix to prevent parent node from becomming selected if singleton child
+	if (node.parent.childList.length==1)
+	{
+		node.parent.bSelected=false;
+		parent_li.removeClass('dynatree-selected');
+	}
+	
+	// Fix to allow parent nodes to be last node in tree to be fully selected 
+	if (node.childList.length > 0)
+	{
+		if ( node.bSelected && (!(node_li_span.hasClass('dynatree-swc'))) && (!(node_li_span.hasClass('dynatree-s'))) && (!(node_li_span.hasClass('dynatree-jc'))) )
+		{
+			//console.log('Not selected => Selected w/ Children');
+			if (!(node.bExpanded)) { node.toggleExpand(); }
+			if (!(node.bSelected)) { node.toggleSelect(); }
+			// Select this and all children
+			// Already done
+			// Set flag for next click
+			node_li_span.addClass('dynatree-swc');
+		}
+		else if (node_li_span.hasClass('dynatree-swc'))
+		{
+			//console.log('Selected w/ Children => Selected')
+			if (!(node.bExpanded)) { node.toggleExpand(); }
+			// Select this node
+			node_li_span.addClass('dynatree-selected')
+			node.bSelected = true;
+			// Partially select parents
+			while (node.parent)
+			{
+				node = node.parent;
+				$($(node.li).find('span')[0]).addClass('dynatree-partsel');
+			}
+			node_li_span.removeClass('dynatree-swc');
+			node_li_span.addClass('dynatree-s');
+		}
+		else if (node_li_span.hasClass('dynatree-s'))
+		{
+			//console.log('Selected => Just Children');
+			if (!(node.bExpanded)) { node.toggleExpand(); }
+			// Deselect parent
+			if (node.bSelected) { node_li_span.removeClass('dynatree-selected'); }
+			node.beSelected = false;
+			// Select children
+			for (var i = 0; i < node.childList.length; i++)
+			{
+				// Will expand child subtrees one level
+				//if (!(node.childList[i].bSelected)) { node.childList[i].toggleSelect(); }
+				if (!(node.childList[i].bSelected))
+				{
+					$($(node.childList[i].li).find('span')[0]).addClass('dynatree-selected');
+					node.childList[i].bSelected = true;
+				}
+			}
+			// Partially select this node
+			node_li_span.addClass('dynatree-partsel');
+			// Partially select parents
+			while (node.parent)
+			{
+				node = node.parent;
+				$($(node.li).find('span')[0]).addClass('dynatree-partsel');
+			}
+			node_li_span.removeClass('dynatree-s');
+			node_li_span.addClass('dynatree-jc');
+		}
+		else if (node_li_span.hasClass('dynatree-jc'))
+		{
+			//console.log('Just Children => None');
+			if (node.bExpanded) { node.toggleExpand(); }
+			if (node.bSelected) { node.toggleSelect(); }
+			node_li_span.removeClass('dynatree-jc');
+		}
+	}
+	
+	// Display list of selected nodes
+	var selNodes = node.tree.getSelectedNodes();
+	//$.each(selNodes, function(idx, x) { if (x.parent.bExpanded) {console.log(x.data.title);} })
+	// Set the selected array to the selected nodes
+	selected = $.map(selNodes, function(node){
+		return node.data.key;
+	});
+}
+
 $(function()
 {
 	$("#mpath_tree").dynatree({
@@ -13,20 +101,7 @@ $(function()
 		},
 		checkbox: true,
 		selectMode: 3,
-		onSelect: function(select, node) {
-			// Fix to prevent parent node from becomming selected if singleton child
-			if (node.parent.childList.length==1)
-			{
-				node.parent.bSelected=false;
-				$($(node.parent.li).find('span')[0]).removeClass('dynatree-selected')
-			}
-			// Display list of selected nodes
-			var selNodes = node.tree.getSelectedNodes();
-			// Set the selected array to the selected nodes'
-			selected = $.map(selNodes, function(node){
-				   return node.data.key;
-			});
-		},
+		onSelect: function(select, node) { custom_select(select,node); },
 		onClick: function(node, event) {
 			// We should not toggle, if target was "checkbox", because this
 			// would result in double-toggle (i.e. no toggle)
@@ -69,20 +144,7 @@ $(function()
 		},
 		checkbox: true,
 		selectMode: 3,
-		onSelect: function(select, node) {
-			// Fix to prevent parent node from becomming selected if singleton child
-			if (node.parent.childList.length==1)
-			{
-				node.parent.bSelected=false;
-				$($(node.parent.li).find('span')[0]).removeClass('dynatree-selected')
-			}
-			// Display list of selected nodes
-			var selNodes = node.tree.getSelectedNodes();
-			// Set the selected array to the selected nodes
-			selected = $.map(selNodes, function(node){
-				   return node.data.key;
-			});
-		},
+		onSelect: function(select, node) { custom_select(select,node); },
 		onClick: function(node, event) {
 			// We should not toggle, if target was "checkbox", because this
 			// would result in double-toggle (i.e. no toggle)

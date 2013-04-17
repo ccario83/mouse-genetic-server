@@ -15,10 +15,18 @@ class GroupsController < ApplicationController
 
 
 	def create
-		@user_ids = []
+		@user_ids = params[:group][:user_ids]
 		@users = []
-		if not (params[:group][:users]=="[]")
-			@user_ids = params[:group][:users].split(',').map(&:to_i)
+		
+		# Set the user list to empty for any possible empty input
+		if (@user_ids.nil? or @user_ids=="[]" or @user_ids=="" or @user_ids==[""])
+			@user_ids = []
+		else # Try to parse the JSON if it is in JSON, otherwise attempt to 
+			begin
+				@user_ids = JSON.parse(@user_ids).map(&:to_i)
+			rescue
+				@user_ids = @user_ids.map(&:to_i)
+			end
 			@user_ids.delete(0) if @user_ids.include?(0)
 		end
 
@@ -34,7 +42,7 @@ class GroupsController < ApplicationController
 		@users.prepend(@creator) if not @users.include?@creator
 
 		# Create the new group
-		@group = Group.create!(:creator => @creator, :name => params[:group][:name], :description => params[:group][:description])
+		@group = Group.create(:creator => @creator, :name => params[:group][:name], :description => params[:group][:description])
 		@group.users << @users
 		if @group.save
 			flash[:notice] = "The new group was successfully created."

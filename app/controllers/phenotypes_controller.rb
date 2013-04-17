@@ -27,7 +27,6 @@ class PhenotypesController < ApplicationController
     @very_youngest = @mice.minimum(:age)
     @very_oldest = @mice.maximum(:age)
     @all_codes = @mice.select(:code).map(&:code).uniq!
-    
   end
   
   
@@ -43,25 +42,35 @@ class PhenotypesController < ApplicationController
     @code               = params['code']
     @sex                = params['sex']
 
+    # A more efficient way?
+    @mice = Diagnosis.joins([:mouse => :strain]).select(%w(
+        mice.id
+        strains.name
+        mice.age
+        mice.sex
+        mice.code
+        )).where({
+        :mouse_anatomy_term_id => @anat_id_list, 
+        :path_base_term_id => @mpath_id_list,
+    })
 
     # Filter mice first by age or code, if a code was selected
-    @mice = Mouse.new
     if (@code == '')
-        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex]).where("age >= :youngest AND age <= :oldest", :youngest => @youngest, :oldest => @oldest)
+        @mice = @mice.where("mice.age >= :youngest AND mice.age <= :oldest", :youngest => @youngest, :oldest => @oldest)
     else
-        @mice = Mouse.joins(:strain).select(['mice.id', :name, :age, :sex, :code]).where(:code => @code)
+        @mice = @mice.where("mice.code" => @code)
     end
 
     # Then filter by sex
     if not @sex == 'B'
-        @mice = @mice.where(:sex => @sex)
+        @mice = @mice.where('mice.sex' => @sex)
     end
     
     # Eventually filter by strain??
     
     
     # Update the filters based on the actual results
-    @strains = @mice.select(:name).map(&:name).sort
+    @strains = @mice.map(&:name).uniq.sort
     @youngest = @mice.minimum(:age)
     @oldest = @mice.maximum(:age)
     if @mice.map(&:sex).uniq.length == 2
@@ -73,12 +82,13 @@ class PhenotypesController < ApplicationController
     @severities = {}
     @frequencies = {}
     # For each sex
+
     @mice.map(&:sex).uniq.each do |sex|
         # Get the mice ids for this sex
-        @sexed_mice = @mice.where(:sex => sex)
+        @sexed_mice = @mice.where('mice.sex' => sex)
         @sexed_strains = @sexed_mice.select(:name).map(&:name).sort
         @ids = @sexed_mice.map(&:id)
-        
+
         # Get the scores for these mice after filtering by mpath/anat ids, 
         @scores = Diagnosis.select([:mouse_id, :score]).where(:mouse_anatomy_term_id => @anat_id_list, :path_base_term_id => @mpath_id_list)
         @scores.where(:mouse_id => @ids)

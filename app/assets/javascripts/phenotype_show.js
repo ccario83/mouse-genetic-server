@@ -206,30 +206,35 @@ function change_sexes(clicked_sex)
 /* =============================================================================== */
 function update_bar_chart(selected_strains, sex, severities, frequencies)
 {
-	charted_data = [];
+	// Strain label formatter helper
+	window.defined_strains = [];
+	var charted_data = [];
 	
 	// Generate the data
 	if ((sex == 'B' || sex == 'M') && !(typeof(frequencies['M']) === "undefined"))
 	{
 		var freq_m = frequencies['M'];
-		freq_m =  _.map(selected_strains, function(strain){ return typeof(freq_m[strain])==='undefined'? 0:parseFloat(freq_m[strain].toFixed(2)); });
+		var sev_m = severities['M'];
 		
+		// Check for defined strains
+		for (var key in freq_m) { defined_strains.push(key); }
+		for (var key in sev_m) { defined_strains.push(key); }
+		
+		freq_m =  _.map(selected_strains, function(strain){ return typeof(freq_m[strain])==='undefined'? 0:parseFloat(freq_m[strain].toFixed(2)); });
 		charted_data.push(
 		{
 			name: 'Frequency M',
-			color: '#7ebacf',
+			color: '#002E69',
 			data: freq_m,
 			yAxis: 0,
 		});
 		// Convert to a list respective to selected_strains strain order
 		
-		var sev_m = severities['M'];
 		sev_m =  _.map(selected_strains, function(strain){ return typeof(sev_m[strain])==='undefined'? 0:parseFloat(sev_m[strain].toFixed(2)); });
-		
 		charted_data.push(
 		{
 			name: 'Severity M',
-			color: '#C7E9F5',
+			color: '#80C4FF',
 			data: sev_m,
 			yAxis: 1,
 		});
@@ -239,23 +244,27 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 	if ((sex == 'B' || sex == 'F') && !(typeof(frequencies['F']) === "undefined"))
 	{
 		var freq_f = frequencies['F'];
-		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:parseFloat(freq_f[strain].toFixed(2)); });
-		
+		var sev_f = severities['F'];
+
+		// Check for defined strains
+		for (var key in freq_f) { defined_strains.push(key); }
+		for (var key in sev_f) { defined_strains.push(key); }
+
+		freq_f =  _.map(selected_strains, function(strain){ return typeof(freq_f[strain])==='undefined'? 0:parseFloat(freq_f[strain].toFixed(2)); });		
 		charted_data.push(
 		{
 			name: 'Frequency F',
-			color: '#d483a8',
+			color: '#8F0F2A',
 			data: freq_f,
 			yAxis: 0,
 		});
 		
-		var sev_f = severities['F'];
+
 		sev_f =  _.map(selected_strains, function(strain){ return typeof(sev_f[strain])==='undefined'? 0:parseFloat(sev_f[strain].toFixed(2)); });
-		
 		charted_data.push(
 		{
 			name: 'Severity F',
-			color: '#FBCFE3',
+			color: '#FF808D',
 			data: sev_f,
 			yAxis: 1,
 		});
@@ -277,6 +286,13 @@ function update_bar_chart(selected_strains, sex, severities, frequencies)
 			categories: selected_strains,
 			labels: 
 			{
+				formatter: function() {
+					if (defined_strains.indexOf(this.value)>-1){
+						return '<span style="fill: black;">' + escape(this.value) + '</span>';
+					} else {
+						return '<span style="fill: #ddd;">' + escape(this.value) + '</span>';
+					}
+				},
 				rotation: 90,
 				align: "left",	
 			},

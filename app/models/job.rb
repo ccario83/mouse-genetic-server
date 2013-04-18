@@ -3,6 +3,7 @@ class Job < ActiveRecord::Base
 	before_create :create_job_directory
 	after_initialize :default_values
 	before_save :ensure_paramaters_are_JSON
+	after_destroy :remove_files
 	
 	belongs_to :creator, :class_name => 'User', :foreign_key => 'creator_id'
 	belongs_to :datafile
@@ -97,5 +98,13 @@ class Job < ActiveRecord::Base
 			rescue
 				self.parameters = self.parameters.to_json
 			end
+		end
+		
+		def remove_files
+			# Delete all files in this job directory
+			Dir["#{self.directory}/**/*"].each{ |file| File.delete(file) if File.file? file }
+			Dir["#{self.directory}/**/*/"].each{ |dir| Dir.delete(dir) }
+			Dir.delete(self.directory)
+			# Delete redis key?
 		end
 end

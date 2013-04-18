@@ -1,0 +1,20 @@
+
+<li class="clear-fix">
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="content span11">
+				<% if current_user?(datafile.owner) %>
+				<a href="/users/<%= current_user.id %>/datafiles/<%= datafile.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+				<% end %>
+			<div>
+		</div>
+		<a href="/users/<%= current_user.id %>/datafiles/<%= datafile.id %>">
+			<div class="display">
+			<% if datafile.uwf_runnable %>
+				<span class="label label-success"><i class="icon-ok"></i>UWF</span> 
+			<% end %>
+				<%= datafile.filename %>
+			</div>
+		</a>
+	</div>
+</li>

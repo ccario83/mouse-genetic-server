@@ -1,7 +1,7 @@
 
 <div class="row-fluid">
 	<div class="span5">
-		<span class="title"> Groups (<%= confirmed_groups.count %>)</span>
+		<span class="title"> Groups (<%= current_user.confirmed_groups.count %>)</span>
 	</div>
 	<div class="span5 icon-panel">
 		<!--<i id="add-group" class="icon-plus"></i>-->
@@ -22,7 +22,7 @@
 
 <div class="row-fluid">
 	<div class="span5">
-		<span class="title"> Microposts (<%= microposts.count %>)</span>
+		<span class="title"> Microposts (<%= current_user.all_received_posts.count %>)</span>
 	</div>
 	<div class="span5 icon-panel">
 		<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>

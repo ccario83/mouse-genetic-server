@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130402194705) do
+ActiveRecord::Schema.define(:version => 20130418204112) do
 
   create_table "communications", :force => true do |t|
     t.integer "recipient_id"
@@ -24,8 +24,9 @@ ActiveRecord::Schema.define(:version => 20130402194705) do
     t.string   "filename"
     t.text     "description"
     t.string   "directory"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "uwf_runnable", :default => false
   end
 
   add_index "datafiles", ["owner_id"], :name => "index_datafiles_on_owner_id"

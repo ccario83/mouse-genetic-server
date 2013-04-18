@@ -33,7 +33,7 @@ $(window).bind("load", function()
 			data: {id: id},
 			dataType: 'json',
 			success: function(response) {process_response(response)},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
 	});
@@ -50,7 +50,7 @@ $(window).bind("load", function()
 			data: {id: id},
 			dataType: 'json',
 			success: function(response) {process_response(response)},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
 	});
@@ -67,7 +67,7 @@ $(window).bind("load", function()
 			data: {id: id},
 			dataType: 'json',
 			success: function(response) {process_response(response)},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
 	});
@@ -84,7 +84,7 @@ $(window).bind("load", function()
 			data: {id: id},
 			dataType: 'json',
 			success: function(response) {process_response(response)},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
 	});
@@ -101,7 +101,7 @@ $(window).bind("load", function()
 			data: {id: id},
 			dataType: 'HTML',
 			success: function(html){ $("#center-panel").html(html); },
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 	});
 	*/
@@ -139,7 +139,39 @@ $(window).bind("load", function()
 	$('#micropost-listing .pagination a').live('click', function () { update_microposts(this.href); return false;});
 	$('#job-listing .pagination a').live('click', function () { update_jobs(this.href); return false;});
 	$('#group-listing .pagination a').live('click', function () { update_groups(this.href); return false;});
+	
+	$('#collapse-datafiles').click(function() 
+	{
+		
+		rotate(this, $(this).css('border-spacing'));
+		$(this).css('border-spacing',$(this).css('border-spacing')*-1);
+		$('#datafile-listing').toggle('slide', { 'direction':'up'});
+	});
 });
+
+
+
+function rotate(element, deg)
+{
+	$(element).animate({  borderSpacing: deg },
+	{
+		step: function(now,fx)
+		{
+			$(this).css('-webkit-transform','rotate('+now+'deg)');
+			$(this).css('-moz-transform','rotate('+now+'deg)'); 
+			$(this).css('-ms-transform','rotate('+now+'deg)');
+			$(this).css('-o-transform','rotate('+now+'deg)');
+		 	$(this).css('transform','rotate('+now+'deg)');  
+		},
+		duration:'slow'
+	},'linear');
+}
+
+function ajax_error(XMLHttpRequest, textStatus, errorThrown)
+{
+	//alert("Error: " + errorThrown);
+}
+
 
 // A function to parse url encoded parameters into a post data param associative array 
 decode_url = function (url)
@@ -180,7 +212,7 @@ function update_groups(url)
 		data: params,
 		dataType: 'html',
 		success: function(response) { reload_effect($('#group-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	return;
 }
@@ -206,7 +238,7 @@ function update_microposts(url)
 		data: params,
 		dataType: 'html',
 		success: function(response) { reload_effect($('#micropost-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	return false;
 }
@@ -236,7 +268,7 @@ function update_jobs(url)
 			reload_effect($('#job-listing'), response);
 			check_user_jobs_progress(); 
 		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 
 	return;
@@ -256,7 +288,7 @@ function check_user_jobs_progress()
 		datatype: 'json',
 		data: {ids: JSON.stringify(job_ids)},
 		success: update_job_bars,
-		error: function(XMLHttpRequest, textStatus, errorThrown) { alert('Error: ' + errorThrown); clearInterval(uwf_timer_id);},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	
 }
@@ -314,7 +346,7 @@ function process_response(response)
 					data: {id: id},
 					dataType: 'json',
 					success: function(response) {process_response(response)},
-					error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+					error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 				});
 			});
 			

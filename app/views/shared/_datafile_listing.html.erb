@@ -1,0 +1,10 @@
+
+<div class="span12">
+	<% if datafiles.any? %>
+	<ol class="datafiles">
+		<%= render :partial =>'shared/datafile', :collection => datafiles %>
+	</ol>
+	<%= will_paginate datafiles, :param_name => 'datafiles_paginate' , :inner_window => 1, :outer_window => 1 %>
+	<% end %>
+</div>
+

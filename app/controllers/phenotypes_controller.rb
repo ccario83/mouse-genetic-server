@@ -253,10 +253,12 @@ class PhenotypesController < ApplicationController
     end
     @frequencies = Hash[@results.map { |k,v| [k, (v.length-v.count(0))/v.length.to_f] }]
     @severities = Hash[@results.map { |k,v| [k, v.sum/v.length.to_f] }]
+    @dichotomized = {}
+    @frequencies.each{|key,val| val>0? @dichotomized[key]=1 : @dichotomized[key]=0} 
 
     # Create a new datafile ActiveRecord, and give it a name
     filename = 'phenotypes.' + SecureRandom.hex(2)
-    @datafile = current_user.datafiles.create!(:filename => filename)
+    @datafile = current_user.datafiles.create!(:filename => filename, :uwf_runnable => true)
     
     sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
     File.open(@datafile.get_path, 'w') do |pheno_file|
@@ -271,10 +273,17 @@ class PhenotypesController < ApplicationController
                 pheno_file.printf "%s\t%d\t%s\t%.2f\n", strain, @fake_id, sex_long[@sex], value
                 @fake_id = @fake_id + 1
             end
-        else
+        elsif @measure == 'frequency'
             pheno_file.printf "Strain\tAnimal_Id\tSex\tFrequency\n"
             @fake_id = 1
             @frequencies.each do |strain, value|
+                pheno_file.printf "%s\t%d\t%s\t%.2f\n", strain, @fake_id, sex_long[@sex], value
+                @fake_id = @fake_id + 1
+            end
+        else # Dichotomized
+            pheno_file.printf "Strain\tAnimal_Id\tSex\tDichotomy\n"
+            @fake_id = 1
+            @dichotomized.each do |strain, value|
                 pheno_file.printf "%s\t%d\t%s\t%.2f\n", strain, @fake_id, sex_long[@sex], value
                 @fake_id = @fake_id + 1
             end

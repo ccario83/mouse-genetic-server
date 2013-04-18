@@ -6,7 +6,7 @@ class UwfWorker
     sidekiq_options queue: 'UWF'
     sidekiq_options retry: false
     
-    def perform(job_id, chromosome = -1, start_position = -1, stop_position = -1, bin_size = 1000000)
+    def perform(job_id, chromosome = -1, start_position = -1, stop_position = -1, bin_size = 5000000)
         
         # Get the required parameters from the job ActiveRecord
         job = Job.find(job_id)

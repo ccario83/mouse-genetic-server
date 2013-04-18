@@ -1,5 +1,5 @@
 class Datafile < ActiveRecord::Base
-	attr_accessible :owner, :filename, :description, :directory
+	attr_accessible :owner, :filename, :description, :directory, :uwf_runnable
 	before_create :create_data_directory
 	before_save :verify_quota
 	

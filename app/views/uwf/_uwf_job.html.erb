@@ -1,5 +1,5 @@
 <span id="job_id" style="display:none;"><%= job.id %></span>
-<span id="job_root_path" style="display:none;"><%= job.get_parameter('circos_root') %></span>
+<span id="job_root_path" style="display:none;"><%= job.get_parameter('circos_root_url') %></span>
 
 <% if job.state == 'Completed' %>
 	<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
@@ -8,7 +8,7 @@
 	<% content_for :page_js do %>
 		<%= javascript_include_tag('interactive_circos_plot') %>
 	<% end %>
-	<div class="row-fluid" style = "border: 1px solid #CCC;">
+	<div class="row-fluid" style = "">
 		<div id="fs-container" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
 			<center>
 			<div id="fs">
@@ -22,7 +22,7 @@
 	<% content_for :page_js do %>
 			<%= javascript_include_tag('uwf_show') %>
 	<% end %>
-	<div class="row-fluid" style = "border: 1px solid #CCC;">
+	<div class="row-fluid" style = "">
 		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
 		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
 		<div id="job-progress" style="padding-left: 20px">
@@ -72,8 +72,8 @@
 				<% if parameter.titlecase == 'Chromosome' and value == -1%><% value = 'All' %><% end %>
 				<% if parameter.titlecase == 'Start Position' and value == -1 %><% next %><% end %>
 				<% if parameter.titlecase == 'Stop Position' and value == -1 %><% next%><% end %>
-				<% if parameter.titlecase == 'Circos Thumb' %>
-					<td>Circos Image (SVG)</td><td><a href="<%= value %>">Download</a></td>
+				<% if parameter.titlecase == 'Circos Root Url' %>
+					<td>Circos Image (SVG)</td><td><a href="<%= value %>/circos.svg">Download</a></td>
 				<% else %>
 					<td><%= parameter.titlecase %></td><td><%= value %></td>
 				<% end %>

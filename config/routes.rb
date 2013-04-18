@@ -26,6 +26,11 @@ RorWebsite::Application.routes.draw do
   # Group AJAX calls
   post '/groups/reload'
   
+  # Micropost routs
+  resources :microposts, :only => [:create, :destroy]
+  # Micropost AJAX calls
+  post '/microposts/reload'
+  
   # Job routes
   resources :users do
     resources :jobs
@@ -34,10 +39,12 @@ RorWebsite::Application.routes.draw do
   post '/jobs/percentages'
   post '/jobs/reload'
   
-  # Micropost routs
-  resources :microposts, :only => [:create, :destroy]
-  # Micropost AJAX calls
-  post '/microposts/reload'
+  # Job routes
+  resources :users do
+    resources :datafiles
+  end
+  # Job AJAX calls
+  post '/datafiles/reload'
   
   # Other app routes
   resources :sessions, :only => [:new, :create, :destroy]

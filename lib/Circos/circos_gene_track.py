@@ -94,13 +94,22 @@ for snp in SNPs:
     if snp_id:
         snp_id['name'] = (20 if(snp_id['name'] == 'X') else snp_id['name'])
         
-        size = 6;
+        ## Gene size parameters
+        min_size = 12
+        max_size = 34
+        size = min_size
+        closeness_threshold = 10000
+        
+        # Compute the distance of the SNP from the nearest gene center
         dist_from_gene_center = abs( long(snp['Pos']) - (((long(snp_id['seq_region_end']) - long(snp_id['seq_region_start'])) / 2) + long(snp_id['seq_region_start'])) )
-        #print str(dist_from_gene_center)
-        if (dist_from_gene_center > 10000):
-            size = 6;
+        
+        # Set a minimum size to very distant SNPs
+        if (dist_from_gene_center > closeness_threshold):
+            size = min_size;
         else:
-            size = int((-.0028*dist_from_gene_center) + 34)
+            ## Simple linear size adjustment based on proximity
+            slope = (max_size - min_size) / closeness_threshold * -1
+            size = int((slope*dist_from_gene_center) + max_size)
         if ((snp_id['seq_region_start'] <= snp['Pos']) and (snp['Pos'] <= snp_id['seq_region_end'])):
             snp_id['size'] = 34
             #snp_id['display_label'] = "<span style='font:bold; color:#0000FF;'>" +  snp_id['display_label'] + "</span>"

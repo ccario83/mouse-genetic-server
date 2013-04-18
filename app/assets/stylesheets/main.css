@@ -530,7 +530,7 @@ body
 
 .microposts li
 {
-	padding: 10px 0;
+	padding: 10px 0px;
 	border-bottom: 1px dashed #ddd;
 }
 
@@ -549,7 +549,7 @@ body
 
 .jobs li
 {
-	padding: 10px 0;
+	padding: 10px 0px;
 	border-bottom: 1px dashed #ddd;
 }
 
@@ -557,6 +557,26 @@ body
 .jobs .progress { height: 5px; }
 
 
+/* jobs */
+
+
+.datafiles
+{
+	list-style: none;
+	margin: 15px 0px;
+}
+
+.datafiles li div { padding: 1px 0px 0px 0px;}
+
+.datafiles li
+{
+	padding: 0px 0px;
+	border-bottom: 1px dashed #ddd;
+}
+
+.datafiles li:first-child {border-top: 1px dashed #ddd;}
+
+/* */
 
 .content 
 {
@@ -564,6 +584,13 @@ body
 	word-wrap: break-word;
 }
 
+.content .display 
+{
+	width: 90%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
 .content .display-User { color:#08C; }
 .content .display-Group { color:#faa732; }
 
@@ -999,6 +1026,3 @@ tr.group-management-panel:last-child
 	margin: 0px 5px;
 }
 #new_micropost div.control-group.select { margin-bottom: 0px; }
-
-
-.jobs .display { cursor: pointer;}

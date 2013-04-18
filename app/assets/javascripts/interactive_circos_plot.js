@@ -6,7 +6,7 @@ function unfull()
 	if (document.webkitIsFullScreen) { return; }
 	
 	var job_root_path = $('#job_root_path').text();
-	image = "/data/"+job_root_path+"/Plots/circos.png";
+	image = job_root_path+"/circos.png";
 	var newElement = "<img alt='Circos' id='circos_thumb' src="+image+" width='75%' />"
 
 	var parent = document.getElementById('fs');
@@ -19,7 +19,7 @@ function unfull()
 
 function full(el)
 {
-
+	$.timer_attempts = 0;
 	// Go fullscreen
 	if(el.webkitRequestFullScreen) 
 	{
@@ -32,7 +32,7 @@ function full(el)
 	
 	// Get the path of the SVG image
 	var job_root_path = $('#job_root_path').text();
-	image_path = "/data/"+job_root_path+"/Plots/circos_im.svg";
+	image_path = job_root_path+"/circos_im.svg";
 	
 	
 	// Replace the PNG thumbnail with the SVG image
@@ -71,7 +71,7 @@ function image_tag_to_path(image_tag)
 		image = 'Chr'+chromosome+'/'+start_pos+'_'+stop_pos+'/circos_im.svg';
 	}
 
-	image_path = "/data/"+job_root_path+"/Plots/"+image;
+	image_path = job_root_path+'/'+image;
 	return image_path;
 };
 
@@ -249,8 +249,9 @@ function color_loaded_segments()
 	// JIK, wait for DOM tree to fully update
 	if(content.length == 0)
 	{
+		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
 		console.log("content not yet available to color sections; trying again...");
-		setTimeout(function(){color_loaded_segments()}, 100);
+		setTimeout(function(){color_loaded_segments()}, 1000);
 		return;
 	}
 	console.log("DOM looks ready now...");
@@ -278,8 +279,10 @@ function button_toggle(selector, state)
 	// JIK, wait for DOM tree to fully update
 	if(button.length == 0)
 	{
+		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
 		console.log("content not yet available to toggle buttons; trying again...");
-		return setTimeout(function(){button_toggle(selector, state)}, 100);
+		setTimeout(function(){button_toggle(selector, state)}, 1000);
+		return;
 	}
 	console.log("DOM looks ready now...");
 
@@ -315,7 +318,8 @@ $(document).ready(function ()
 	$.plots.simultaneous_request_limit = 2;
 	$.plots.timerID;
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
-
+	$.timer_attempts_threshold = 40;
+	$.timer_attempts = 0;
 });
 
 

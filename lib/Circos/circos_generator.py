@@ -263,7 +263,6 @@ for section in sections:
         plot['r0'] =                          current_r0 
         plot['r1'] =                          current_r1 
         plot['attributes'] = {'min':          0, 
-                              'max':          15201, 
                               'color':        'spectral-9-div-rev'}
         plots.append(plot)
     if section == 'MHP_track':

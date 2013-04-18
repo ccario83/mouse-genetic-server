@@ -13,7 +13,8 @@
 
 <div class="row-fluid">
 	<div class="span5">
-		<span class="title"> Data ()</span>
+		<i id="collapse-datafiles" class="icon-angle-down icon-2x" style="display:inline-block;"></i>
+		<span class="title"> Data (<%= current_user.datafiles.count %>)</span>
 	</div>
 	<div class="span5 icon-panel">
 		<i id="add-data" class="icon-plus"></i>
@@ -22,11 +23,14 @@
 <div id="new-data" class="modal hide fade">
 	
 </div>
+<div id= "datafile-listing" class="row-fluid">
+	<%= render 'shared/datafile_listing', datafiles: datafiles %>
+</div>
 <hr>
 
 <div class="row-fluid">
 	<div class="span5">
-		<span class="title"> Jobs (<%= jobs.count %>)</span>
+		<span class="title"> Jobs (<%= current_user.jobs.count %>)</span>
 	</div>
 	<div class="span5 icon-panel">
 		<i id="add-job" class="icon-plus"></i>

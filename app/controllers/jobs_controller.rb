@@ -30,14 +30,12 @@ class JobsController < ApplicationController
 	# DELETE /user/:user_id/jobs/:id
 	def destroy
 		@job = Job.find(params[:id])
-		
 		# Verify the user owns the job
 		if not @job.creator == current_user
 			flash[:error] = "You don't own this job."
 		end
-		
 		@job.destroy
-		redirect_to '/users/#{current_user.id}'
+		redirect_to "/users/#{current_user.id}"
 	end
 
 	def reload

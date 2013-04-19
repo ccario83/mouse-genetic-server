@@ -1,42 +1,21 @@
 
-<div class="row-fluid title-bar">
-	<div class="drop-panel">
-		<i id="collapse-groups" class="icon-chevron-down"></i>
-	</div>
-	<div class="title-panel">
-		<span class="title"> Groups (<%= current_user.confirmed_groups.count %>)</span>
-	</div>
-	<div class="icon-panel">
-		<!--<i id="add-group" class="icon-plus"></i>-->
-		<i class="icon-edit <% if @confirmed_groups.length != @all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
-		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
-	</div>
-	<div id="manage-members" class="modal hide">
-		<%= render 'group_management_form', groups: all_groups, type: 'groups' %>
-	</div>
-</div>
-<div id="new-group" class="modal hide fade">
-	<%= render 'groups/group_form', group: group, users: users %>
-</div>
-<div id="group-listing" class="row-fluid">
-	<%= render 'group_listing', confirmed_groups: confirmed_groups, user: current_user %>
-</div>
-<hr>
-
+<% user ||= @user %>
+<% confirmed_groups ||= @confirmed_groups %>
+<% associated_users ||= @associated_users %>
 <div class="row-fluid title-bar">
 	<div class="drop-panel">
 		<i id="collapse-microposts" class="icon-chevron-down"></i>
 	</div>
 	<div class="title-panel">
-		<span class="title"> Microposts (<%= current_user.all_received_posts.count %>)</span>
+		<span class="title"> Microposts (<%= user.all_received_posts.count %>)</span>
 	</div>
 	<div class="icon-panel">
 		<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
 	</div>
 </div>
 <div id="new-post" class="modal hide fade">
-	<%= render 'shared/micropost_form', micropost: micropost, groups: confirmed_groups, users: associated_users, show_filters: true %>
+	<%= render 'shared/micropost_form', groups: confirmed_groups, users: associated_users, show_filters: true %>
 </div>
 <div id="micropost-listing" class="row-fluid">
-	<%= render 'shared/micropost_listing', microposts: microposts %>
+	<%= render 'shared/micropost_listing' %>
 </div>

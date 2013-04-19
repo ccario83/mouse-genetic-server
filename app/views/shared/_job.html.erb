@@ -1,4 +1,5 @@
 
+<% user ||= @user %>
 <% case job.state.downcase
 	   when 'starting'     %><% bar_classes = "bar-warning" %><%  progress_classes = "progress-striped active" %>
 	<% when 'progressing'  %><% bar_classes = "bar-success" %><%  progress_classes = "progress-striped active" %>
@@ -15,12 +16,12 @@
 	<div class="container-fluid" style="padding:0px;">
 		<div class="row-fluid">
 			<div class="content span12">
-				<% if current_user?(job.creator) %>
-				<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+				<% if (user == job.creator) %>
+				<a href="/users/<%= user.id %>/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
 				<% end %>
 			<div>
 		</div>
-		<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>">
+		<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
 			<div class="display display-<%= job.state %>">
 					<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
 			</div>

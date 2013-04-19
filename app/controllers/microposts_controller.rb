@@ -78,12 +78,12 @@ class MicropostsController < ApplicationController
 	end
 	
 	def reload
-		user = params[:user_id]
-		page = params[:microposts_paginate]
-		user ||= current_user
-		page = 1 if page==""
-		microposts = user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 5)
-		render :partial => 'shared/micropost_listing', :locals => { microposts: microposts }
+		@user = params[:user_id]
+		@page = params[:microposts_paginate]
+		@user ||= current_user
+		@page = 1 if @page==""
+		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 8)
+		render :partial => 'shared/micropost_listing'
 	end
 	
 	private

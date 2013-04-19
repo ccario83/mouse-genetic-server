@@ -39,11 +39,11 @@ RorWebsite::Application.routes.draw do
   post '/jobs/percentages'
   post '/jobs/reload'
   
-  # Job routes
+  # Datafile routes
   resources :users do
     resources :datafiles
   end
-  # Job AJAX calls
+  # Datafile AJAX calls
   post '/datafiles/reload'
   
   # Other app routes

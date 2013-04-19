@@ -1,4 +1,5 @@
 
+<% user ||= @user %>
 <li id="<%= micropost.id %>" class="clear-fix">
 	<div class="container-fluid" style="padding:0px;">
 		<div class="row-fluid">
@@ -6,7 +7,7 @@
 				<%= gravatar_for(micropost.creator) %>
 			</div>
 			<div class="content span11">
-				<% if current_user?(micropost.creator) %>
+				<% if (user == micropost.creator) %>
 				<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
 				<% end %>
 				<%= micropost.content %>
@@ -15,8 +16,8 @@
 		<div class="display-<%= micropost.recipient_type %>">
 				<% num_users  = micropost.user_recipients.length %>
 				<% num_groups = micropost.group_recipients.length %>
-				<% if micropost.creator == current_user %> You <% else %><%= micropost.creator.name %><% end %>
-				<% if num_users == 1 && micropost.user_recipients[0] == current_user %>
+				<% if micropost.creator == user %> You <% else %><%= micropost.creator.name %><% end %>
+				<% if num_users == 1 && micropost.user_recipients[0] == user %>
 					directly to you.
 				<% else %>
 					<% if num_groups == 1 %>
@@ -35,8 +36,5 @@
 		<div class="timestamp">
 				<%= time_ago_in_words(micropost.created_at) %> ago
 		</div>
-		
-		
-
 	</div>
 </li>

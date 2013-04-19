@@ -1,7 +1,8 @@
 
+<% job ||= @job %>
 <% if not job.nil? %>
-	<% if @job.runner == 'UWF' %>
-		<%= render 'uwf/uwf_job', job: job %>
+	<% if job.runner == 'UWF' %>
+		<%= render 'uwf/uwf_job' %>
 	<% end %>
 <% else %>
 	<%= render 'tools_panel' %>

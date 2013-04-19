@@ -1,7 +1,8 @@
 class JobsController < ApplicationController
-	before_filter :signed_in_user, :only => [:show, :edit, :destroy]
+	before_filter :signed_in_user
+	#before_filter :correct_user, :only => :destroy
 
-  # GET /user/:user_id/jobs/:id
+	# GET /user/:user_id/jobs/:id
 	def show
 		#@user = User.find(params[:user_id])
 		@user = current_user
@@ -39,12 +40,12 @@ class JobsController < ApplicationController
 	end
 
 	def reload
-		user = params[:user_id]
-		page = params[:jobs_paginate]
-		user ||= current_user
-		page = 1 if page==""
-		jobs = user.jobs.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 5)
-		render :partial => 'shared/job_listing', :locals => { jobs: jobs }
+		@user = params[:user_id]
+		@page = params[:jobs_paginate]
+		@user ||= current_user
+		@page = 1 if @page==""
+		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 5)
+		render :partial => 'shared/job_listing', :locals => { jobs: @jobs }
 	end
 
 	def percentages

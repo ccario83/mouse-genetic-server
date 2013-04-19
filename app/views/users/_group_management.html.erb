@@ -1,36 +1,38 @@
- 					
-						<tr id="<%=group.id%>" class="group-management-panel">
-							<td class="group-info-small" style="">
-							<% if current_user == group.creator %>
-								<i class="icon-star-empty"></i>	
-							<% elsif group.confirmed_member?(current_user) %>
-								<i id="<%=group.id%>" class="icon-group"></i>
-							<% else %> 
-								<i id="<%=group.id%>" class="icon-group faded"></i>
-							<% end %>
-								<a href="/groups/<%= group.id %>"><%= group.name %></a>
-								<span class="gray"> by <% if current_user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
-							</td>
-						
-							<td class="icon-panel">
-							<% if not group.confirmed_member?(current_user) %>
-								<i id="<%=group.id%>" class="accept icon-thumbs-up"></i>
-								<i id="<%=group.id%>" class="decline icon-thumbs-down"></i>
-								<i id="<%=group.id%>" class="disabled icon-signout"></i>
-							<% else %>
-								<i id="<%=group.id%>" class="disabled icon-thumbs-up"></i>
-								<i id="<%=group.id%>" class="disabled icon-thumbs-down"></i>
-								<% if current_user == group.creator %>
-								<i id="<%=group.id%>" class="disabled icon-signout"></i>
-								<% else %>
-								<i id="<%=group.id%>" class="leave icon-signout"></i>
-								<% end %>
-							<% end %>
-							<% if current_user == group.creator %>
-								<i id="<%=group.id%>" class="delete icon-remove"></i>
-							<% else %>
-								<i id="<%=group.id%>" class="disabled icon-remove"></i>
-							<% end %>
-							</td>
-						</tr>
+
+<% group ||= @group %>
+<% user ||= @user %>
+<tr id="<%=group.id%>" class="group-management-panel">
+	<td class="group-info-small" style="">
+	<% if user == group.creator %>
+		<i class="icon-star-empty"></i>	
+	<% elsif group.confirmed_member?(user) %>
+		<i id="<%=group.id%>" class="icon-group"></i>
+	<% else %> 
+		<i id="<%=group.id%>" class="icon-group faded"></i>
+	<% end %>
+		<a href="/groups/<%= group.id %>"><%= group.name %></a>
+		<span class="gray"> by <% if user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
+	</td>
+
+	<td class="icon-panel">
+	<% if not group.confirmed_member?(user) %>
+		<i id="<%=group.id%>" class="accept icon-thumbs-up"></i>
+		<i id="<%=group.id%>" class="decline icon-thumbs-down"></i>
+		<i id="<%=group.id%>" class="disabled icon-signout"></i>
+	<% else %>
+		<i id="<%=group.id%>" class="disabled icon-thumbs-up"></i>
+		<i id="<%=group.id%>" class="disabled icon-thumbs-down"></i>
+		<% if user == group.creator %>
+		<i id="<%=group.id%>" class="disabled icon-signout"></i>
+		<% else %>
+		<i id="<%=group.id%>" class="leave icon-signout"></i>
+		<% end %>
+	<% end %>
+	<% if user == group.creator %>
+		<i id="<%=group.id%>" class="delete icon-remove"></i>
+	<% else %>
+		<i id="<%=group.id%>" class="disabled icon-remove"></i>
+	<% end %>
+	</td>
+</tr>
 

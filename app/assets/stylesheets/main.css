@@ -720,6 +720,46 @@ h3 span.btn
 .icon-panel i.icon-remove:hover { color: #E62C29; }
 .icon-panel i.disabled.icon-remove:hover { color: #eee; }
 
+
+/* The icon panel                                              */
+/* ----------------------------------------------------------- */
+.gicon-panel 
+{
+        height: 25px;
+        line-height: 25px;
+        width: 75px;
+        
+        
+        /*border: 1px solid #f2f2f2;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        background: #fcfcfc;*/
+        
+        
+}
+
+.gicon-panel [class^="icon-"],.icon-panel [class*=" icon-"]
+{
+        width: 22px;
+        display: inline-block;
+        text-align: center;
+        vertical-align:middle;
+        margin-top: 4px;
+        cursor:pointer;
+}
+
+.gicon-panel [class^="icon-"]:hover,.icon-panel [class*=" icon-"]:hover
+{
+        color: #08c;
+        font-size: 22px;
+}
+.gicon-panel i.disabled:hover { color: #eee; font-size:14px; }
+.gicon-panel i.disabled { color: #eee; }
+
+.gicon-panel i.icon-remove:hover { color: #E62C29; }
+.gicon-panel i.disabled.icon-remove:hover { color: #eee; }
+
+
 .drop-panel
 {
 	position: absolute;
@@ -1040,7 +1080,7 @@ tr.group-management-panel:last-child
 
 .group-management-panel td.group-info-small
 {
-	width:80%;
+	width:85%;
 }
 .group-management-panel td.icon-panel
 {

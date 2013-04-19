@@ -8,9 +8,8 @@ $(window).bind("load", function()
 	// Keep polling the server to update bars
 	user_jobs_timer_id = setInterval('check_user_jobs_progress()', 5000);
 
-	//$('#add-group').click(function() { location.href = "/groups/new"; });
-	//$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
-	//$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
+	$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
+	$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
 	
 	$('.pulsate').click(function() { $(this).removeClass('pulsate')  });
 	$(function()
@@ -139,37 +138,41 @@ $(window).bind("load", function()
 	$('#micropost-listing .pagination a').live('click', function () { update_div('#micropost-listing','/microposts/reload', this.href); return false;});
 	$('#job-listing .pagination a').live('click', function () { update_div('#job-listing','/jobs/reload', this.href); return false;});
 	$('#group-listing .pagination a').live('click', function () { update_div('#group-listing','/groups/reload', this.href); return false;});
-	
+	$('#datafile-listing .pagination a').live('click', function () { update_div('#datafile-listing','/datafiles/reload', this.href); return false;});
 	
 	// Collapse functions
-	$('#collapse-datafiles').click(function() 
-	{
-		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
-		$('#datafile-listing').toggle('slide', { 'direction':'up'});
-	});
-	$('#collapse-jobs').click(function() 
-	{
-		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
-		$('#job-listing').toggle('slide', { 'direction':'up'});
-	});
-	$('#collapse-groups').click(function() 
-	{
-		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
-		$('#group-listing').toggle('slide', { 'direction':'up'});
-	});
-	$('#collapse-microposts').click(function() 
-	{
-		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
-		$('#micropost-listing').toggle('slide', { 'direction':'up'});
-	});
+	$('#collapse-groups').click(function() { collapse_listing(this, '#group-listing'); });
+	$('#collapse-datafiles').click(function() { collapse_listing(this, '#datafile-listing'); });
+	$('#collapse-jobs').click(function() { collapse_listing(this, '#job-listing'); });
+	$('#collapse-microposts').click(function() { collapse_listing(this, '#micropost-listing'); });
 
+	collapse_listing('#collapse-groups', '#group-listing');
+	collapse_listing('#collapse-datafiles', '#datafile-listing');
+	collapse_listing('#collapse-jobs', '#job-listing');
 });
+function ajax_error(XMLHttpRequest, textStatus, errorThrown)
+{
+	alert("Error: " + errorThrown);
+}
+
+
+
+
+function collapse_listing(arrow, div)
+{
+	if (getRotationDegrees($(arrow))==-90) { rotate(arrow, -90, 5, 0); } else { rotate(arrow, 0, -5, -90); }
+	$(div).toggle('slide', { 'direction':'up'});
+}
+
 
 function rotate(element, cur_deg, step, final_deg)
 {
 	cur_deg = cur_deg + step;
 	$(element).css({ '-webkit-transform': 'rotate(' + cur_deg + 'deg)'});
 	$(element).css({ '-moz-transform': 'rotate(' + cur_deg + 'deg)'});
+	$(element).css({ '-ms-transform': 'rotate(' + cur_deg + 'deg)'});
+	$(element).css({ '-o-transform': 'rotate(' + cur_deg + 'deg)'});
+	$(element).css({ 'transform': 'rotate(' + cur_deg + 'deg)'});
 	
 	if ((step > 0 && cur_deg < final_deg) || (step < 0 && cur_deg > final_deg))
 	{
@@ -195,14 +198,8 @@ function getRotationDegrees(obj)
 }
 
 
-function ajax_error(XMLHttpRequest, textStatus, errorThrown)
-{
-	//alert("Error: " + errorThrown);
-}
-
-
 // A function to parse url encoded parameters into a post data param associative array 
-decode_url = function (url)
+function decode_url(url)
 {
 	// The disabled pagination 'previous' and 'next' still have active links ending with #. Ignore them
 	if (url[url.length-1]=='#') { return null; }
@@ -223,9 +220,9 @@ function update_div(target_div, update_url, url_params)
 {
 	// Get url parameters
 	var params = {};
-	if (!(typeof(url)==='undefined'))
+	if (!(typeof(url_params)==='undefined'))
 	{
-		params = decode_url(url);
+		params = decode_url(url_params);
 		// Dont try to post bad urls
 		if (params == null) { return false; }
 	}
@@ -239,9 +236,18 @@ function update_div(target_div, update_url, url_params)
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		data: params,
 		dataType: 'html',
-		success: function(response) { reload_effect($(target_div), response) },
+		success: function(response) { reload_effect($(target_div), response); check_user_jobs_progress(); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
+	return;
+}
+
+function reload_effect(div, new_html)
+{
+	div.html(new_html);
+	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
+	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
+	//div.toggle('slide', { direction : 'right' });
 	return;
 }
 
@@ -353,23 +359,13 @@ function update_job_bars(percentages)
 {
 	$.each(percentages, function(k,v)
 	{
-		var selector = '.jobs li .bar#' + k.toString();
+		var selector = '.jobs li #' + k.toString() + '.bar';
 		var width = v.toString() + '%'
 		$(selector).css("width",width)
 	});
 	
 	return;
 }
-
-function reload_effect(div, new_html)
-{
-	div.html(new_html);
-	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
-	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
-	//div.toggle('slide', { direction : 'right' });
-	return;
-}
-
 
 function process_response(response)
 {

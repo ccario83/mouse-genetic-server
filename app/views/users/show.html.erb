@@ -8,18 +8,18 @@
 <% content_for :page_js do %>
 
 		<%= javascript_include_tag('user_show') %>
-		<!--<%= javascript_include_tag('jquery.pajinate') %>-->
+		<%= javascript_include_tag('jquery.pajinate') %><!-- needed for group management form -->
 		<%= javascript_include_tag('chosen.jquery') %>
 <% end %>
 
 				<div class="container-fluid span3">
-					<%= render 'user_left_panel', user: current_user, datafiles: @datafiles, jobs: @jobs %>
+					<%= render 'user_left_panel' %>
 				</div>
 				
 				<div id="center-panel" class="container-fluid span5">
-					<%= render 'user_center_panel', job: @job %>
+					<%= render 'user_center_panel' %>
 				</div>
 				
 				<div class="container-fluid span4">
-					<%= render 'user_right_panel', users: @users, group: @group, all_groups: @all_groups, confirmed_groups: @confirmed_groups, associated_users: @associated_users, micropost: @micropost, microposts: @microposts %>
+					<%= render 'user_right_panel' %>
 				</div>

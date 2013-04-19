@@ -12,7 +12,7 @@ class UsersController < ApplicationController
 		@user = current_user
 		@users = User.all
 		
-		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 5)
+		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
 		@micropost = current_user.authored_posts.new
 		
 		@group = @user.groups.new

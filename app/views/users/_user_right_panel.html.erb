@@ -1,12 +1,15 @@
 
-<div class="row-fluid">
-	<div class="span5">
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-groups" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
 		<span class="title"> Groups (<%= current_user.confirmed_groups.count %>)</span>
 	</div>
-	<div class="span5 icon-panel">
+	<div class="icon-panel">
 		<!--<i id="add-group" class="icon-plus"></i>-->
-		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
 		<i class="icon-edit <% if @confirmed_groups.length != @all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
+		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
 	</div>
 	<div id="manage-members" class="modal hide">
 		<%= render 'group_management_form', groups: all_groups, type: 'groups' %>
@@ -20,11 +23,14 @@
 </div>
 <hr>
 
-<div class="row-fluid">
-	<div class="span5">
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-microposts" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
 		<span class="title"> Microposts (<%= current_user.all_received_posts.count %>)</span>
 	</div>
-	<div class="span5 icon-panel">
+	<div class="icon-panel">
 		<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
 	</div>
 </div>

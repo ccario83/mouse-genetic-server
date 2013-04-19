@@ -14,7 +14,7 @@
 <li class="clear-fix">
 	<div class="container-fluid" style="padding:0px;">
 		<div class="row-fluid">
-			<div class="content span11">
+			<div class="content span12">
 				<% if current_user?(job.creator) %>
 				<a href="/users/<%= current_user.id %>/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
 				<% end %>

@@ -11,12 +11,15 @@
 </div>
 <hr>
 
-<div class="row-fluid">
-	<div class="span5">
-		<i id="collapse-datafiles" class="icon-angle-down icon-2x" style="display:inline-block;"></i>
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-datafiles" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
 		<span class="title"> Data (<%= current_user.datafiles.count %>)</span>
 	</div>
-	<div class="span5 icon-panel">
+	<div class="icon-panel">
+		<i id="share-job" class="icon-share"></i>
 		<i id="add-data" class="icon-plus"></i>
 	</div>
 </div>
@@ -28,13 +31,16 @@
 </div>
 <hr>
 
-<div class="row-fluid">
-	<div class="span5">
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-jobs" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
 		<span class="title"> Jobs (<%= current_user.jobs.count %>)</span>
 	</div>
-	<div class="span5 icon-panel">
-		<i id="add-job" class="icon-plus"></i>
+	<div class="icon-panel">
 		<i id="share-job" class="icon-share"></i>
+		<i id="add-job" class="icon-plus"></i>
 	</div>
 </div>
 <div id= "job-listing" class="row-fluid">

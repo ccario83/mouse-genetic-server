@@ -554,7 +554,7 @@ body
 }
 
 .jobs li:first-child {border-top: 1px dashed #ddd;}
-.jobs .progress { height: 5px; }
+.jobs .progress { height: 5px; width: 87%;}
 
 
 /* jobs */
@@ -676,28 +676,26 @@ h3 span.btn
 	padding-right: 5px;
 }
 
-/* Section titles */
-.title 
-{
-	font-size:25px;
-	width: 50%;
-	line-height: 32px;
-}
+
 
 /* The icon panel                                              */
 /* ----------------------------------------------------------- */
 .icon-panel 
 {
+	margin-right:3px;
+	position: absolute;
+	top: 0%;
+	right: 0%;
 	height: 25px;
 	line-height: 25px;
-	width: 75px;
+	/*width: 75px;*/
 	
-	
-	/*border: 1px solid #f2f2f2;
+	/*
+	border: 1px solid #f2f2f2;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
-	background: #fcfcfc;*/
-	
+	background: #fcfcfc;
+	*/
 	
 }
 
@@ -707,7 +705,7 @@ h3 span.btn
 	display: inline-block;
 	text-align: center;
 	vertical-align:middle;
-	margin-top: 4px;
+	/*margin-top: 4px;*/
 	cursor:pointer;
 }
 
@@ -721,6 +719,48 @@ h3 span.btn
 
 .icon-panel i.icon-remove:hover { color: #E62C29; }
 .icon-panel i.disabled.icon-remove:hover { color: #eee; }
+
+.drop-panel
+{
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	height: 25px;
+	line-height: 25px;
+}
+
+.drop-panel [class^="icon-"],.icon-panel [class*=" icon-"]
+{
+	width: 22px;
+	display: inline-block;
+	text-align: center;
+	vertical-align:middle;
+	/*margin-top: 4px;*/
+	cursor:pointer;
+}
+
+.title-panel
+{
+	position: absolute;
+	top: 0%;
+	left: 30px;
+	height: 25px;
+	line-height: 25px;
+}
+.title-bar
+{
+	position: relative; 
+	height:25px;
+}
+.title 
+{
+	font-size:25px;
+	width: 50%;
+	line-height: 28px;
+}
+
+
+
 /* The group partial                                           */
 /* ----------------------------------------------------------- */
 .groups

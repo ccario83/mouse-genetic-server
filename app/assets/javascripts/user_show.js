@@ -136,36 +136,64 @@ $(window).bind("load", function()
 	});
 	
 	// Pagination link overrides
-	$('#micropost-listing .pagination a').live('click', function () { update_microposts(this.href); return false;});
-	$('#job-listing .pagination a').live('click', function () { update_jobs(this.href); return false;});
-	$('#group-listing .pagination a').live('click', function () { update_groups(this.href); return false;});
+	$('#micropost-listing .pagination a').live('click', function () { update_div('#micropost-listing','/microposts/reload', this.href); return false;});
+	$('#job-listing .pagination a').live('click', function () { update_div('#job-listing','/jobs/reload', this.href); return false;});
+	$('#group-listing .pagination a').live('click', function () { update_div('#group-listing','/groups/reload', this.href); return false;});
 	
+	
+	// Collapse functions
 	$('#collapse-datafiles').click(function() 
 	{
-		
-		rotate(this, $(this).css('border-spacing'));
-		$(this).css('border-spacing',$(this).css('border-spacing')*-1);
+		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
 		$('#datafile-listing').toggle('slide', { 'direction':'up'});
 	});
+	$('#collapse-jobs').click(function() 
+	{
+		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
+		$('#job-listing').toggle('slide', { 'direction':'up'});
+	});
+	$('#collapse-groups').click(function() 
+	{
+		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
+		$('#group-listing').toggle('slide', { 'direction':'up'});
+	});
+	$('#collapse-microposts').click(function() 
+	{
+		if (getRotationDegrees($(this))==-90) { rotate(this, -90, 5, 0); } else { rotate(this, 0, -5, -90); }
+		$('#micropost-listing').toggle('slide', { 'direction':'up'});
+	});
+
 });
 
-
-
-function rotate(element, deg)
+function rotate(element, cur_deg, step, final_deg)
 {
-	$(element).animate({  borderSpacing: deg },
+	cur_deg = cur_deg + step;
+	$(element).css({ '-webkit-transform': 'rotate(' + cur_deg + 'deg)'});
+	$(element).css({ '-moz-transform': 'rotate(' + cur_deg + 'deg)'});
+	
+	if ((step > 0 && cur_deg < final_deg) || (step < 0 && cur_deg > final_deg))
 	{
-		step: function(now,fx)
-		{
-			$(this).css('-webkit-transform','rotate('+now+'deg)');
-			$(this).css('-moz-transform','rotate('+now+'deg)'); 
-			$(this).css('-ms-transform','rotate('+now+'deg)');
-			$(this).css('-o-transform','rotate('+now+'deg)');
-		 	$(this).css('transform','rotate('+now+'deg)');  
-		},
-		duration:'slow'
-	},'linear');
+		setTimeout(function() { rotate(element, cur_deg, step, final_deg); }, 10);
+	} else {return;}
 }
+// Needed to find the degrees rotated so the rotate direction can be figured out
+function getRotationDegrees(obj)
+{
+	var matrix = obj.css("-webkit-transform") ||
+	obj.css("-moz-transform")    ||
+	obj.css("-ms-transform")     ||
+	obj.css("-o-transform")      ||
+	obj.css("transform");
+	if(matrix !== 'none')
+	{
+		var values = matrix.split('(')[1].split(')')[0].split(',');
+		var a = values[0];
+		var b = values[1];
+		var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+	} else { var angle = 0; }
+	return angle;
+}
+
 
 function ajax_error(XMLHttpRequest, textStatus, errorThrown)
 {
@@ -191,6 +219,33 @@ decode_url = function (url)
 	return params;
 }
 
+function update_div(target_div, update_url, url_params)
+{
+	// Get url parameters
+	var params = {};
+	if (!(typeof(url)==='undefined'))
+	{
+		params = decode_url(url);
+		// Dont try to post bad urls
+		if (params == null) { return false; }
+	}
+	
+	// Update groups AJAX
+	$.ajax(
+	{
+		//async: false,
+		type:'post',
+		url: update_url,
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: params,
+		dataType: 'html',
+		success: function(response) { reload_effect($(target_div), response) },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
+	});
+	return;
+}
+
+/*
 function update_groups(url)
 {
 	// Get url parameters
@@ -273,6 +328,7 @@ function update_jobs(url)
 
 	return;
 }
+*/
 
 function check_user_jobs_progress()
 {

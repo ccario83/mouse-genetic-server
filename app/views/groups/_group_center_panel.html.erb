@@ -1,33 +1,4 @@
 
-					<div class="row-fluid">
-						<div class="span5">
-							<span class="title"> Microposts (<%= microposts.count %>)</span>
-						</div>
-						<div class="span5 icon-panel">
-							<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
-						</div>
-					</div>
-					<div id="new-post" class="modal hide">
-						<%= render 'shared/micropost_form', micropost: micropost, group: @group %>
-					</div>
-					
-					<div class="row-fluid">
-						<div class="span12">
-							<% if params.has_key?(:user_filter)%>
-								Feeds by:
-								<span class="display-User" style="font-size:14px; font-weight:normal;"> 
-									<%=User.find(params[:user_filter]).name %>
-								</span>
-								<span class="text-links">
-									<a href="/groups/<%= params[:id] %>">[Show All]</a>
-								</span>
-							<% end %>
-							<% if microposts.any? %>
-								<ol class="microposts">
-									<%= render :partial =>'shared/micropost', :collection => microposts %>
-								</ol>
-							<%= will_paginate microposts, :param_name => 'microposts_paginate', :inner_window => 1 %>
-							<% end %>
-						</div>
-					</div>
-
+<div id="micropost-panel" class="row-fluid">
+	<%= render 'shared/micropost_panel', viewer: @group, show_listing_on_load: true %>
+</div>

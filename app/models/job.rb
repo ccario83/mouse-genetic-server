@@ -15,6 +15,9 @@ class Job < ActiveRecord::Base
 	validates :datafile, :presence => true
 	validates_associated :datafile
 	
+	# Set the default number of posts per page for will_paginate
+	self.per_page = 4
+	
 	def redis_key
 			return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
 	end

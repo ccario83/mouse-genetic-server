@@ -3,16 +3,16 @@
 <% group ||= @group %>
 <div class="stats">
 	<a>
-	<% if defined? user %>
+	<% if not user.nil? %>
 		<strong><%= user.authored_posts.count %></strong> microposts
-	<% elsif defined? group %>
+	<% elsif not group.nil? %>
 		<strong><%= group.microposts.count %></strong> microposts
 	<% end %>
 	</a>
 	<a>
-	<% if defined? user %>
+	<% if not user.nil? %>
 		<strong><%= user.groups.count %></strong> groups
-	<% elsif defined? group %>
+	<% elsif not group.nil? %>
 		<strong><%= group.members.count %></strong> members
 	<% end %>
 	</a>

@@ -83,7 +83,7 @@ class MicropostsController < ApplicationController
 		@user ||= current_user
 		@page = 1 if @page==""
 		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 8)
-		render :partial => 'shared/micropost_listing'
+		render :partial => 'shared/micropost_panel', :locals => { show_listing_on_load: true }
 	end
 	
 	private

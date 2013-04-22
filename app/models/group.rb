@@ -27,6 +27,9 @@ class Group < ActiveRecord::Base
 	validates :name, :presence => true, :length => {:maximum => 25 }, :uniqueness => { :case_sensitive => true}
 	validates :description,	:presence => true, :length => { :maximum => 150 }
 	
+	# Set the default number of posts per page for will_paginate
+	self.per_page = 5
+	
 	# Maybe a little friendlier than group.users
 	def members
 		self.users

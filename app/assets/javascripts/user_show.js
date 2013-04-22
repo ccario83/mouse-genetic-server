@@ -31,7 +31,7 @@ $(window).bind("load", function()
 			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 			data: {id: id},
 			dataType: 'json',
-			success: function(response) {process_response(response)},
+			success: function(response) {post_group_change(response)},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
@@ -48,7 +48,7 @@ $(window).bind("load", function()
 			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 			data: {id: id},
 			dataType: 'json',
-			success: function(response) {process_response(response)},
+			success: function(response) {post_group_change(response)},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
@@ -65,7 +65,7 @@ $(window).bind("load", function()
 			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 			data: {id: id},
 			dataType: 'json',
-			success: function(response) {process_response(response)},
+			success: function(response) {post_group_change(response)},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
@@ -82,7 +82,7 @@ $(window).bind("load", function()
 			headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 			data: {id: id},
 			dataType: 'json',
-			success: function(response) {process_response(response)},
+			success: function(response) {post_group_change(response)},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 		});
 		
@@ -136,19 +136,19 @@ $(window).bind("load", function()
 	
 	// Pagination link overrides
 	$('#micropost-listing .pagination a').live('click', function () { update_div('#micropost-listing','/microposts/reload', this.href); return false;});
-	$('#job-listing .pagination a').live('click', function () { update_div('#job-listing','/jobs/reload', this.href); return false;});
-	$('#group-listing .pagination a').live('click', function () { update_div('#group-listing','/groups/reload', this.href); return false;});
-	$('#datafile-listing .pagination a').live('click', function () { update_div('#datafile-listing','/datafiles/reload', this.href); return false;});
+	$('#job-listing .pagination a').live('click', function () { update_div('#job-panel','/jobs/reload', this.href); return false;});
+	$('#group-listing .pagination a').live('click', function () { update_div('#group-panel','/groups/reload', this.href); return false;});
+	$('#datafile-listing .pagination a').live('click', function () { update_div('#datafile-panel','/datafiles/reload', this.href); return false;});
 	
 	// Collapse functions
-	$('#collapse-groups').click(function() { collapse_listing(this, '#group-listing'); });
-	$('#collapse-datafiles').click(function() { collapse_listing(this, '#datafile-listing'); });
-	$('#collapse-jobs').click(function() { collapse_listing(this, '#job-listing'); });
-	$('#collapse-microposts').click(function() { collapse_listing(this, '#micropost-listing'); });
+	$('#collapse-groups').live('click', function() { collapse_listing(this, '#group-listing'); });
+	$('#collapse-datafiles').live('click', function() { collapse_listing(this, '#datafile-listing'); });
+	$('#collapse-jobs').live('click', function() { collapse_listing(this, '#job-listing'); });
+	$('#collapse-microposts').live('click', function() { collapse_listing(this, '#micropost-listing'); });
 
-	collapse_listing('#collapse-groups', '#group-listing');
-	collapse_listing('#collapse-datafiles', '#datafile-listing');
-	collapse_listing('#collapse-jobs', '#job-listing');
+	rotate($('#collapse-groups'), 0, -5, -90);
+	rotate($('#collapse-datafiles'), 0, -5, -90);
+	rotate($('#collapse-jobs'), 0, -5, -90);
 });
 function ajax_error(XMLHttpRequest, textStatus, errorThrown)
 {
@@ -157,11 +157,19 @@ function ajax_error(XMLHttpRequest, textStatus, errorThrown)
 
 
 
+/* Functions to pull out for shared custom ajax js file */
 
 function collapse_listing(arrow, div)
 {
 	if (getRotationDegrees($(arrow))==-90) { rotate(arrow, -90, 5, 0); } else { rotate(arrow, 0, -5, -90); }
-	$(div).toggle('slide', { 'direction':'up'});
+	//$(div).toggle('slide', { 'direction':'up'});
+	
+	if ($(div).is(":hidden"))
+	{
+		$(div).slideDown();
+	} else {
+		$(div).slideUp();
+	}
 }
 
 
@@ -236,105 +244,26 @@ function update_div(target_div, update_url, url_params)
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		data: params,
 		dataType: 'html',
-		success: function(response) { reload_effect($(target_div), response); check_user_jobs_progress(); },
+		success: function(response) { reload_effect($(target_div), response); after_update(); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	return;
 }
-
 function reload_effect(div, new_html)
 {
 	div.html(new_html);
 	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
 	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
-	//div.toggle('slide', { direction : 'right' });
 	return;
 }
 
-/*
-function update_groups(url)
+/* End pull out */
+
+
+function after_update()
 {
-	// Get url parameters
-	var params = {};
-	if (!(typeof(url)==='undefined'))
-	{
-		params = decode_url(url);
-		// Dont try to post bad urls
-		if (params == null) { return false; }
-	}
-	
-	// Update groups AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/groups/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: params,
-		dataType: 'html',
-		success: function(response) { reload_effect($('#group-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
-	});
-	return;
+	check_user_jobs_progress();
 }
-
-function update_microposts(url)
-{
-	// Get url parameters
-	var params = {};
-	if (!(typeof(url)==='undefined'))
-	{
-		params = decode_url(url);
-		// Dont try to post bad urls
-		if (params == null) { return false; }
-	}
-
-	// Update microposts AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/microposts/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: params,
-		dataType: 'html',
-		success: function(response) { reload_effect($('#micropost-listing'), response) },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
-	});
-	return false;
-}
-
-function update_jobs(url)
-{
-	// Get url parameters
-	var params = {};
-	if (!(typeof(url)==='undefined'))
-	{
-		params = decode_url(url);
-		// Dont try to post bad urls
-		if (params == null) { return false; }
-	}
-	
-	// Update microposts AJAX
-	$.ajax(
-	{
-		//async: false,
-		type:'post',
-		url: '/jobs/reload',
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: params,
-		dataType: 'html',
-		success: function(response)
-		{
-			reload_effect($('#job-listing'), response);
-			check_user_jobs_progress(); 
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
-	});
-
-	return;
-}
-*/
 
 function check_user_jobs_progress()
 {
@@ -367,7 +296,7 @@ function update_job_bars(percentages)
 	return;
 }
 
-function process_response(response)
+function post_group_change(response)
 {
 	switch(response['type'])
 	{
@@ -397,7 +326,7 @@ function process_response(response)
 					headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 					data: {id: id},
 					dataType: 'json',
-					success: function(response) {process_response(response)},
+					success: function(response) {post_group_change(response)},
 					error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 				});
 			});
@@ -441,10 +370,10 @@ function process_response(response)
 		break;
 	}
 	
-	//update_data();
-	update_jobs();
-	update_groups();
-	update_microposts();
+	update_div('#group-panel','/groups/reload', this.href);
+	update_div('#datafile-panel','/datafiles/reload', this.href);
+	update_div('#job-panel','/jobs/reload', this.href);
+	update_div('#micropost-panel','/microposts/reload', this.href);
 	
 	return;
 }

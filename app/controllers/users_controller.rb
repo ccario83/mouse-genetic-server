@@ -12,6 +12,8 @@ class UsersController < ApplicationController
 		@user = current_user
 		@users = User.all
 		
+		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
+		
 		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
 		@micropost = current_user.authored_posts.new
 		
@@ -23,7 +25,7 @@ class UsersController < ApplicationController
 		@jobs = current_user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
 		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
 		
-		@datafiles = current_user.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page =>4)
+		@datafiles = current_user.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4)
 		@datafile = current_user.datafiles.new
 	end
 

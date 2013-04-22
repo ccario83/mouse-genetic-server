@@ -62,6 +62,10 @@ class GroupsController < ApplicationController
 	
 	
 	def show
+		@user = current_user
+		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
+		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
+		
 		@users = User.order(:last_name)
 		@group = Group.find(params[:id])
 		@micropost ||= current_user.authored_posts.new({:group_recipients => [@group]})
@@ -77,7 +81,9 @@ class GroupsController < ApplicationController
 		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 7)
 
 		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 7)
-		@member_ids = @members.map(&:id)
+		
+		@datafiles = []
+		@jobs = []
 	end
 	
 	
@@ -114,7 +120,7 @@ class GroupsController < ApplicationController
 		@user ||= current_user
 		@page = 1 if @page==""
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => @page, :per_page => 5)
-		render :partial => 'users/group_listing'
+		render :partial => 'users/group_panel', :locals => { show_listing_on_load: true }
 	end
 	
 	private

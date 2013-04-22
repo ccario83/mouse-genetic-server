@@ -25,11 +25,12 @@ function submitCommentForm()
 	return false;
 }
 
-function flash_notice(notice)
+function flash_notice(notice, alert_type)
 {
+	alert_type = typeof alert_type !== 'undefined' ? alert_type : 'notice';
 	if($('#flash').length != 0)
 		$('#flash').remove()
-	$('body').append('<div id="flash" class="alert alert-notice"><button type="button" class="close" data-dismiss="alert">×</button>'+notice+'</div>');
+	$('body').append('<div id="flash" class="alert alert-' + alert_type + '">' + notice + '</div>');
 	$('#flash').show(); 
 	$('#flash').delay(5000).fadeOut(1000);
 	return false;

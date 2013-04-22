@@ -1,77 +1,32 @@
 
 <% user ||= @user %>
+<% show_panels_on_load ||= false %>
 <div class="row-fluid">
 	<div class="span12">
 		<div class="row-fluid">
 			<%= render 'user_info' %>
 		</div>
+		<!--
 		<div class="row-fluid">
 			<%= render 'shared/stats' %>
 		</div>
+		-->
 	</div>
 </div>
 <hr>
 
-<% confirmed_groups ||= @confirmed_groups %>
-<% all_groups ||= @all_groups %>
-<div class="row-fluid title-bar">
-	<div class="drop-panel">
-		<i id="collapse-groups" class="icon-chevron-down"></i>
-	</div>
-	<div class="title-panel">
-		<span class="title"> Groups (<%= confirmed_groups.count %>)</span>
-	</div>
-	<div class="icon-panel">
-		<!--<i id="add-group" class="icon-plus"></i>-->
-		<i class="icon-edit <% if confirmed_groups.length != all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
-		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
-	</div>
-	<div id="manage-members" class="modal hide">
-		<%= render 'group_management_form', groups: all_groups, type: 'groups' %>
-	</div>
-</div>
-<div id="new-group" class="modal hide fade">
-	<%= render 'groups/group_form' %>
-</div>
-<div id="group-listing" class="row-fluid">
-	<%= render 'group_listing' %>
+<div id="group-panel" class="row-fluid">
+	<%= render 'group_panel' %>
 </div>
 <hr>
 
-<% user ||= @user %>
-<div class="row-fluid title-bar">
-	<div class="drop-panel">
-		<i id="collapse-datafiles" class="icon-chevron-down"></i>
-	</div>
-	<div class="title-panel">
-		<span class="title"> Data (<%= user.datafiles.count %>)</span>
-	</div>
-	<div class="icon-panel">
-		<i id="share-job" class="icon-share"></i>
-		<i id="add-data" class="icon-plus"></i>
-	</div>
-</div>
-<div id="new-data" class="modal hide fade">
-	
-</div>
-<div id= "datafile-listing" class="row-fluid">
-	<%= render 'shared/datafile_listing' %>
+
+<div id= "datafile-panel" class="row-fluid">
+	<%= render 'shared/datafile_panel', viewer: @user %>
 </div>
 <hr>
 
-<% user ||= @user %>
-<div class="row-fluid title-bar">
-	<div class="drop-panel">
-		<i id="collapse-jobs" class="icon-chevron-down"></i>
-	</div>
-	<div class="title-panel">
-		<span class="title"> Jobs (<%= user.jobs.count %>)</span>
-	</div>
-	<div class="icon-panel">
-		<i id="share-job" class="icon-share"></i>
-		<i id="add-job" class="icon-plus"></i>
-	</div>
-</div>
-<div id= "job-listing" class="row-fluid">
-	<%= render 'shared/job_listing' %>
+
+<div id= "job-panel" class="row-fluid">
+	<%= render 'shared/job_panel', viewer: @user %>
 </div>

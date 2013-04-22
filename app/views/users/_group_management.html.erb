@@ -1,8 +1,8 @@
 
 <% group ||= @group %>
 <% user ||= @user %>
-<tr id="<%=group.id%>" class="group-management-panel">
-	<td class="group-info-small" style="">
+<div id="<%=group.id%>" class="group-management-panel">
+	<div class="group-info-small">
 	<% if user == group.creator %>
 		<i class="icon-star-empty"></i>	
 	<% elsif group.confirmed_member?(user) %>
@@ -12,9 +12,9 @@
 	<% end %>
 		<a href="/groups/<%= group.id %>"><%= group.name %></a>
 		<span class="gray"> by <% if user == group.creator %> You <% else %> <%= group.creator.name %> <% end %></span>
-	</td>
+	</div>
 
-	<td class="icon-panel">
+	<div class="icon-panel">
 	<% if not group.confirmed_member?(user) %>
 		<i id="<%=group.id%>" class="accept icon-thumbs-up"></i>
 		<i id="<%=group.id%>" class="decline icon-thumbs-down"></i>
@@ -33,6 +33,6 @@
 	<% else %>
 		<i id="<%=group.id%>" class="disabled icon-remove"></i>
 	<% end %>
-	</td>
-</tr>
+	</div>
+</div>
 

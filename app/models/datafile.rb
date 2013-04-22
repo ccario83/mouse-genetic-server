@@ -9,6 +9,9 @@ class Datafile < ActiveRecord::Base
 	validates :owner, :presence => true
 	validates :filename, :presence => true
 
+	# Set the default number of posts per page for will_paginate
+	self.per_page = 4
+
 	def get_filehandle(flag)
 		return File.open(self.get_path, flag)
 	end

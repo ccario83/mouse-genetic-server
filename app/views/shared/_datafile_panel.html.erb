@@ -1,0 +1,32 @@
+
+<% datafiles ||= @datafiles %>
+<% show_listing_on_load ||= false %>
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-datafiles" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
+		<span class="title"> Data </span>
+	</div>
+	<div class="icon-panel">
+		<i class="icon-number"> <%= viewer.datafiles.count %> </i>
+
+		<i id="add-datafile" class="icon-plus" onclick="$('#new-datafile').modal('show'); return false;"></i>
+		<i class="disabled icon-edit"></i>
+		<i id="share-job" class="icon-share"></i>
+	</div>
+</div>
+
+<div id="new-datafile" class="modal hide fade">
+	<%= render 'users/datafile_form' %>
+</div>
+
+<div id="datafile-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>
+	<% if datafiles.any? %>
+	<ol class="datafiles">
+		<%= render :partial =>'shared/datafile', collection: datafiles %>
+	</ol>
+	<%= will_paginate datafiles, :param_name => 'datafiles_paginate' , :inner_window => 1, :outer_window => 1 %>
+	<% end %>
+</div>
+

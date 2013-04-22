@@ -1,0 +1,34 @@
+
+<% user ||= @user %>
+<% microposts ||= @microposts %>
+<% confirmed_groups ||= @confirmed_groups %>
+<% associated_users ||= @associated_users %>
+<% show_listing_on_load ||= false %>
+<div class="row-fluid title-bar">
+	<div class="drop-panel">
+		<i id="collapse-microposts" class="icon-chevron-down"></i>
+	</div>
+	<div class="title-panel">
+		<span class="title"> Microposts </span>
+	</div>
+	<div class="icon-panel">
+		<i class="icon-number"> <%= viewer.received_posts.count %> </i>
+		
+		<i id="add-group" class="icon-plus" onclick="$('#new-post').modal('show'); return false;"></i>
+		<i class="disabled icon-edit"></i>
+		<i class="disabled icon-share"></i>
+	</div>
+</div>
+
+<div id="new-post" class="modal hide fade">
+	<%= render 'shared/micropost_form', groups: confirmed_groups, users: associated_users, show_filters: true %>
+</div>
+
+<div id="micropost-listing">
+		<% if microposts.any? %>
+		<ol class="microposts">
+			<%= render :partial =>'shared/micropost', :collection => microposts %>
+		</ol>
+		<%= will_paginate microposts, :param_name => 'microposts_paginate' , :inner_window => 1, :outer_window => 1 %>
+		<% end %>
+</div>

@@ -44,8 +44,8 @@ class JobsController < ApplicationController
 		@page = params[:jobs_paginate]
 		@user ||= current_user
 		@page = 1 if @page==""
-		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 5)
-		render :partial => 'shared/job_listing', :locals => { jobs: @jobs }
+		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 4)
+		render :partial => 'shared/job_panel', :locals => { viewer: @user, show_listing_on_load: true }
 	end
 
 	def percentages

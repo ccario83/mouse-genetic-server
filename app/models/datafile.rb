@@ -18,14 +18,14 @@ class Datafile < ActiveRecord::Base
 	
 	# This function writes uploaded file data to a file in the job directory
 	def process_uploaded_file(source)
-		if source.original_filename.match(/ ^.*\/(.[^\/`"':]+)$/).nil?
+		if not source.original_filename.match(/ ^.*\/(.[^\/`"':]+)$/).nil?
 			self.errors[:base] << "The uploaded file name cannot contain /, \", `, :, or \' characters."
 			return
 		end
 		
 		# Set the filename
 		self.filename = source.original_filename
-		self.directory = File.join(self.owner.directory,' data')
+		self.directory = File.join(self.owner.directory,'data')
 		
 		File.open(self.get_path, "wb") { |f| f.write(source.read) }
 		return self.get_path

@@ -78,12 +78,29 @@ class MicropostsController < ApplicationController
 	end
 	
 	def reload
-		@user = params[:user_id]
-		@page = params[:microposts_paginate]
-		@user ||= current_user
-		@page = 1 if @page==""
-		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 8)
-		render :partial => 'shared/micropost_panel', :locals => { show_listing_on_load: true }
+		id = params[:id]
+		type = params[:type]
+		page = params[:microposts_paginate]
+		page = 1 if @page==""
+		
+		@user = nil
+		@viewer = nil
+		@micropost = nil
+		if type == 'users'
+			@user = User.find(id)
+			@viewer = @user
+			@micropost = @viewer.authored_posts.new
+		elsif type == 'groups'
+			@user = current_user
+			@viewer = Group.find(id)
+			@micropost = @user.authored_posts.new({:group_recipients => [@viewer]})
+		else
+			flash[:error] = "A viewing user or group was not defined."
+			return "Error loading new data!"
+		end
+		
+		@microposts = @viewer.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 8)
+		render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: true }
 	end
 	
 	private

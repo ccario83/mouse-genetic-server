@@ -566,11 +566,10 @@ select, input[type="file"] { line-height: 0px;}
 	margin: 15px 0px;
 }
 
-.datafiles li div { padding: 1px 0px 0px 0px;}
 
 .datafiles li
 {
-	padding: 0px 0px;
+	padding: 5px 0px;
 	border-bottom: 1px dashed #ddd;
 }
 
@@ -666,20 +665,29 @@ h3 span.btn
 /* Delete Icons */
 .delete { color: #aaa; }
 .delete:hover { color: #E62C29; text-decoration: none; }
+
 .delete i
 {
-	/*position:relative;
+	/*
+	position:relative;
 	top: -50px;
 	left: 90%;*/
 	float:right;
 	font-size: 17px;
-	padding-right: 2px;
+	padding-right: 3px;*/
 }
-
+.icon-panel .delete i
+{
+	float: inherit;
+	font-size: 14px;
+	padding-right: 0px;
+	
+}
 
 
 /* The icon panel                                              */
 /* ----------------------------------------------------------- */
+li [class^="icon-"] { width: inherit;}
 .icon-panel 
 {
 	margin-right:3px;
@@ -707,6 +715,7 @@ h3 span.btn
 	vertical-align:middle;
 	/*margin-top: 4px;*/
 	cursor:pointer;
+	color: black;
 }
 
 .icon-panel [class^="icon-"]:hover,.icon-panel [class*=" icon-"]:hover
@@ -740,6 +749,7 @@ h3 span.btn
 	font-size: 14px;
 	cursor: default;
 }
+.icon-panel a i { margin-top: -1px; }
 
 .drop-panel
 {
@@ -779,7 +789,10 @@ h3 span.btn
 	width: 50%;
 	line-height: 28px;
 }
-
+.title-small
+{
+	font-size:14px;
+}
 
 
 /* The group partial                                           */

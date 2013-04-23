@@ -13,6 +13,10 @@ RorWebsite::Application.routes.draw do
   match '/signout', :to => 'sessions#destroy', :via => :delete
   match '/phenotypes', :to => 'phenotypes#index'
   
+  # FOR ALL AJAX CALLS
+  #post '/:type/:id/:controller/:action'
+  
+  
   # User routes
   resources :users
   # User AJAX calls
@@ -27,9 +31,9 @@ RorWebsite::Application.routes.draw do
   post '/groups/reload'
   
   # Micropost routs
-  resources :microposts, :only => [:create, :destroy]
+  resources :microposts, :only => [:create, :destroy,]
   # Micropost AJAX calls
-  post '/microposts/reload'
+  post '/:type/:id/microposts/reload' => 'microposts#reload'
   
   # Job routes
   resources :users do
@@ -46,9 +50,16 @@ RorWebsite::Application.routes.draw do
   # Datafile AJAX calls
   post '/datafiles/reload'
   
+
+  # Task AJAX calls
+  post '/tasks/check'
+  post '/:type/:id/tasks/reload' => 'tasks#reload'
+
+
   # Other app routes
   resources :sessions, :only => [:new, :create, :destroy]
-  resources :tasks, :only => [:create, :destroy, :check]
+  resources :tasks, :only => [:create, :destroy ]
+
   
   # UWF routes
   resources :uwf, :only => [:index, :new, :create]

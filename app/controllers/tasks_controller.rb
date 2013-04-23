@@ -47,6 +47,20 @@ class TasksController < ApplicationController
 		end
 	end
 
+	def reload
+		id = params[:id]
+		type = params[:type]
+		page = params[:tasks_paginate]
+		page = 1 if @page==""
+		
+		@user = current_user
+		@group = Group.find(id)
+
+		@task = @user.created_tasks.new({:group_id => @group.id, :creator_id => @user.id })
+		@tasks = @group.tasks.paginate(:page => page, :per_page => 8)
+
+		render :partial => 'shared/task_panel', :locals => { viewer: @group, show_listing_on_load: true }
+	end
 
 	private
 		def correct_user

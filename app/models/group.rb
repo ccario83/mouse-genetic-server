@@ -51,5 +51,9 @@ class Group < ActiveRecord::Base
 	def microposts
 		return self.received_posts
 	end
+	
+	def all_received_posts
+		return self.received_posts.sort_by(&:created_at)
+	end
 end
 

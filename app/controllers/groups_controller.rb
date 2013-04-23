@@ -63,14 +63,14 @@ class GroupsController < ApplicationController
 	
 	def show
 		@user = current_user
+		@users = User.order(:last_name)
+		
+		@group = Group.find(params[:id])
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
-		
-		@users = User.order(:last_name)
-		@group = Group.find(params[:id])
+		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 7)
+
 		@micropost ||= current_user.authored_posts.new({:group_recipients => [@group]})
-		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
-		
 		@microposts = @group.received_posts
 		if params.has_key?(:user_filter)
 			puts "{"+params[:user_filter]+"}"
@@ -78,9 +78,8 @@ class GroupsController < ApplicationController
 		end
 		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 7)
 
-		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 7)
-
-		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 7)
+		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
+		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 8)
 		
 		@datafiles = []
 		@jobs = []

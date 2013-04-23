@@ -1,21 +1,21 @@
 
 <% user ||= @user %>
-<li class="clear-fix">
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="content span12">
-				<% if (user == datafile.owner) %>
-				<a href="/users/<%= user.id %>/datafiles/<%= datafile.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+<li>
+	<div class="group-management-panel">
+		<div class="group-info-small">
+			<a href="/users/<%= user.id %>/datafiles/<%= datafile.id %>">
+
+				<% if datafile.uwf_runnable %>
+					<span class="label label-info">UWF</span> 
 				<% end %>
-			<div>
-		</div>
-		<a href="/users/<%= user.id %>/datafiles/<%= datafile.id %>">
-			<div class="display">
-			<% if datafile.uwf_runnable %>
-				<span class="label label-success"><i class="icon-ok"></i>UWF</span> 
-			<% end %>
 				<%= datafile.filename %>
-			</div>
-		</a>
+			</a>
+		</div>
+		<div class="icon-panel">
+			<i class="icon-share"></i>
+			<% if (user == datafile.owner) %>
+			<a href="/users/<%= user.id %>/datafiles/<%= datafile.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
+			<% end %>
+		</div>
 	</div>
 </li>

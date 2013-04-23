@@ -77,7 +77,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-
 	def group_received_posts
 		microposts = self.groups.map(&:received_posts).flatten
 		microposts.sort_by(&:created_at)

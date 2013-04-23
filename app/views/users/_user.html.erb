@@ -5,7 +5,7 @@
 		<div class="user-info-small">
 			<% gravatar_for user, :size =>20 %>
 			<i class="icon-user"></i>
-			<a href="?user_filter=<%= user.id %>"><%= user.name %></a>
+			<%= user.name %>
 			<span class="gray"><%= user.institution %></span>
 		</div>
 	</li>

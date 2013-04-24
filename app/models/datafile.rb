@@ -1,7 +1,7 @@
 class Datafile < ActiveRecord::Base
 	attr_accessible :owner, :filename, :description, :directory, :uwf_runnable
 	before_create :create_data_directory
-	before_save :verify_quota
+	before_save :verify_quota, :check_uwf_compatibility
 	
 	belongs_to :owner, :class_name => 'User', :foreign_key => 'owner_id'
 	has_and_belongs_to_many :groups
@@ -53,5 +53,8 @@ class Datafile < ActiveRecord::Base
 		def create_data_directory
 			self.directory = File.join(self.owner.directory, 'data') unless not self.directory.nil?
 		end
+		
+		def check_uwf_compatibility
 
+		end
 end

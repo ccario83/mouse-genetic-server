@@ -48,7 +48,7 @@ RorWebsite::Application.routes.draw do
     resources :datafiles
   end
   # Datafile AJAX calls
-  post '/datafiles/reload'
+  post '/:type/:id/datafiles/reload' => 'datafiles#reload'
   
 
   # Task AJAX calls

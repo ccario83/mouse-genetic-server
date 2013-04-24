@@ -13,8 +13,8 @@
 	<div class="icon-panel">
 		<i class="icon-number"> <%= user.confirmed_groups.count %> </i>
 		
-		<i class="icon-edit <% if confirmed_groups.length != all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
 		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
+		<i class="icon-list <% if confirmed_groups.length != all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
 	</div>
 </div>
 

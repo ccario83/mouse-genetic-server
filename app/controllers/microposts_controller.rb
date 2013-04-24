@@ -69,11 +69,13 @@ class MicropostsController < ApplicationController
 	
 	
 	def destroy
+		# verifies correct user
 		if @micropost.destroy
 			flash[:notice] = "The micropost was successfully deleted."
 			redirect_to :back
 		else
 			flash[:error] = "The micropost deletion failed!"
+			redirect_to :back
 		end
 	end
 	

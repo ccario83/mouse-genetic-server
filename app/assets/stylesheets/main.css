@@ -554,7 +554,7 @@ select, input[type="file"] { line-height: 0px;}
 }
 
 .jobs li:first-child {border-top: 1px dashed #ddd;}
-.jobs .progress { height: 5px; width: 87%;}
+.jobs .progress { height: 5px; width: 75%;}
 
 
 /* jobs */
@@ -585,7 +585,7 @@ select, input[type="file"] { line-height: 0px;}
 
 .content .display 
 {
-	width: 90%;
+	width: 75%;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;

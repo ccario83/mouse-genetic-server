@@ -15,17 +15,24 @@
 <li class="clear-fix">
 	<div class="container-fluid" style="padding:0px;">
 		<div class="row-fluid">
-			<div class="content span12">
-				<% if (user == job.creator) %>
-				<a href="/users/<%= user.id %>/jobs/<%= job.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
-				<% end %>
+			<div class="group-management-panel content" style="height:inherit;">
+				
+				<div class="group-info-small display" style="left:0px;">
+					<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
+						<div class="display-item display-<%= job.state %>">
+								<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
+						</div>
+					</a>
+				</div>
+				<div class="icon-panel">
+					<i class="icon-share"></i>
+					<% if (user == job.creator) %>
+					<%= link_to '<i class="icon-remove"></i>'.html_safe, user_job_path(user, job), :confirm => 'Are you sure?', :method => :delete, :method => :delete %>
+					<% end %>
+				</div>
 			<div>
 		</div>
-		<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
-			<div class="display-item display-<%= job.state %>">
-					<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
-			</div>
-		</a>
+		<br/>
 		<div class="progress <%= progress_classes %>">
 			<div id="<%= job.id %>" class="bar <%= bar_classes %>"></div>
 		</div>

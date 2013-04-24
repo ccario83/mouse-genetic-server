@@ -53,14 +53,18 @@ function decode_url(url)
 	if (url[url.length-1]=='#') { return null; }
 	// url = url.replace('#','');
 	params = {};
-	terms = url.split('?')[1].split('&');
-	for(var i = 0; i < terms.length; i++) 
+	try
 	{
-		pair = terms[i];
-		term  = pair.split('=')[0];
-		value = pair.split('=')[1];
-		params[term] = value;
-	};
+		terms = url.split('?')[1].split('&');
+		for(var i = 0; i < terms.length; i++) 
+		{
+			pair = terms[i];
+			term  = pair.split('=')[0];
+			value = pair.split('=')[1];
+			params[term] = value;
+		};
+	}
+	catch(err) { }
 	
 	/*
 	base = url.split('?')[0].split('/');
@@ -80,6 +84,15 @@ function decode_url(url)
 
 function update_div(target_div, original_link, controller)
 {
+	// Find defaults if needed
+	if (typeof original_link === 'undefined')
+	{
+		if (typeof($(target_div).find('div.pagination li.active a')[0]) !== 'undefined')
+		{
+			original_link = $(target_div).find('div.pagination li.active a')[0].href;
+		} else { original_link = window.location.pathname; }
+	}
+	// Risky if page is not structured correctly, but user should know to pass the argument if it isnt
 	controller = typeof controller !== 'undefined' ? controller : ['', target_div.replace('#','').split('-')[0]+'s','reload'].join('/');
 	// Remove the controller sub-url if present (the way will_paginate generates links...)
 	original_link = original_link.replace(controller,'');
@@ -150,30 +163,37 @@ function update_job_bars(percentages)
 	return;
 }
 
-function ajax_form_submit(submit, form_container, form_url)
+function ajax_form_submit(form_container, form_url)
 {
-	form_container = typeof form_container !== 'undefined' ? form_container : $(submit).parent().parent();
 	form_url = typeof form_url !== 'undefined' ? form_url : $(form_container).find('form').attr('action');
 	//var form_div = $(form_container).find('form');
-	var formData = new FormData($(form_container).find('form'));
+	var formData = new FormData($(form_container).find('form')[0]);
 	
 
 	$.ajax(
 	{
-		//async: false,
 		type:'post',
 		url: form_url,
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		data: formData,
 		dataType: 'html',
-		success: function(response) { form_submit_response($(form_div), response); after_form_submit(); },
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function(response) { form_submit_response($(form_container), response); after_form_submit(); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	
 	return false;
 }
-function form_submit_response(form_div, new_html)
+function form_submit_response(form_div, new_html, div_to_update)
 {
+	// The div_to_update will default to the form_div id stripped of 'new-' with '-panel' postpented eg. "new-datatfile" => "#datafile-panel" 
+	div_to_update = typeof div_to_update !== 'undefined' ? div_to_update : '#' + $(form_div)[0].id.split('-')[1] + '-panel'
 	form_div.html(new_html);
+	
+	$(form_div).modal('hide');
+	update_div(div_to_update);
+	
 }
 function after_form_submit() {};

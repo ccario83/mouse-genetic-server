@@ -62,7 +62,7 @@ $(window).bind("load", function()
 	
 	// Keep polling the server to update job progress bars
 	user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);
-	
+	check_jobs_progress();
 	
 	// Pulsate anything with the pulsate class, but stop if it is clicked on
 	(function pulse(){
@@ -75,7 +75,26 @@ $(window).bind("load", function()
 	//$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
 
 
-$('#new-datafile :submit').live('click', function(){ ajax_form_submit(this); return false; });
+	$('#new-datafile :file').change(function()
+	{
+		var file = this.files[0];
+		if(file.name.length < 1 || file.size < 1) 
+		{
+			alert("The file appears empty.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else if(file.size > 1048576)
+		{
+			alert("Please limit file uploads to 1Mb.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else
+		{
+			$('#new-datafile :submit').removeAttr('disabled','');
+			$('#new-datafile :submit').live('click', function(){ ajax_form_submit('#new-datafile'); return false; });
+		}
+	});
+
 });
 
 // Error function called on any AJAX fails

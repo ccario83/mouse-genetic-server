@@ -55,6 +55,51 @@ class Datafile < ActiveRecord::Base
 		end
 		
 		def check_uwf_compatibility
+			require 'csv'
+			uwf_header = ["Strain", "Animal_Id", "Sex"]
 
+			contents = CSV.read(self.get_path, :headers => true, :quote_char => '"', :col_sep =>"\t", :row_sep =>:auto)
+			if contents.headers.length < 4
+				return
+			elsif (uwf_header.map {|x| x.downcase} != contents.headers.slice(0,3).map{|x| x.downcase})
+				return
+			end
+			contents.each do |entry|
+				# Verify strain contains any letter, number, underscore, <, >, +, or / character
+				if (entry[contents.headers[0]] =~ /^[\w\/\+<> ]+$/).nil?
+					puts "Bad strain" 
+					return
+				# Verify the second ID column is alpha numeric word
+				elsif (entry[contents.headers[1]] =~ /^\w+$/).nil?
+					puts "Bad id" 
+					return
+				# Verify sex is male, female, na, or both 
+				elsif (entry[contents.headers[2]] =~ /^(male|m|female|f|na|n\/a|both){1}$/i).nil?
+					puts "Bad sex"
+					return
+				# Verify numeric phenotype
+				elsif (entry[contents.headers[3]] =~ /^-?(\d|\.)+\d*$/).nil?
+					puts "Bad phenotype"
+					return
+				end
+				
+				# Clean up sex column
+				if !(entry[contents.headers[2]] =~ /^(male|m)$/i).nil?
+					entry[contents.headers[2]]= 'male'
+				elsif !(entry[contents.headers[2]] =~ /^(female|f)$/i).nil?
+					entry[contents.headers[2]]= 'female'
+				elsif !(entry[contents.headers[2]] =~ /^(na|n\/a)$/i).nil?
+					entry[contents.headers[2]]= 'na'
+				end
+				
+			end
+			# Write cleaned up version
+			File.open(self.get_path, 'w') do |f|
+				f.write uwf_header << contents.headers[3]
+				contents.each {|e| f.write e.to_s.gsub(',','\t') }
+			end
+
+			self.uwf_runnable = true
+			return
 		end
 end

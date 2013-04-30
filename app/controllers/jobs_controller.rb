@@ -40,11 +40,25 @@ class JobsController < ApplicationController
 	end
 
 	def reload
-		@user = params[:user_id]
-		@page = params[:jobs_paginate]
-		@user ||= current_user
-		@page = 1 if @page==""
-		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => @page, :per_page => 4)
+		id = params[:id]
+		type = params[:type]
+		page = params[:jobs_paginate]
+		page = 1 if @page==""
+
+		@user = nil
+		@viewer = nil
+		@micropost = nil
+		if type == 'users'
+			@user = User.find(id)
+			@viewer = @user
+		elsif type == 'groups'
+			@user = current_user
+			@viewer = Group.find(id)
+		else
+			return "Error loading new data! A viewing user or group was not defined."
+		end
+		
+		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
 		render :partial => 'shared/job_panel', :locals => { viewer: @user, show_listing_on_load: true }
 	end
 

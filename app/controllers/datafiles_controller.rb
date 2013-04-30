@@ -44,14 +44,11 @@ class DatafilesController < ApplicationController
 		if type == 'users'
 			@user = User.find(id)
 			@viewer = @user
-			@micropost = @viewer.authored_posts.new
 		elsif type == 'groups'
 			@user = current_user
 			@viewer = Group.find(id)
-			@micropost = @user.authored_posts.new({:group_recipients => [@viewer]})
 		else
-			flash[:error] = "A viewing user or group was not defined."
-			return "Error loading new data!"
+			return "Error loading new data! A viewing user or group was not defined."
 		end
 		
 		@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)

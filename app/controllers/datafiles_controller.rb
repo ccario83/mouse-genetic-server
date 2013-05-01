@@ -8,13 +8,23 @@ class DatafilesController < ApplicationController
 		@datafile = @user.datafiles.new()
 		@datafile.process_uploaded_file(params['datafile']['datafile'])
 		@datafile.description = params['datafile']['description']
+		@datafile.groups = Group.find(cleanup_ids(params['datafile']['group_ids']))
+
 		if @datafile.save!
 			flash[:notice] = "Datafile uploaded"
 		else
 			flash[:error] = @datafile.errors
 		end
 
-		render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile }
+		render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile, groups: @user.groups.order(:name) }
+	end
+
+	def update
+		@datafile = params[:id]
+		debugger
+		#cleanup_chosen_ids(params[:datafile]['group_ids'])
+		flash[:notice] = "OK!"
+		redirect_to :back
 	end
 
 	def destroy

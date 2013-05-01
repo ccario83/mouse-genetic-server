@@ -1,5 +1,6 @@
 
 <% user ||= @user %>
+<% groups ||= @groups %>
 <li>
 	<div class="group-management-panel content">
 		<div class="group-info-small display">
@@ -12,12 +13,15 @@
 			</a>
 		</div>
 		<div class="icon-panel">
-			<i class="icon-share"></i>
+			<i class="icon-share" onclick="$('#edit-datafile-<%=datafile.id%>').modal('show'); return false;"></i>
 			<% if (user == datafile.owner) %>
 			<!--<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :remote => true %>-->
 			<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :method => :delete %>
 			
 			<% end %>
 		</div>
+	</div>
+	<div id="edit-datafile-<%=datafile.id%>" class="modal hide fade">
+		<%= render 'users/datafile_form', datafile: datafile, groups: groups, mode: 'Edit' %>
 	</div>
 </li>

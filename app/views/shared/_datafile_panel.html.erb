@@ -1,5 +1,6 @@
 
 <% datafiles ||= @datafiles %>
+<% confirmed_groups ||= @confirmed_groups %>
 <% show_listing_on_load ||= false %>
 <div class="title-bar">
 	<div class="drop-panel">
@@ -17,13 +18,13 @@
 </div>
 
 <div id="new-datafile" class="modal hide fade">
-	<%= render 'users/datafile_form' %>
+	<%= render 'users/datafile_form', groups: @confirmed_groups %>
 </div>
 
 <div id="datafile-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>
 	<% if datafiles.any? %>
 	<ol class="datafiles">
-		<%= render :partial =>'shared/datafile', collection: datafiles %>
+		<%= render :partial =>'shared/datafile', collection: datafiles, groups: @confirmed_groups %>
 	</ol>
 	<%= will_paginate datafiles, :param_name => 'datafiles_paginate' , :inner_window => 1, :outer_window => 1 %>
 	<% end %>

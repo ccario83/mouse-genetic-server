@@ -6,31 +6,8 @@ class MicropostsController < ApplicationController
 		@recipient_type = params[:micropost][:recipient_type]
 		@content = params[:micropost][:content]
 		
-		@group_ids = params[:micropost][:group_recipient_ids]
-		@user_ids = params[:micropost][:user_recipient_ids]
-
-		## REALLY UGLY CODE DUE TO CHOSEN'S METHOD OF SENDING IDs
-		# Parse the group and user ids
-		if (@group_ids=="[]" or @group_ids=="" or @group_ids==[""])
-			@group_ids = current_user.groups.map(&:id)
-		else
-			begin
-				@group_ids = JSON.parse(params[:micropost][:group_recipient_ids]).map(&:to_i)
-			rescue
-				@group_ids = params[:micropost][:group_recipient_ids].map(&:to_i)
-			end
-			@group_ids.delete(0) if @group_ids.include?(0)
-		end
-		if (@user_ids=="[]" or @user_ids=="" or @user_ids==[""])
-			@user_ids = current_user.confirmed_groups.map(&:users).flatten.uniq.map(&:id)
-		else
-			begin
-				@user_ids = JSON.parse(params[:micropost][:user_recipient_ids]).map(&:to_i)
-			rescue
-				@user_ids = params[:micropost][:user_recipient_ids].map(&:to_i)
-			end
-			@user_ids.delete(0) if @user_ids.include?(0)
-		end
+		@group_ids = cleanup_ids(params[:micropost][:group_recipient_ids])
+		@user_ids = cleanup_ids(params[:micropost][:user_recipient_ids])
 		
 		# Convert the ids to a recipient list for the requested type (group or user post), and check that the current_user has permissions to post to these
 		@recipients = []

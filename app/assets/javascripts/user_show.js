@@ -41,6 +41,14 @@ $(window).bind("load", function()
 	});
 	//------------------------------------------------------------------------------------------------
 
+
+	//----------- Datafile share form listeners --------------------------------------------------
+	// Chosen listeners
+	//$('#datafile_group_ids').chosen({ min_search_term_length: 2 });
+
+
+
+
 	//----------- will_paginate overrides for AJAX  --------------------------------------------------
 	// Pagination link overrides
 	$('#micropost-listing .pagination a').live('click', function () { update_div('#micropost-panel', this.href, '/microposts/reload'); return false;});
@@ -59,6 +67,8 @@ $(window).bind("load", function()
 	rotate($('#collapse-datafiles'), 0, -5, -90);
 	rotate($('#collapse-jobs'), 0, -5, -90);
 	//-------------------------------------------------------------------------------------------------
+	
+	
 	
 	// Keep polling the server to update job progress bars
 	user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);

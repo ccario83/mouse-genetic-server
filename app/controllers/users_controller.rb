@@ -22,11 +22,10 @@ class UsersController < ApplicationController
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
 		
-		@jobs = current_user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
+		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
 		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
 		
-		@datafiles = current_user.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4)
-		@datafile = current_user.datafiles.new
+		# Default @datafile/@datafiles values used in partial  
 	end
 
 
@@ -63,6 +62,7 @@ class UsersController < ApplicationController
 
 
 	def destroy
+		debugger
 		User.find(params[:id]).destroy
 		flash[:notice] = "User deleted"
 		redirect_to :back

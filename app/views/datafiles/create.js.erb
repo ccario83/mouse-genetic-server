@@ -1,0 +1,27 @@
+
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#new-datafile").html("<%= escape_javascript(render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile }) %>");
+<% if @datafile.errors.messages.any? %>
+
+	<% @datafile.errors.messages.each do |field, errors| %>
+		<% if errors.any? %>
+		<% debugger %>
+			<% if field == :filename %><% field = :datafile %><% end %>
+			var field = $('#new-datafile #datafile_<%= field %>');
+			field.parent().parent().addClass('error');
+			<% errors.each do |error| %>
+
+				field.after("<p class='help-block'><%= error %></p>")
+	<% debugger %>
+			<% end %>
+		<% end %>
+	<% end %>
+<% else %>
+	$("#new-datafile").modal('hide');
+	update_div('#datafile-panel');
+<% end %>
+

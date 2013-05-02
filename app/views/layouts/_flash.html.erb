@@ -1,0 +1,8 @@
+
+	<% if not flash.nil? %>
+		<div id="flash_notice">
+			<% flash.each do |key, value| %>
+			<%= content_tag(:div, value, :id => "flash", :class => "alert alert-#{key}") %>
+			<% end %>
+		</div>
+	<% end %>

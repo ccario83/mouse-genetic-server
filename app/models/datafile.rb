@@ -1,7 +1,7 @@
 class Datafile < ActiveRecord::Base
 	attr_accessible :owner, :filename, :description, :directory, :uwf_runnable
-	before_create :create_data_directory
-	before_save :verify_quota, :check_uwf_compatibility
+	before_create :create_data_directory, :check_uwf_compatibility
+	before_save :verify_quota
 	
 	belongs_to :owner, :class_name => 'User', :foreign_key => 'owner_id'
 	has_and_belongs_to_many :groups
@@ -18,6 +18,12 @@ class Datafile < ActiveRecord::Base
 	
 	# This function writes uploaded file data to a file in the job directory
 	def process_uploaded_file(source)
+		# Verify the source isn't empty
+		if source == '' or source.nil?
+			self.errors[:filename] << "A file must be present."
+			return
+		end
+		
 		if not source.original_filename.match(/ ^.*\/(.[^\/`"':]+)$/).nil?
 			self.errors[:base] << "The uploaded file name cannot contain /, \", `, :, or \' characters."
 			return
@@ -28,6 +34,13 @@ class Datafile < ActiveRecord::Base
 		self.directory = File.join(self.owner.directory,'data')
 		
 		File.open(self.get_path, "wb") { |f| f.write(source.read) }
+		return self.get_path
+	end
+	
+	def process_local_file(source)
+		self.filename = File.basename(source)
+		self.directory = File.join(self.owner.directory, 'data')
+		FileUtils.cp source, self.directory
 		return self.get_path
 	end
 	

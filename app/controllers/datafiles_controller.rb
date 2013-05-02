@@ -4,42 +4,51 @@ class DatafilesController < ApplicationController
 
 	def create
 		@user = current_user
+		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
 		# Process new file
 		@datafile = @user.datafiles.new()
 		@datafile.process_uploaded_file(params['datafile']['datafile'])
 		@datafile.description = params['datafile']['description']
 		@datafile.groups = Group.find(cleanup_ids(params['datafile']['group_ids']))
 
-		if @datafile.save!
-			flash[:notice] = "Datafile uploaded"
+		if @datafile.save
+			flash[:notice] = "Datafile uploaded."
 		else
-			flash[:error] = @datafile.errors
+			flash[:error] = "Please correct form errors."
 		end
-
-		render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile, groups: @user.groups.order(:name) }
+		
+		respond_to do |format|
+			format.js { render :controller => "datafiles", :action => "create" }
+		end
 	end
 
 	def update
-		@datafile = params[:id]
-		debugger
-		#cleanup_chosen_ids(params[:datafile]['group_ids'])
-		flash[:notice] = "OK!"
-		redirect_to :back
+		@datafile = Datafile.find(params[:id])
+		@datafile.description = params['datafile']['description']
+		@datafile.groups = Group.find(cleanup_ids(params['datafile']['group_ids']))
+		
+		if @datafile.save
+			flash[:success] = "Datafile successfully updated."
+		else
+			flash[:error] = "Please correct form errors."
+		end
+		
+		respond_to do |format|
+			format.js { render :controller => "datafiles", :action => "update" }
+		end
 	end
 
 	def destroy
 		if @datafile.destroy
-			flash[:notice] = "The datafile was successfully deleted."
-			redirect_to :back
+			flash[:success] = "The datafile was successfully deleted."
 		else
 			flash[:error] = "The datafile deletion failed!"
-			redirect_to :back
 		end
 		
-		#respond_to do |format|
-		#	format.js { }
-		#	format.html {  }
-		#end
+		respond_to do |format|
+			format.js { }
+			format.html {  }
+		end
 	end
 
 	def reload
@@ -61,7 +70,8 @@ class DatafilesController < ApplicationController
 			return "Error loading new data! A viewing user or group was not defined."
 		end
 		
-		@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
+		# Creates datafiles in partial
+		#@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
 		render :partial => 'shared/datafile_panel', :locals => { viewer: @user, show_listing_on_load: true }
 	end
 

@@ -13,11 +13,9 @@
 			</a>
 		</div>
 		<div class="icon-panel">
-			<i class="icon-share" onclick="$('#edit-datafile-<%=datafile.id%>').modal('show'); return false;"></i>
+			<i class="icon-share" data-toggle="modal" data-target="#edit-datafile-<%=datafile.id%>"></i>
 			<% if (user == datafile.owner) %>
-			<!--<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :remote => true %>-->
-			<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :method => :delete %>
-			
+			<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
 			<% end %>
 		</div>
 	</div>

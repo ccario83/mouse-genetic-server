@@ -35,9 +35,10 @@
 	</head>
 
 	<body>
-		<% flash.each do |key, value| %>
-		<%= content_tag(:div, value, :id => "flash", :class => "alert alert-#{key}") %>
-		<% end %>
+		<div id="flash_notice">
+			<%= render 'layouts/flash' %>
+		</div>
+		
 		<%= render 'layouts/navbar' %>
 		
 		<div class="container-fluid" style="padding:0px;">

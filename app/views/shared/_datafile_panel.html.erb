@@ -1,6 +1,6 @@
 
-<% datafiles ||= @datafiles %>
-<% confirmed_groups ||= @confirmed_groups %>
+<% viewer ||= @user %>
+<% datafiles ||= viewer.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4) %>
 <% show_listing_on_load ||= false %>
 <div class="title-bar">
 	<div class="drop-panel">
@@ -12,19 +12,19 @@
 	<div class="icon-panel">
 		<i class="icon-number"> <%= viewer.datafiles.count %> </i>
 
-		<i id="add-datafile" class="icon-plus" onclick="$('#new-datafile').modal('show'); return false;"></i>
+		<i id="add-datafile" class="icon-plus" data-toggle="modal" data-target="#new-datafile"></i>
 		<i class="disabled icon-list"></i>
 	</div>
 </div>
 
 <div id="new-datafile" class="modal hide fade">
-	<%= render 'users/datafile_form', groups: @confirmed_groups %>
+	<%= render 'users/datafile_form' %>
 </div>
 
 <div id="datafile-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>
 	<% if datafiles.any? %>
 	<ol class="datafiles">
-		<%= render :partial =>'shared/datafile', collection: datafiles, groups: @confirmed_groups %>
+		<%= render :partial =>'shared/datafile', collection: datafiles %>
 	</ol>
 	<%= will_paginate datafiles, :param_name => 'datafiles_paginate' , :inner_window => 1, :outer_window => 1 %>
 	<% end %>

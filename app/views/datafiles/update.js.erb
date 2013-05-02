@@ -1,5 +1,8 @@
 
+
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
+
+$("#edit-datafile-<%= @datafile.id %>").modal('hide');
 update_div('#datafile-panel');

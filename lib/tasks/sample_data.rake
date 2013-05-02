@@ -5,6 +5,7 @@ namespace :db do
 		make_groups
 		make_microposts
 		make_tasks
+		make_datafiles
 		make_jobs
 	end
 end
@@ -116,13 +117,28 @@ def make_tasks
 	end
 end
 
-def make_jobs
+def make_datafiles
 	user = User.first
-	datafile = user.datafiles.new(:filename => '/tmp/no.txt')
-	user.jobs.create!(:name => 'Starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting', :datafile => datafile)
-	user.jobs.create!(:name => 'Progressing', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing', :datafile => datafile)
-	user.jobs.create!(:name => 'Failed', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed', :datafile => datafile)
-	user.jobs.create!(:name => 'Completed', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed', :datafile => datafile)
+	isgood = user.datafiles.new()
+	isgood.process_local_file(File.join(Rails.root, 'lib/tasks/GOOD.txt'))
+	isgood.description = 'Runnable with UWF'
+	isgood.save!
+	
+	nogood = user.datafiles.new()
+	nogood.process_local_file(File.join(Rails.root, 'lib/tasks/NoGOOD.txt'))
+	nogood.description = 'Not runnable with UWF'
+	nogood.save!
 end
 
+def make_jobs
+	user = User.first
+	
+	isgood = Datafile.first
+	nogood = Datafile.find(2)
+
+	user.jobs.create!(:name => 'Starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting', :datafile => isgood)
+	user.jobs.create!(:name => 'Progressing', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing', :datafile => isgood)
+	user.jobs.create!(:name => 'Failed', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed', :datafile => nogood)
+	user.jobs.create!(:name => 'Completed', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed', :datafile => isgood)
+end
 

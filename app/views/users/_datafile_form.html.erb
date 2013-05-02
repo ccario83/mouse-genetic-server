@@ -1,7 +1,7 @@
 
-<% datafile ||= @datafile %>
 <% user ||= @user %>
-<% groups ||= @groups %>
+<% datafile ||= user.datafiles.new %>
+<% groups ||= user.confirmed_groups.sort_by(&:name) %>
 <% mode ||= 'Create' %>
 
 <% if mode == 'Create' %><% url = user_datafiles_path(user)%><% elsif mode == 'Edit' %><% url = user_datafile_path(user, datafile) %><% end %>
@@ -11,14 +11,17 @@
 	<h3><%= mode %> Datafile</h3>
 </div>
 <div class="modal-body" style="overflow: visible;">
-	<%= simple_form_for datafile, :url => url, :html => { :class => '', } do |f| %>
+	<%= simple_form_for datafile, :url => url, :multipart => mode == 'Create', :remote => true, :html => { } do |f| %>
+		<div id="errors"></div>
 		<%= f.association :groups, :collection => groups, :selected => datafile.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:510px;" } %>
 		<%= f.input :description, :label => 'Description', :required => false, :input_html => { :style => 'width:500px;', :rows => 5 } %>
-	<% if mode == 'Create' %>
+		<% if mode == 'Create' %>
 		<%= f.input :datafile, :as => :file, :label => 'File:', :required => true %>
-	<% end %>
+		<%= f.error :datafile, id: 'user_roor' %>
+		<% end %>
+
 </div>
 <div class="modal-footer">
-	<input type="submit" class="btn btn-primary" value="Submit">
+	<%= f.submit "Submit", :class => "btn btn-primary" %>
 </div>
 	<% end %>

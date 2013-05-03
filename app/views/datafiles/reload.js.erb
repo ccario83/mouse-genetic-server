@@ -1,0 +1,10 @@
+
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#new-datafile").html("<%= escape_javascript(render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile }) %>");
+$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+
+

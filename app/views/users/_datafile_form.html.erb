@@ -11,9 +11,8 @@
 	<h3><%= mode %> Datafile</h3>
 </div>
 <div class="modal-body" style="overflow: visible;">
-	<%= simple_form_for datafile, :url => url, :multipart => mode == 'Create', :remote => true, :html => { } do |f| %>
-		<div id="errors"></div>
-		<%= f.association :groups, :collection => groups, :selected => datafile.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:510px;" } %>
+	<%= simple_form_for datafile, :url => url, :multipart => mode == 'Create', :remote => true, :html => {:'data-update-target' => 'new-datafile'} do |f| %>
+		<%= f.association :groups, :collection => groups, :selected => datafile.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:510px;", :class => 'edit_datafile_groups', :id => "#{datafile.id || 'new'}" } %>
 		<%= f.input :description, :label => 'Description', :required => false, :input_html => { :style => 'width:500px;', :rows => 5 } %>
 		<% if mode == 'Create' %>
 		<%= f.input :datafile, :as => :file, :label => 'File:', :required => true %>

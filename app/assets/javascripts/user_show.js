@@ -21,6 +21,14 @@ $(window).bind("load", function()
 	// Set the selected To: box to groups initially
 	$('#micropost_user_recipient_ids_chzn').hide();
 	$('#micropost_recipient_type').val('group');
+	//------------------------------------------------------------------------------------------------
+
+	//----------- Datafile modifications ---------- --------------------------------------------------
+	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	
+	
+	
+	
 	
 	// Switches To: box between group and user recipients 
 	$('#to-group').click(function() 
@@ -57,10 +65,14 @@ $(window).bind("load", function()
 	$('#datafile-listing .pagination a').live('click', function () { update_div('#datafile-panel', this.href, '/datafiles/reload'); return false;});
 	
 	// Collapse functions
-	$('#collapse-groups').live('click', function() { collapse_listing(this, '#group-listing'); });
+	$('#collapse-groups').live('click', function() { collapse_listing(this, '#group-listing', this); });
+	$('#group-panel .title-panel').live('click', function() { collapse_listing($('#collapse-groups'), '#group-listing'); });
 	$('#collapse-datafiles').live('click', function() { collapse_listing(this, '#datafile-listing'); });
+	$('#datafile-panel .title-panel').live('click', function() { collapse_listing($('#collapse-datafiles'), '#datafile-listing'); });
 	$('#collapse-jobs').live('click', function() { collapse_listing(this, '#job-listing'); });
+	$('#micropost-panel .title-panel').live('click', function() { collapse_listing($('#collapse-microposts'), '#micropost-listing'); });
 	$('#collapse-microposts').live('click', function() { collapse_listing(this, '#micropost-listing'); });
+	$('#job-panel .title-panel').live('click', function() { collapse_listing($('#collapse-jobs'), '#job-listing'); });
 	
 	// Initall collapse groups, datafiles, and jobs
 	rotate($('#collapse-groups'), 0, -5, -90);
@@ -123,7 +135,7 @@ function after_update_div()
 function group_change(type, id)
 {
 	var url = null;
-	switch(response['type'])
+	switch('type')
 	{
 		case 'accept':
 			url = '/users/accept_group'

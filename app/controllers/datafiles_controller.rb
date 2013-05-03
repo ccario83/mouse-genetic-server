@@ -6,6 +6,7 @@ class DatafilesController < ApplicationController
 		@user = current_user
 		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
 		# Process new file
+
 		@datafile = @user.datafiles.new()
 		@datafile.process_uploaded_file(params['datafile']['datafile'])
 		@datafile.description = params['datafile']['description']

@@ -114,6 +114,7 @@ class GroupsController < ApplicationController
 	end
 	
 	def reload
+debugger
 		@user = params[:user_id]
 		@page = params[:confirmed_groups_paginate]
 		@user ||= current_user

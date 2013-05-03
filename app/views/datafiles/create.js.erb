@@ -5,18 +5,15 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
 $("#new-datafile").html("<%= escape_javascript(render :partial => 'users/datafile_form', :locals => { user: @user, datafile: @datafile }) %>");
-<% if @datafile.errors.messages.any? %>
 
+<% if not @datafile.valid? %>
 	<% @datafile.errors.messages.each do |field, errors| %>
 		<% if errors.any? %>
-		<% debugger %>
 			<% if field == :filename %><% field = :datafile %><% end %>
 			var field = $('#new-datafile #datafile_<%= field %>');
 			field.parent().parent().addClass('error');
 			<% errors.each do |error| %>
-
 				field.after("<p class='help-block'><%= error %></p>")
-	<% debugger %>
 			<% end %>
 		<% end %>
 	<% end %>
@@ -25,3 +22,21 @@ $("#new-datafile").html("<%= escape_javascript(render :partial => 'users/datafil
 	update_div('#datafile-panel');
 <% end %>
 
+// Reattach the :remote=>true form submit functionality
+$('#new-datafile input:submit').on('click', function()
+{
+	var formData = new FormData($('#new-datafile form')[0]);
+	$.ajax({
+		type: 'post',
+		url: $('#new-datafile form').attr('action'), //sumbits it to the given url of the form
+		data: formData,
+		dataType: 'script',
+		cache: false,
+		contentType: false,
+		processData: false
+	});
+	return false;
+});
+
+// Reattach chosen handler
+$('#datafile_group_ids').chosen({ min_search_term_length: 2 });

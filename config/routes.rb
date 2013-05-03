@@ -28,7 +28,7 @@ RorWebsite::Application.routes.draw do
   # Group routes
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
   # Group AJAX calls
-  post '/groups/reload'
+  post '/:type/:id/groups/reload' => 'groups#reload'
   
   # Micropost routs
   resources :microposts, :only => [:create, :destroy,]

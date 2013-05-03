@@ -567,13 +567,13 @@ select, input[type="file"] { line-height: 0px;}
 }
 
 
-.datafiles li
+.datafiles > li
 {
 	padding: 5px 0px;
 	border-bottom: 1px dashed #ddd;
 }
 
-.datafiles li:first-child {border-top: 1px dashed #ddd;}
+.datafiles > li:first-child {border-top: 1px dashed #ddd;}
 
 /* */
 
@@ -788,6 +788,7 @@ li [class^="icon-"] { width: inherit;}
 	font-size:25px;
 	width: 50%;
 	line-height: 28px;
+	cursor: pointer;
 }
 .title-small
 {

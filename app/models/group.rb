@@ -26,6 +26,7 @@ class Group < ActiveRecord::Base
 	validates :creator_id, :presence => true
 	validates :name, :presence => true, :length => {:maximum => 25 }, :uniqueness => { :case_sensitive => true}
 	validates :description,	:presence => true, :length => { :maximum => 150 }
+	validates :users, :length => {:minimum => 2, :message => "You cannot create group with no non-creator members."}
 	
 	# Set the default number of posts per page for will_paginate
 	self.per_page = 5

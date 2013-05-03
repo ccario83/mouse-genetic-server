@@ -15,48 +15,31 @@ class GroupsController < ApplicationController
 
 
 	def create
-		@user_ids = params[:group][:user_ids]
-		@users = []
+		# Create the new group
+		@user = current_user
+		@group = Group.create(:creator => @user, :name => params[:group][:name], :description => params[:group][:description])
 		
-		# Set the user list to empty for any possible empty input
-		if (@user_ids.nil? or @user_ids=="[]" or @user_ids=="" or @user_ids==[""])
-			@user_ids = []
-		else # Try to parse the JSON if it is in JSON, otherwise attempt to 
-			begin
-				@user_ids = JSON.parse(@user_ids).map(&:to_i)
-			rescue
-				@user_ids = @user_ids.map(&:to_i)
-			end
-			@user_ids.delete(0) if @user_ids.include?(0)
-		end
-
-		if @user_ids.empty? # No users were selected and we don't allow groups with only the creator as a member
-			flash[:error] = "You cannot create group with no non-creator members."
-			redirect_to :back and return
-		else
-			@users = User.find(@user_ids)
-		end
-		@creator = current_user
+		# Add group users
+		@users = User.find(cleanup_ids(params[:group][:user_ids]))
 		# Set the group creator and make them a group member (this are not passed in params[:group][:users] if the show_current_user flag is false in the user form
 		# Since a user MUST be a member of their own group, this assures they are kept in any case
-		@users.prepend(@creator) if not @users.include?@creator
-
-		# Create the new group
-		@group = Group.create(:creator => @creator, :name => params[:group][:name], :description => params[:group][:description])
+		@users.prepend(@user) if not @users.include?@user
 		@group.users << @users
+		
 		if @group.save
-			flash[:notice] = "The new group was successfully created."
+			flash[:success] = "The new group was successfully created."
 			# Auto confirm the creator to his/her own group
-			current_user.confirm_membership(@group)
-			redirect_to @group and return # Same as render 'show' with group_id (POST /group/show/id)
+			@user.confirm_membership(@group)
 		else
 			puts @group.errors.messages
 			# Regenerate the user list
-			flash[:error] = "Group creation failed, please check the form for errors."
-			@users = User.all
+			flash[:error] = "Please correct form errors."
 			@preselected = @group.users.map(&:id).to_s
 			@group.users = []
-			render 'new' # Otherwise redirect back to the new view. Simple_form or other code will handle display of errors in the @group object
+		end
+		
+		respond_to do |format|
+			format.js { render :controller => "groups", :action => "create" }
 		end
 	end
 	
@@ -114,13 +97,17 @@ class GroupsController < ApplicationController
 	end
 	
 	def reload
-debugger
-		@user = params[:user_id]
-		@page = params[:confirmed_groups_paginate]
+		id = params[:id]
+		type = params[:type]
+		page = params[:confirmed_groups_paginate]
+		page = 1 if @page==""
+
 		@user ||= current_user
-		@page = 1 if @page==""
-		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => @page, :per_page => 5)
-		render :partial => 'users/group_panel', :locals => { show_listing_on_load: true }
+		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => page, :per_page => 5)
+		
+		respond_to do |format|
+			format.js { render :controller => "groups", :action => "reload" }
+		end
 	end
 	
 	private

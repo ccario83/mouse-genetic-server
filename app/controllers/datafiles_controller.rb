@@ -8,9 +8,9 @@ class DatafilesController < ApplicationController
 		# Process new file
 
 		@datafile = @user.datafiles.new()
-		@datafile.process_uploaded_file(params['datafile']['datafile'])
-		@datafile.description = params['datafile']['description']
-		@datafile.groups = Group.find(cleanup_ids(params['datafile']['group_ids']))
+		@datafile.process_uploaded_file(params[:datafile][:datafile])
+		@datafile.description = params[:datafile][:description]
+		@datafile.groups = Group.find(cleanup_ids(params[:datafile][:group_ids]))
 
 		if @datafile.save
 			flash[:notice] = "Datafile uploaded."
@@ -19,7 +19,7 @@ class DatafilesController < ApplicationController
 		end
 		
 		respond_to do |format|
-			format.js { render :controller => "datafiles", :action => "create" }
+			format.js { render :controller => "datafiles", :action => "create" } and return
 		end
 	end
 
@@ -71,9 +71,12 @@ class DatafilesController < ApplicationController
 			return "Error loading new data! A viewing user or group was not defined."
 		end
 		
-		# Creates datafiles in partial
-		#@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
-		render :partial => 'shared/datafile_panel', :locals => { viewer: @user, show_listing_on_load: true }
+		@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
+		
+		respond_to do |format|
+			format.js { render :controller => "datafiles", :action => "reload" }
+		end
+		
 	end
 
 	private

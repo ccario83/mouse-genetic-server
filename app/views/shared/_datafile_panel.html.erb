@@ -1,6 +1,6 @@
 
 <% viewer ||= @user %>
-<% datafiles ||= viewer.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4) %>
+<% datafiles ||= @datafiles %>
 <% show_listing_on_load ||= false %>
 <div class="title-bar">
 	<div class="drop-panel">

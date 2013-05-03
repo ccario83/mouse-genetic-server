@@ -10,22 +10,20 @@ class UsersController < ApplicationController
 	def show
 		#@user = User.find(params[:id])
 		@user = current_user
-		@users = User.all
+		#@users = User.all
 		
 		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
 		
 		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
 		@micropost = current_user.authored_posts.new
 		
-		@group = @user.groups.new
-		@all_groups = @user.groups.order(:name)
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
 		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
 		
 		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
 		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
 		
-		# Default @datafile/@datafiles values used in partial  
+		@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4)
 	end
 
 

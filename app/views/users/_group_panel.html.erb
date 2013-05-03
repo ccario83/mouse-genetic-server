@@ -1,7 +1,7 @@
 
 <% user ||= @user %>
 <% confirmed_groups ||= @confirmed_groups %>
-<% all_groups ||= @all_groups %>
+<% all_groups ||= @user.groups.order(:name) %>
 <% show_listing_on_load ||= false %>
 <div class="title-bar">
 	<div class="drop-panel">
@@ -13,13 +13,13 @@
 	<div class="icon-panel">
 		<i class="icon-number"> <%= user.confirmed_groups.count %> </i>
 		
-		<i id="add-group" class="icon-plus" onclick="$('#new-group').modal('show'); return false;"></i>
-		<i class="icon-list <% if confirmed_groups.length != all_groups.length %> pulsate <% end %>" onclick="$('#manage-members').modal('show'); return false;"></i>
+		<i class="icon-plus" data-toggle="modal" data-target="#new-group"></i>
+		<i class="icon-list <% if confirmed_groups.length != all_groups.length %> pulsate <% end %>" data-toggle="modal" data-target="#manage-members"></i>
 	</div>
 </div>
 
 <div id="manage-members" class="modal hide">
-	<%= render 'group_management_form', groups: all_groups, type: 'groups' %>
+	<%= render 'users/group_management_form', groups: all_groups %>
 </div>
 
 <div id="new-group" class="modal hide fade">
@@ -29,7 +29,7 @@
 <div id="group-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>
 	<% if confirmed_groups.any? %>
 	<ul class="groups">
-		<%= render confirmed_groups, user: user %>
+		<%= render confirmed_groups %>
 	</ul>
 	<%= will_paginate confirmed_groups, :param_name => 'confirmed_groups_paginate' %>
 	<% end %>

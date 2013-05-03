@@ -1,5 +1,6 @@
 
 <% groups ||= @groups %>
+<% type ||= 'groups' %>
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h3>Manage Your Groups</h3>
@@ -10,7 +11,7 @@
 		<div class="page_navigation pagination"></div>
 		<table id="managed-<%= type %>" class="<%= type %> content" style="display:none;">
 		<% for group in groups do %>
-			<%= render :partial => 'group_management', :locals => { :group => group } %>
+			<%= render :partial => 'users/group_management', :locals => { :group => group } %>
 		<% end %>
 		</table>
 	</div>

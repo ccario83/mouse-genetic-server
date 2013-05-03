@@ -23,15 +23,18 @@ $(window).bind("load", function()
 	$('#micropost_recipient_type').val('group');
 	//------------------------------------------------------------------------------------------------
 
+	//----------- Group modifications ---------- --------------------------------------------------
+	$('#group_user_ids').chosen({ min_search_term_length: 2 });
+	//------------------------------------------------------------------------------------------------
+	
+	
 	//----------- Datafile modifications ---------- --------------------------------------------------
 	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
-	
-	
-	
+	//------------------------------------------------------------------------------------------------
 	
 	
 	// Switches To: box between group and user recipients 
-	$('#to-group').click(function() 
+	$('#to-group').live('click', function() 
 	{
 		$('#to-group').toggleClass("highlighted");
 		$('#to-user').toggleClass("highlighted");
@@ -39,7 +42,7 @@ $(window).bind("load", function()
 		$("#micropost_user_recipient_ids_chzn").toggle();
 		$('#micropost_recipient_type').val('group');
 	});
-	$('#to-user').click(function() 
+	$('#to-user').live('click', function() 
 	{
 		$('#to-group').toggleClass("highlighted");
 		$('#to-user').toggleClass("highlighted");

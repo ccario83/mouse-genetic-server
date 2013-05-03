@@ -1,0 +1,43 @@
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+//("#new-group").html("<%= escape_javascript(render :partial => 'groups/group_form', :locals => { preselected: @preselected, group: @group }) %>");
+
+// Display any form errors
+<% if not @group.valid? %>
+	<% @group.errors.messages.each do |field, errors| %>
+		<% if errors.any? %>
+			<% if field == :users %><% field = 'user_ids' %><% end %>
+			var field = $('#new-group #group_<%= field %>');
+			field.parent().parent().addClass('error');
+			<% errors.each do |error| %>
+				field.parent().after("<p class='help-block'><%= error %></p>")
+				
+			<% end %>
+		<% end %>
+	<% end %>
+<% else %>
+	$("#new-group").modal('hide');
+	update_div('#group-panel');
+<% end %>
+
+// Reattach the :remote=>true form submit functionality
+$('#new-group input:submit').on('click', function()
+{
+	var formData = new FormData($('#new-group form')[0]);
+	$.ajax({
+		type: 'post',
+		url: $('#new-group form').attr('action'), //sumbits it to the given url of the form
+		data: formData,
+		dataType: 'script',
+		cache: false,
+		contentType: false,
+		processData: false
+	});
+	return false;
+});
+
+// Reattach chosen handler
+$('#group_user_ids').chosen({ min_search_term_length: 2 });

@@ -1,0 +1,9 @@
+
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#group-panel").html("<%= escape_javascript(render :partial => 'users/group_panel', :locals => { show_listing_on_load: true }) %>");
+
+

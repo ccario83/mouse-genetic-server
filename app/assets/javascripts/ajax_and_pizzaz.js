@@ -115,7 +115,7 @@ function update_div(target_div, original_link, controller)
 		url: update_url,
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
 		data: params,
-		dataType: 'html',
+		dataType: 'script',
 		success: function(response) { reload_effect($(target_div), response); after_update_div(); },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
@@ -126,7 +126,7 @@ function after_update_div()
 
 function reload_effect(div, new_html)
 {
-	div.html(new_html);
+	//div.html(new_html); DEPRECIATED, ajax is call type is now 'script' instead of html, rendering the actions .js.erb file which handles html replacement
 	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
 	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
 	return;

@@ -1,12 +1,12 @@
 
-						<% delete_allowed ||= false %>
-						<div class="group-info-large">
-								<i class="icon-group icon-4x icon-border"></i>
-								<span id="group-name">
-								<% if current_user.admin? and delete_allowed %>
-									<a href="/groups/<%=group.id%>" data-confirm="You sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
-								<% end %>
-									<%= group.name %>
-								</span>
-								<span id="group-description"><%= group.description %></span>
-						</div>
+<% delete_allowed ||= false %>
+<div class="group-info-large">
+		<i class="icon-group icon-4x icon-border"></i>
+		<span id="group-name">
+		<% if current_user.admin? and delete_allowed %>
+			<a href="/groups/<%=group.id%>" data-confirm="Are you sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
+		<% end %>
+			<%= group.name %>
+		</span>
+		<span id="group-description"><%= group.description %></span>
+</div>

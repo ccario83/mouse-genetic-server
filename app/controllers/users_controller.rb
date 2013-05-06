@@ -10,7 +10,6 @@ class UsersController < ApplicationController
 	def show
 		#@user = User.find(params[:id])
 		@user = current_user
-		#@users = User.all
 		
 		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
 		

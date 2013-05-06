@@ -42,8 +42,9 @@ class JobsController < ApplicationController
 	def reload
 		id = params[:id]
 		type = params[:type]
-		page = params[:jobs_paginate]
+		page = params[:datafiles_paginate]
 		page = 1 if @page==""
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
 		@user = nil
 		@viewer = nil
@@ -55,11 +56,15 @@ class JobsController < ApplicationController
 			@user = current_user
 			@viewer = Group.find(id)
 		else
-			return "Error loading new data! A viewing user or group was not defined."
+			return "Error loading new jobs! A viewing user or group was not defined."
 		end
 		
 		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 4)
-		render :partial => 'shared/job_panel', :locals => { viewer: @user, show_listing_on_load: true }
+		
+		respond_to do |format|
+			format.js { render :controller => "jobs", :action => "reload" }
+		end
+
 	end
 
 	def percentages

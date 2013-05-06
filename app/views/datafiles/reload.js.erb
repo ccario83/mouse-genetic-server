@@ -4,7 +4,9 @@
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
-$("#datafile-panel").html("<%= escape_javascript(render :partial => 'shared/datafile_panel', :locals => { show_listing_on_load: true }) %>");
-$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+$("#datafile-panel").html("<%= escape_javascript(render :partial => 'shared/datafile_panel', :locals => { show_listing_on_load: @show_listing_on_load }) %>");
+$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); });
 
-
+<% if @show_listing_on_load == false %>
+rotate($('#collapse-datafiles'), 0, -5, -90);
+<% end %>

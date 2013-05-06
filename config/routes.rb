@@ -41,7 +41,7 @@ RorWebsite::Application.routes.draw do
   end
   # Job AJAX calls
   post '/jobs/percentages'
-  post '/jobs/reload'
+  post '/:type/:id/jobs/reload' => 'jobs#reload'
   
   # Datafile routes
   resources :users do

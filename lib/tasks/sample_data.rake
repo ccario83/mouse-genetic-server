@@ -11,19 +11,21 @@ namespace :db do
 end
 
 def make_users
-	admin = User.create!(:first_name 			=> "Clint",
-						 :last_name				=> "Cario",
-						 :institution			=> "University of Pittsburgh",
-						 :email 				=> "clint.cario@gmail.com",
-						 :password 				=> "foobar",
-						 :password_confirmation => "foobar")
+	admin = User.create(:first_name 			=> "Clint",
+						:last_name				=> "Cario",
+						:institution			=> "University of Pittsburgh",
+						:email 					=> "clint.cario@gmail.com",
+						:password 				=> "foobar",
+						:password_confirmation	=> "foobar")
+	admin.save!
 	admin.toggle!(:admin)
-	admin = User.create!(:first_name 			=> "Annerose",
-						 :last_name				=> "Berndt",
-						 :institution			=> "University of Pittsburgh",
-						 :email 				=> "anb128@pitt.edu",
-						 :password 				=> "foobar",
-						 :password_confirmation => "foobar")
+	admin = User.create(:first_name 			=> "Annerose",
+						:last_name				=> "Berndt",
+						:institution			=> "University of Pittsburgh",
+						:email 					=> "anb128@pitt.edu",
+						:password 				=> "foobar",
+						:password_confirmation	=> "foobar")
+	admin.save!
 	admin.toggle!(:admin)
 	20.times do |n|
 		first_name	= Faker::Name.name.split()[0]
@@ -31,18 +33,19 @@ def make_users
 		institution = "Some Other Place"
 		email		= "example-#{n+1}@otherplace.org"
 		password	= "password"
-		User.create!(:first_name 				=> first_name, 
-					 :last_name 				=> last_name, 
-					 :email 					=> email,
-					 :institution				=> institution,
-					 :password 					=> password, 
-					 :password_confirmation 	=> password)
+		user = User.create( :first_name 			=> first_name,
+							:last_name 				=> last_name,
+							:email 					=> email,
+							:institution			=> institution,
+							:password 				=> password,
+							:password_confirmation 	=> password)
+		user.save!
 	end
 end
 
 def make_groups
 	# A group created by Clint, Annerose and person 3 are members, tasks will appear here
-	group = Group.create!(:creator => User.find(1), :name => 'Clint owned group 1', :description => 'To make sure that owned group functions work')
+	group = Group.create(:creator => User.find(1), :name => 'Clint owned group 1', :description => 'To make sure that owned group functions work')
 	group.users << User.all(:limit => 5)
 	group.save!
 	# Confirm Clint's membership for this group
@@ -50,7 +53,7 @@ def make_groups
 	
 	
 	# Another group created by Clint
-	group = Group.create!(:creator => User.find(1), :name => 'Clint owned group 2', :description => 'Another owned group with no tasks')
+	group = Group.create(:creator => User.find(1), :name => 'Clint owned group 2', :description => 'Another owned group with no tasks')
 	group.users << User.all(:limit => 5)
 	group.save!
 	# Confirm Clint's membership for this group
@@ -61,7 +64,7 @@ def make_groups
 		name		= Faker::Company.name[0..24]
 		description = Faker::Lorem.sentence(1)
 		creator = User.all.sample(1)[0]
-		group = Group.create!(:creator => creator, :name => name, :description => description)
+		group = Group.create(:creator => creator, :name => name, :description => description)
 		group.users << User.all.sample(6)
 		group.save!
 		creator.confirm_membership(group)

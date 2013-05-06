@@ -57,6 +57,7 @@ class DatafilesController < ApplicationController
 		type = params[:type]
 		page = params[:datafiles_paginate]
 		page = 1 if @page==""
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
 		@user = nil
 		@viewer = nil

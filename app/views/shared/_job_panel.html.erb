@@ -12,10 +12,14 @@
 	<div class="icon-panel">
 		<i class="icon-number"> <%= viewer.jobs.count %> </i>
 		
-		<a href="/users/<%= user.id %>"><i id="add-job" class="icon-plus" onclick="flash_notice('Create a job by running a tool.');"></i></a>
+		<i class="icon-plus" data-toggle="modal" data-target="#new-job"></i>
 		<i class="disabled icon-list"></i>
 
 	</div>
+</div>
+
+<div id="new-job" class="modal hide fade">
+	<%= render 'users/job_form' %>
 </div>
 
 <div id="job-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>

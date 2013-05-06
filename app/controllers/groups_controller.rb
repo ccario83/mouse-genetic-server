@@ -101,6 +101,7 @@ class GroupsController < ApplicationController
 		type = params[:type]
 		page = params[:confirmed_groups_paginate]
 		page = 1 if @page==""
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
 		@user ||= current_user
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => page, :per_page => 5)

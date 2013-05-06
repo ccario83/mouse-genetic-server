@@ -82,7 +82,7 @@ function decode_url(url)
 	return params;
 }
 
-function update_div(target_div, original_link, controller)
+function update_div(target_div, original_link, controller, expand)
 {
 	// Find defaults if needed
 	if (typeof original_link === 'undefined')
@@ -93,10 +93,15 @@ function update_div(target_div, original_link, controller)
 		} else { original_link = window.location.pathname; }
 	}
 	// Risky if page is not structured correctly, but user should know to pass the argument if it isnt
-	controller = typeof controller !== 'undefined' ? controller : ['', target_div.replace('#','').split('-')[0]+'s','reload'].join('/');
+	var panel_name = target_div.replace('#','').split('-')[0];
+	
+	controller = typeof controller !== 'undefined' ? controller : ['', panel_name+'s','reload'].join('/');
 	// Remove the controller sub-url if present (the way will_paginate generates links...)
 	original_link = original_link.replace(controller,'');
 	var update_url= [original_link.split('?')[0], controller].join('')
+	
+	// Passes an expand option to the controller
+	expand = typeof expand !== 'undefined' ? expand : $(target_div).find('#' + panel_name + '-listing').is(":visible");
 	
 	// Get url parameters
 	var params = {};
@@ -106,6 +111,7 @@ function update_div(target_div, original_link, controller)
 		// Dont try to post bad urls
 		if (params == null) { return false; }
 	}
+	params['expand'] = expand
 	
 	// Update groups AJAX
 	$.ajax(

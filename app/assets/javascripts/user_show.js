@@ -23,12 +23,17 @@ $(window).bind("load", function()
 	$('#micropost_recipient_type').val('group');
 	//------------------------------------------------------------------------------------------------
 
-	//----------- Group modifications ---------- --------------------------------------------------
+	//----------- Group modifications ---------- -----------------------------------------------------
 	$('#group_user_ids').chosen({ min_search_term_length: 2 });
 	//------------------------------------------------------------------------------------------------
 	
 	
 	//----------- Datafile modifications ---------- --------------------------------------------------
+	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- Job modifications ------------------------------------------------------------------
 	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
 	//------------------------------------------------------------------------------------------------
 	
@@ -51,13 +56,6 @@ $(window).bind("load", function()
 		$('#micropost_recipient_type').val('user');
 	});
 	//------------------------------------------------------------------------------------------------
-
-
-	//----------- Datafile share form listeners --------------------------------------------------
-	// Chosen listeners
-	//$('#datafile_group_ids').chosen({ min_search_term_length: 2 });
-
-
 
 
 	//----------- will_paginate overrides for AJAX  --------------------------------------------------
@@ -86,7 +84,7 @@ $(window).bind("load", function()
 	
 	
 	// Keep polling the server to update job progress bars
-	user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);
+	//user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);
 	check_jobs_progress();
 	
 	// Pulsate anything with the pulsate class, but stop if it is clicked on
@@ -138,7 +136,7 @@ function after_update_div()
 function group_change(type, id)
 {
 	var url = null;
-	switch('type')
+	switch(type)
 	{
 		case 'accept':
 			url = '/users/accept_group'
@@ -158,7 +156,6 @@ function group_change(type, id)
 	};
 	// other cases ignored
 	if (url==null) { return; }
-	
 	$.ajax(
 	{
 		//async: false,
@@ -246,11 +243,11 @@ function post_group_change(response)
 			$(row).fadeOut('slow');
 		break;
 	}
-	
-	update_div('#group-panel','/groups/reload', this.href);
-	update_div('#datafile-panel','/datafiles/reload', this.href);
-	update_div('#job-panel','/jobs/reload', this.href);
-	update_div('#micropost-panel','/microposts/reload', this.href);
+
+	update_div('#group-panel', this.href, '/groups/reload');
+	update_div('#job-panel', this.href, '/jobs/reload');
+	update_div('#datafile-panel', this.href, '/datafiles/reload');
+	//update_div('#micropost-panel', this.href, '/microposts/reload');
 	
 	return;
 }

@@ -4,6 +4,15 @@
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
-$("#group-panel").html("<%= escape_javascript(render :partial => 'users/group_panel', :locals => { show_listing_on_load: true }) %>");
+$("#group-panel").html("<%= escape_javascript(render :partial => 'users/group_panel', :locals => { is_reloading: true, show_listing_on_load: @show_listing_on_load }) %>");
+$('#group_user_ids').chosen({ min_search_term_length: 2 });
 
+<% if @show_listing_on_load == false %>
+rotate($('#collapse-groups'), 0, -5, -90);
+<% end %>
 
+// Reinitialize the group management modal so button clicks work. 
+$('#manage-members').modal(); 
+
+// Hack to prevend double backdrops
+$('.modal-backdrop').not(':last').remove();

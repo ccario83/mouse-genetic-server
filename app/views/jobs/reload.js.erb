@@ -5,6 +5,7 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
 $("#job-panel").html("<%= escape_javascript(render :partial => 'shared/job_panel', :locals => { viewer: @user, show_listing_on_load: @show_listing_on_load }) %>");
+$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
 
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-jobs'), 0, -5, -90);

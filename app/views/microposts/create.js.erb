@@ -1,0 +1,21 @@
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#new-micropost").html("<%= escape_javascript(render :partial => 'shared/micropost_form', :locals => { user: @user, micropost: @micropost }) %>");
+
+<% if not @micropost.valid? %>
+	<% @micropost.errors.messages.each do |field, errors| %>
+		<% if errors.any? %>
+			var field = $('#new-micropost #micropost_<%= field %>');
+			field.parent().parent().addClass('error');
+			<% errors.each do |error| %>
+				field.after("<p class='help-block'><%= error %></p>")
+			<% end %>
+		<% end %>
+	<% end %>
+<% else %>
+	$("#new-micropost").modal('hide');
+	update_div('#micropost-panel');
+<% end %>

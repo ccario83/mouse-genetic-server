@@ -1,25 +1,22 @@
 
 <% user ||= @user %>
-<% groups ||= @groups %>
 <li>
-	<div class="group-management-panel content">
-		<div class="group-info-small display">
-			<a href="/users/<%= user.id %>/datafiles/<%= datafile.id %>">
-
-				<% if datafile.uwf_runnable %>
-					<span class="label label-info">UWF</span> 
-				<% end %>
-				<%= datafile.description %> (<%= datafile.filename %>)
-			</a>
+	<div class="listing-panel has-popover content" id="datafile-<%= datafile.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%= datafile.description %>" data-title="<% if datafile.groups.count == 0 %> (Private) <% else %> Shared with <%= datafile.groups.count %> group(s). <% end %>">
+		<div class="display">
+			<p>
+				
+				<span class="label label-info<% if not datafile.uwf_runnable %> disabled<% end %>">UWF</span> 
+				<%= datafile.filename %>
+			</p>
 		</div>
 		<div class="icon-panel">
-			<i class="icon-share" data-toggle="modal" data-target="#edit-datafile-<%=datafile.id%>"></i>
+			<i class="icon-edit" data-toggle="modal" data-target="#edit-datafile-<%=datafile.id%>"></i>
 			<% if (user == datafile.owner) %>
 			<%= link_to '<i class="icon-remove"></i>'.html_safe, user_datafile_path(user, datafile), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
 			<% end %>
 		</div>
 	</div>
-	<div id="edit-datafile-<%=datafile.id%>" class="modal hide fade">
-		<%= render 'users/datafile_form', datafile: datafile, groups: groups, mode: 'Edit' %>
+	<div id="edit-datafile-<%=datafile.id %>" class="modal hide fade">
+		<%= render 'users/datafile_form', datafile: datafile, mode: 'Edit' %>
 	</div>
 </li>

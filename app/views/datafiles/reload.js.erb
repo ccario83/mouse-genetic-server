@@ -4,9 +4,29 @@
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
-$("#datafile-panel").html("<%= escape_javascript(render :partial => 'shared/datafile_panel', :locals => { show_listing_on_load: @show_listing_on_load }) %>");
-$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); });
+$("#datafile-panel").html("<%= escape_javascript(render :partial => 'shared/datafile_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load }) %>");
+$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
 
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-datafiles'), 0, -5, -90);
 <% end %>
+
+$('#new-datafile :file').change(function()
+{
+	var file = this.files[0];
+	if(file.name.length < 1 || file.size < 1) 
+	{
+		alert("The file appears empty.");
+		$('#new-datafile :submit').attr('disabled','disabled');
+	}
+	else if(file.size > 1048576)
+	{
+		alert("Please limit file uploads to 1Mb.");
+		$('#new-datafile :submit').attr('disabled','disabled');
+	}
+	else
+	{
+		$('#new-datafile :submit').removeAttr('disabled','');
+		$('#new-datafile :submit').live('click', function(){ ajax_form_submit('#new-datafile'); return false; });
+	}
+});

@@ -12,32 +12,30 @@
 	<% when 'otherjob'    %><% label_classes = ""              %>
 <% end %>
 
-<li class="clear-fix">
-	<div class="container-fluid" style="padding:0px;">
-		<div class="row-fluid">
-			<div class="group-management-panel content" style="height:inherit;">
-				
-				<div class="group-info-small display" style="left:0px;">
-					<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
-						<div class="display-item display-<%= job.state %>">
-								<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
-						</div>
-					</a>
+<li>
+	<div class="listing-panel has-popover content" id="job-<%= job.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%= job.description %>" data-title="<% if job.groups.count == 0 %> (Private) <% else %> Shared with <%= job.groups.count %> group(s). <% end %>" style="height:inherit;">
+		<div class="display" style="left:0px;">
+			<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
+				<div class="display-item display-<%= job.state %>">
+						<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>
 				</div>
-				<div class="icon-panel">
-					<i class="icon-share"></i>
-					<% if (user == job.creator) %>
-					<%= link_to '<i class="icon-remove"></i>'.html_safe, user_job_path(user, job), :confirm => 'Are you sure?', :method => :delete, :method => :delete %>
-					<% end %>
-				</div>
-			<div>
+			</a>
+		</div>
+		<div class="icon-panel">
+			<i class="icon-edit" data-toggle="modal" data-target="#edit-job-<%=job.id%>"></i>
+			<% if (user == job.creator) %>
+					<%= link_to '<i class="icon-remove"></i>'.html_safe, user_job_path(user, job), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
+			<% end %>
 		</div>
 		<br/>
 		<div class="progress <%= progress_classes %>">
 			<div id="<%= job.id %>" class="bar <%= bar_classes %>"></div>
 		</div>
-		<div class="timestamp">
+		<!--<div class="timestamp">
 				<%= time_ago_in_words(job.created_at) %> ago
-		</div>
+		</div>-->
+	</div>
+	<div id="edit-job-<%=job.id %>" class="modal hide fade">
+		<%= render 'users/job_form', job: job, mode: 'Edit' %>
 	</div>
 </li>

@@ -82,7 +82,7 @@ function decode_url(url)
 	return params;
 }
 
-function update_div(target_div, original_link, controller, expand)
+function update_div(target_div, original_link, controller, expand, async)
 {
 	// Find defaults if needed
 	if (typeof original_link === 'undefined')
@@ -103,6 +103,8 @@ function update_div(target_div, original_link, controller, expand)
 	// Passes an expand option to the controller
 	expand = typeof expand !== 'undefined' ? expand : $(target_div).find('#' + panel_name + '-listing').is(":visible");
 	
+	async = typeof async !== 'undefined' ? true : false;
+	
 	// Get url parameters
 	var params = {};
 	if (!(typeof(original_link)==='undefined'))
@@ -116,7 +118,7 @@ function update_div(target_div, original_link, controller, expand)
 	// Update groups AJAX
 	$.ajax(
 	{
-		//async: false,
+		async: async,
 		type:'post',
 		url: update_url,
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},

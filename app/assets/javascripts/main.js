@@ -8,6 +8,11 @@ $(window).load(function(){
 	
 	$('#submit-left').mouseover(function() { $(this).css('opacity',1); $('#submit-left-tooltip').tooltip('show'); });
 	$('#submit-left').mouseleave(function() { $(this).css('opacity',0.25); $('#submit-left-tooltip').tooltip('hide'); });
+	
+	$('body').popover({
+		selector: '.has-popover',
+		trigger: 'hover'
+	});
 });
 
 function submitCommentForm()

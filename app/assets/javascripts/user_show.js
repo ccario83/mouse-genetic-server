@@ -34,11 +34,11 @@ $(window).bind("load", function()
 	
 	
 	//----------- Job modifications ------------------------------------------------------------------
-	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
 	//------------------------------------------------------------------------------------------------
 	
 	
-	// Switches To: box between group and user recipients 
+	// Switches to: box between group and user recipients 
 	$('#to-group').live('click', function() 
 	{
 		$('#to-group').toggleClass("highlighted");
@@ -71,9 +71,10 @@ $(window).bind("load", function()
 	$('#collapse-datafiles').live('click', function() { collapse_listing(this, '#datafile-listing'); });
 	$('#datafile-panel .title-panel').live('click', function() { collapse_listing($('#collapse-datafiles'), '#datafile-listing'); });
 	$('#collapse-jobs').live('click', function() { collapse_listing(this, '#job-listing'); });
+	$('#job-panel .title-panel').live('click', function() { collapse_listing($('#collapse-jobs'), '#job-listing'); });
 	$('#micropost-panel .title-panel').live('click', function() { collapse_listing($('#collapse-microposts'), '#micropost-listing'); });
 	$('#collapse-microposts').live('click', function() { collapse_listing(this, '#micropost-listing'); });
-	$('#job-panel .title-panel').live('click', function() { collapse_listing($('#collapse-jobs'), '#job-listing'); });
+
 	
 	// Initall collapse groups, datafiles, and jobs
 	rotate($('#collapse-groups'), 0, -5, -90);
@@ -207,7 +208,7 @@ function post_group_change(response)
 			
 			// Solidify group icon
 			$('#'+response['id']+'.icon-group').removeClass('faded');
-			var row = $('#'+response['id']+'.group-management-panel')[0];
+			var row = $('#'+response['id']+'.listing-panel')[0];
 			
 			// Flash success
 			$(row).animate({backgroundColor:'#DFF0D8'},'fast');
@@ -219,7 +220,7 @@ function post_group_change(response)
 			$('#'+response['id']+'.decline').unbind('click');
 			$('#'+response['id']+'.decline').removeClass('decline');
 
-			var row = $('#'+response['id']+'.group-management-panel')[0];
+			var row = $('#'+response['id']+'.listing-panel')[0];
 			$(row).fadeOut('slow');
 		break;
 		
@@ -228,7 +229,7 @@ function post_group_change(response)
 			$('#'+response['id']+'.leave').unbind('click');
 			$('#'+response['id']+'.leave').removeClass('leave');
 
-			var row = $('#'+response['id']+'.group-management-panel')[0];
+			var row = $('#'+response['id']+'.listing-panel')[0];
 			$(row).fadeOut('slow');
 		break;
 		
@@ -237,17 +238,17 @@ function post_group_change(response)
 			$('#'+response['id']+'.delete').unbind('click');
 			$('#'+response['id']+'.delete').removeClass('delete');
 
-			var row = $('#'+response['id']+'.group-management-panel')[0];
+			var row = $('#'+response['id']+'.listing-panel')[0];
 			$(row).animate({backgroundColor:'#f2dede'},'fast');
 			$(row).animate({backgroundColor:'white'},'fast');
 			$(row).fadeOut('slow');
 		break;
 	}
 
-	update_div('#group-panel', this.href, '/groups/reload');
+	update_div('#group-panel', this.href, '/groups/reload', true);
 	update_div('#job-panel', this.href, '/jobs/reload');
 	update_div('#datafile-panel', this.href, '/datafiles/reload');
-	//update_div('#micropost-panel', this.href, '/microposts/reload');
+	update_div('#micropost-panel', this.href, '/microposts/reload');
 	
 	return;
 }

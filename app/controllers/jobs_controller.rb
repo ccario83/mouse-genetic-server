@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
 	before_filter :signed_in_user
-	#before_filter :correct_user, :only => :destroy
+	before_filter :correct_user, :only => [:update, :destroy]
 
 	# GET /user/:user_id/jobs/:id
 	def show
@@ -28,21 +28,39 @@ class JobsController < ApplicationController
 		#@job = Job.find(params[:id])
 	end
 
+	def update
+		@job.description = params['job']['description']
+		@job.groups = Group.find(cleanup_ids(params['job']['group_ids']))
+		
+		if @job.save
+			flash[:success] = "Job successfully updated."
+		else
+			flash[:error] = "Please correct form errors."
+		end
+		
+		respond_to do |format|
+			format.js { render :controller => "jobs", :action => "update" }
+		end
+	end
+
 	# DELETE /user/:user_id/jobs/:id
 	def destroy
-		@job = Job.find(params[:id])
-		# Verify the user owns the job
-		if not @job.creator == current_user
-			flash[:error] = "You don't own this job."
+		if @job.destroy
+			flash[:success] = "The job was successfully deleted."
+		else
+			flash[:error] = "The job deletion failed!"
 		end
-		@job.destroy
-		redirect_to "/users/#{current_user.id}"
+		
+		respond_to do |format|
+			format.js { }
+			format.html {  }
+		end
 	end
 
 	def reload
 		id = params[:id]
 		type = params[:type]
-		page = params[:datafiles_paginate]
+		page = params[:jobs_paginate]
 		page = 1 if @page==""
 		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
@@ -74,4 +92,14 @@ class JobsController < ApplicationController
 		percentages.each{|k,v| percentages[k] = 0 if v.nil?}
 		render :json => percentages.to_json
 	end
+	
+	private
+		def correct_user
+			#current_user = params[:user_id] # DONT TRUST
+			@job = current_user.jobs.find_by_id(params[:id])
+			if @job.nil?
+				flash[:error] = "The job creator verification failed!"
+				redirect_to :back
+			end
+		end
 end

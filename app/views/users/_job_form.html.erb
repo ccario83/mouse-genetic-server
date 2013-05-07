@@ -1,16 +1,27 @@
 
 <% user ||= @user %>
+<% job ||= user.jobs.new %>
+<% groups ||= user.confirmed_groups.sort_by(&:name) %>
+<% mode ||= 'Create' %>
+
+<% if mode == 'Create' %><% url = user_jobs_path(user)%><% elsif mode == 'Edit' %><% url = user_job_path(user, job) %><% end %>
+
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3>New Job</h3>
+	<h3><%= mode %> Job</h3>
 </div>
 <div class="modal-body" style="overflow: visible;">
-<p> Jobs are created when data is submitted to one of the tools for analysis.
-	Jobs can be shared in the job panel once they have been created. </p>
-<p> Click the 'Show' to see the available tools. </p>
+	<%= simple_form_for job, :url => url, :remote => true, :html => {:'data-update-target' => 'new-job'} do |f| %>
+		<%= f.association :groups, :collection => groups, :selected => job.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:514px;", :class => 'edit_job_groups', :id => "job-#{job.id || 'new'}" } %>
+		<%= f.input :description, :label => 'Description', :required => false, :input_html => { :style => 'width:500px;', :rows => 5 } %>
+		<% if mode == 'Create' %>
+		<% else %>
+		<%= f.input :runner, :input_html => {:value => "#{job.runner}", :style => 'width:500px;'}, :label => "Assoicated Tool", :required => false, :readonly => true %>
+		<%= f.input :datafile, :input_html => {:value => "#{job.datafile.filename}", :style => 'width:500px;'}, :label => "Associated Data", :required => false, :readonly => true %>
+		<% end %>
 
 </div>
 <div class="modal-footer">
-	<a href="#" class="btn" data-dismiss="modal" data-target="#new-job">Close</a>
-	<a href="#" class="btn btn-primary" onclick="window.location = '<%= user_path(user) %>'">Show</a>
+	<%= f.submit "Submit", :class => "btn btn-primary" %>
 </div>
+	<% end %>

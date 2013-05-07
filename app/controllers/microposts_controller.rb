@@ -3,44 +3,50 @@ class MicropostsController < ApplicationController
 	before_filter :correct_user, :only => :destroy
 
 	def create
-		@recipient_type = params[:micropost][:recipient_type]
-		@content = params[:micropost][:content]
+		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
+		@user = current_user
 		
-		@group_ids = cleanup_ids(params[:micropost][:group_recipient_ids])
-		@user_ids = cleanup_ids(params[:micropost][:user_recipient_ids])
+		@micropost = @user.authored_posts.new()
+		@micropost.recipient_type = params[:micropost][:recipient_type]
+		@micropost.content = params[:micropost][:content]
+		
+		group_ids = cleanup_ids(params[:micropost][:group_recipient_ids])
+		user_ids = cleanup_ids(params[:micropost][:user_recipient_ids])
 		
 		# Convert the ids to a recipient list for the requested type (group or user post), and check that the current_user has permissions to post to these
-		@recipients = []
-		if @recipient_type.nil? || @recipient_type == 'group'
-			@recipients = Group.find(@group_ids)
+		recipients = []
+		if @micropost.recipient_type.nil? || @micropost.recipient_type == 'group'
+			recipients = Group.find(group_ids)
 			allowed_recipients = current_user.groups
-			if !(@recipients.map{|x| allowed_recipients.include?(x)}.all?)
+			if !(recipients.map{|x| allowed_recipients.include?(x)}.all?)
 				flash[:error] = "Nice try h4x0r..."
 				redirect_to :back
 			end
-		elsif @recipient_type == 'user'
-			@recipients = User.find(@user_ids)
+		elsif @micropost.recipient_type == 'user'
+			recipients = User.find(user_ids)
 			allowed_recipients = current_user.confirmed_groups.map(&:users).flatten.uniq
-			if !(@recipients.map{|x| allowed_recipients.include?(x)}.all?)
+			if !(recipients.map{|x| allowed_recipients.include?(x)}.all?)
 				flash[:error] = "Nice try h4x0r..."
 				redirect_to :back
 			end
 		end
 		
 		# Post the message
-		post_was_successful = false
-		if @recipient_type == 'group'
-			post_was_successful = current_user.post_message_to_groups(@recipients, @content)
-		elsif @recipient_type == 'user'
-			post_was_successful = current_user.post_message_to_users(@recipients, @content)
+		recipients = recipients.is_a?(Array) ? recipients : [recipients]
+		if @micropost.recipient_type == 'group'
+			@micropost.group_recipients = recipients
+		elsif micropost.recipient_type == 'user'
+			@micropost.user_recipients = recipients
 		end
 		
-		if	post_was_successful
+		if @micropost.save!
 			flash[:success] = "The micropost was successfully created."
-			redirect_to :back
 		else
-			flash[:error] = "A micropost should contain content and recipient(s)."
-			redirect_to :back
+			flash[:error] = "Please correct form errors."
+		end
+		
+		respond_to do |format|
+			format.js { render :controller => "microposts", :action => "create" } and return
 		end
 	end
 	
@@ -61,6 +67,7 @@ class MicropostsController < ApplicationController
 		type = params[:type]
 		page = params[:microposts_paginate]
 		page = 1 if @page==""
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 		
 		@user = nil
 		@viewer = nil
@@ -79,7 +86,9 @@ class MicropostsController < ApplicationController
 		end
 		
 		@microposts = @viewer.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => page, :per_page => 8)
-		render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: true }
+		respond_to do |format|
+			format.js { render :controller => "microposts", :action => "reload" }
+		end
 	end
 	
 	private

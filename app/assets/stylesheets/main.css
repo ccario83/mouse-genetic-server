@@ -547,13 +547,13 @@ select, input[type="file"] { line-height: 0px;}
 	margin: 15px 0px;
 }
 
-.jobs li
+.jobs > li
 {
 	padding: 10px 0px;
 	border-bottom: 1px dashed #ddd;
 }
 
-.jobs li:first-child {border-top: 1px dashed #ddd;}
+.jobs > li:first-child {border-top: 1px dashed #ddd;}
 .jobs .progress { height: 5px; width: 75%;}
 
 
@@ -585,10 +585,13 @@ select, input[type="file"] { line-height: 0px;}
 
 .content .display 
 {
+	position: absolute;
 	width: 75%;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	line-height: 30px;
+	height: 30px;
 }
 .content .display-User { color:#08C; }
 .content .display-Group { color:#faa732; }
@@ -1057,7 +1060,7 @@ img.gravatar
 /* =========================================================== */
 /*   users/show view styles                                    */
 /* =========================================================== */
-.group-management-panel
+.listing-panel
 {
 	height: 30px;
 	white-space: nowrap;
@@ -1066,25 +1069,25 @@ img.gravatar
 	position: relative;
 	
 }
-.group-management-panel:last-child
+.listing-panel:last-child
 {
 	border-bottom: none;
 }
 
-.group-management-panel .group-info-small
+.listing-panel .group-info-small
 {
 	position: absolute;
 	left: 5px;
 	line-height: 30px;
 	height: 30px;
 }
-.group-management-panel .group-info-small [class^="icon-"], .group-info-small [class*=" icon-"], .icon-group { margin-top: 8px; }
-.group-management-panel .icon-panel 
+.listing-panel .group-info-small [class^="icon-"], .group-info-small [class*=" icon-"], .icon-group { margin-top: 8px; }
+.listing-panel .icon-panel 
 {
 	line-height: 25px;
 	height: 25px;
 }
-.group-management-panel .icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }
+.listing-panel .icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }
 
 #to-box { padding-bottom: 10px; }
 #to-group, #to-user
@@ -1104,3 +1107,12 @@ img.gravatar
 	margin: 0px 5px;
 }
 #new_micropost div.control-group.select { margin-bottom: 0px; }
+
+
+.invisible { color: rgba(0,0,0,0); }
+.display .disabled, .display .disabled:hover
+{
+	color: #fff;
+	background: #eee;
+	text-shadow: none;
+}

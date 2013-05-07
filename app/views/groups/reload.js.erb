@@ -11,8 +11,20 @@ $('#group_user_ids').chosen({ min_search_term_length: 2 });
 rotate($('#collapse-groups'), 0, -5, -90);
 <% end %>
 
+
 // Reinitialize the group management modal so button clicks work. 
-$('#manage-members').modal(); 
+var display_modal = ($('#manage-members').css('display') == 'block');
+
+if (display_modal)
+{
+$('#manage-members').modal();
+$('#manage-members').removeClass('hide');
+$('#manage-members').removeClass('fade');
 
 // Hack to prevend double backdrops
 $('.modal-backdrop').not(':last').remove();
+}
+
+<% if @confirmed_groups.count == 0 %>
+$('#manage-members').modal('hide');
+<% end %>

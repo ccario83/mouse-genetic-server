@@ -1,19 +1,19 @@
 class DatafilesController < ApplicationController
 	before_filter :signed_in_user, :only => [:create, :destroy, :reload]
-	before_filter :correct_user, :only => :destroy
+	before_filter :correct_user, :only => [:update, :destroy]
 
 	def create
-		@user = current_user
 		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
+		@user = current_user
+		
 		# Process new file
-
 		@datafile = @user.datafiles.new()
 		@datafile.process_uploaded_file(params[:datafile][:datafile])
 		@datafile.description = params[:datafile][:description]
 		@datafile.groups = Group.find(cleanup_ids(params[:datafile][:group_ids]))
 
 		if @datafile.save
-			flash[:notice] = "Datafile uploaded."
+			flash[:success] = "Datafile successfuly uploaded."
 		else
 			flash[:error] = "Please correct form errors."
 		end
@@ -24,7 +24,6 @@ class DatafilesController < ApplicationController
 	end
 
 	def update
-		@datafile = Datafile.find(params[:id])
 		@datafile.description = params['datafile']['description']
 		@datafile.groups = Group.find(cleanup_ids(params['datafile']['group_ids']))
 		
@@ -77,7 +76,6 @@ class DatafilesController < ApplicationController
 		respond_to do |format|
 			format.js { render :controller => "datafiles", :action => "reload" }
 		end
-		
 	end
 
 	private

@@ -26,10 +26,10 @@
 		<%= f.association :user_recipients, :collection => [], :label => false, :as => :hidden %>
 	<% end %>
 		<%= f.input :content, :label => "Message:", :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:500px; margin:0px; padding:5px 5px;' }, :required => false %>
+	<% end %>
 </div>
 <div class="modal-footer">
-	<%= f.submit "Submit", :class => "btn btn-primary" %>
+	<input class="btn btn-primary" name="commit" type="submit" value="Submit">
 </div>
-	<% end %>
 
 

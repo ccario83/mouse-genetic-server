@@ -19,9 +19,8 @@
 		<%= f.input :runner, :input_html => {:value => "#{job.runner}", :style => 'width:500px;'}, :label => "Assoicated Tool", :required => false, :readonly => true %>
 		<%= f.input :datafile, :input_html => {:value => "#{job.datafile.filename}", :style => 'width:500px;'}, :label => "Associated Data", :required => false, :readonly => true %>
 		<% end %>
-
+	<% end %>
 </div>
 <div class="modal-footer">
-	<%= f.submit "Submit", :class => "btn btn-primary" %>
+	<input class="btn btn-primary" name="commit" type="submit" value="Submit">
 </div>
-	<% end %>

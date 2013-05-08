@@ -12,8 +12,8 @@
 		<%= f.association :users, :collection => users, :label => 'Members', :html_options => { :selected => preselected }, :input_html => { 'data-placeholder'=> 'Please start typing a member\'s name', :style => "width:515px;" } %>
 		<%= f.input :name, :label => 'Name', :required => false, :input_html => { :style => 'width:500px', } %>
 		<%= f.input :description, :label => 'Description', :required => false, :input_html => { :style => 'width:500px;', :rows => 5 } %>
+	<% end %>
 </div>
 <div class="modal-footer">
-	<input type="submit" class="btn btn-primary" value="Create">
+	<input class="btn btn-primary" name="commit" type="submit" value="Submit">
 </div>
-	<% end %>

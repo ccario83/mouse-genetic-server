@@ -581,6 +581,8 @@ select, input[type="file"] { line-height: 0px;}
 {
 	display: block; 
 	word-wrap: break-word;
+	line-height: 30px;
+	height: 30px;
 }
 
 .content .display 
@@ -590,11 +592,11 @@ select, input[type="file"] { line-height: 0px;}
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	line-height: 30px;
-	height: 30px;
+
 }
-.content .display-User { color:#08C; }
-.content .display-Group { color:#faa732; }
+.display-User { color:#08C; }
+.display-Group { color:#faa732; }
+.display-You { color: #DE256C;}
 
 .timestamp { color: #999; }
 
@@ -690,7 +692,7 @@ h3 span.btn
 
 /* The icon panel                                              */
 /* ----------------------------------------------------------- */
-li [class^="icon-"] { width: inherit;}
+/* li [class^="icon-"] { width: inherit;}*/
 .icon-panel 
 {
 	margin-right:3px;
@@ -996,7 +998,7 @@ a i.icon-group:hover { text-decoration: none; }
 	margin-right: 10px;
 }
 
-img.gravatar
+img.rounded
 {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;

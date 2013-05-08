@@ -21,22 +21,6 @@ $(window).bind("load", function()
 	// Set the selected To: box to groups initially
 	$('#micropost_user_recipient_ids_chzn').hide();
 	$('#micropost_recipient_type').val('group');
-	//------------------------------------------------------------------------------------------------
-
-	//----------- Group modifications ---------- -----------------------------------------------------
-	$('#group_user_ids').chosen({ min_search_term_length: 2 });
-	//------------------------------------------------------------------------------------------------
-	
-	
-	//----------- Datafile modifications ---------- --------------------------------------------------
-	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
-	//------------------------------------------------------------------------------------------------
-	
-	
-	//----------- Job modifications ------------------------------------------------------------------
-	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
-	//------------------------------------------------------------------------------------------------
-	
 	
 	// Switches to: box between group and user recipients 
 	$('#to-group').live('click', function() 
@@ -55,8 +39,22 @@ $(window).bind("load", function()
 		$("#micropost_user_recipient_ids_chzn").toggle();
 		$('#micropost_recipient_type').val('user');
 	});
+	attach_submit('#new-micropost');
 	//------------------------------------------------------------------------------------------------
 
+	//----------- Group modifications ---------- -----------------------------------------------------
+	$('#group_user_ids').chosen({ min_search_term_length: 2 });
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- Datafile modifications ---------- --------------------------------------------------
+	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- Job modifications ------------------------------------------------------------------
+	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	//------------------------------------------------------------------------------------------------
 
 	//----------- will_paginate overrides for AJAX  --------------------------------------------------
 	// Pagination link overrides

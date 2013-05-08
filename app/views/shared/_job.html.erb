@@ -14,7 +14,7 @@
 
 <li>
 	<div class="listing-panel has-popover content" id="job-<%= job.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%= job.description %>" data-title="<% if job.groups.count == 0 %> (Private) <% else %> Shared with <%= job.groups.count %> group(s). <% end %>" style="height:inherit;">
-		<div class="display" style="left:0px;">
+		<div class="display">
 			<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
 				<div class="display-item display-<%= job.state %>">
 						<span class="label <%= label_classes %>"><%= job.runner %></span> <%= job.name %>

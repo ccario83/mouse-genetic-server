@@ -205,3 +205,21 @@ function form_submit_response(form_div, new_html, div_to_update)
 	
 }
 function after_form_submit() {};
+
+function attach_submit(div)
+{
+	$(div+' input:submit').on('click', function()
+	{
+		var formData = new FormData($(div+' form')[0]);
+		$.ajax({
+			type: 'post',
+			url: $(div+' form').attr('action'), //sumbits it to the given url of the form
+			data: formData,
+			dataType: 'script',
+			cache: false,
+			contentType: false,
+			processData: false
+		});
+		return false;
+	});
+}

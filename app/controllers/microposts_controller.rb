@@ -35,11 +35,11 @@ class MicropostsController < ApplicationController
 		recipients = recipients.is_a?(Array) ? recipients : [recipients]
 		if @micropost.recipient_type == 'group'
 			@micropost.group_recipients = recipients
-		elsif micropost.recipient_type == 'user'
+		elsif @micropost.recipient_type == 'user'
 			@micropost.user_recipients = recipients
 		end
 		
-		if @micropost.save!
+		if @micropost.save
 			flash[:success] = "The micropost was successfully created."
 		else
 			flash[:error] = "Please correct form errors."

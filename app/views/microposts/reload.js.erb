@@ -4,7 +4,7 @@
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
-$("#micropost-panel").html("<%= escape_javascript(render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load }) %>");
+$("#micropost-panel").html("<%= escape_javascript(render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load, show_filters: true }) %>");
 // Chosen listeners
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
@@ -13,3 +13,22 @@ $('#micropost_user_recipient_ids').chosen({ min_search_term_length: 2 });
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-microposts'), 0, -5, -90);
 <% end %>
+
+// Reattach the :remote=>true form submit functionality
+attach_submit('#new-micropost');
+/* 
+$('#new-micropost input:submit').on('click', function()
+{
+	var formData = new FormData($('#new-micropost form')[0]);
+	$.ajax({
+		type: 'post',
+		url: $('#new-micropost form').attr('action'), //sumbits it to the given url of the form
+		data: formData,
+		dataType: 'script',
+		cache: false,
+		contentType: false,
+		processData: false
+	});
+	return false;
+});
+*/

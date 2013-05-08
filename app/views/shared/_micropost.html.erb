@@ -1,40 +1,77 @@
 
 <% user ||= @user %>
-<li id="<%= micropost.id %>" class="clear-fix">
+<li>
 	<div class="container-fluid" style="padding:0px;">
 		<div class="row-fluid">
-			<div class="span1">
-				<%= gravatar_for(micropost.creator) %>
+			<div class="span1" style="line-height: 52px;">
+				<%= gravatar_for(micropost.creator, {:html_class => "rounded"}) %>
 			</div>
-			<div class="content span11">
-				<% if (user == micropost.creator) %>
-				<a href="/microposts/<%= micropost.id %>" data-confirm="You sure?" data-method="delete" class="delete"><i class="icon-remove"></i></a>
-				<% end %>
-				<%= micropost.content %>
-			<div>
-		</div>
-		<div class="display-<%= micropost.recipient_type %>">
-				<% num_users  = micropost.user_recipients.length %>
-				<% num_groups = micropost.group_recipients.length %>
-				<% if micropost.creator == user %> You <% else %><%= micropost.creator.name %><% end %>
-				<% if num_users == 1 && micropost.user_recipients[0] == user %>
-					directly to you.
-				<% else %>
-					<% if num_groups == 1 %>
-						to <%= micropost.group_recipients[0].name %>
-					<% elsif num_users == 1 %>
-						to <%= micropost.user_recipients[0].name %>
-					<% elsif num_groups == 0 %>
-						to many users.
-					<% elsif num_users == 0 %>
-						to many groups.
-					<% else %>
-						to many groups and or users.
+			
+			
+			
+			<div class="span11 listing-panel content" style="height:inherit; cursor: pointer;" data-toggle="modal" data-target="#micropost-<%= micropost.id %>">
+				<div class="display">
+					<%= micropost.content %>
+				</div>
+
+				<br/>
+				<div style="line-height: 15px;">
+						<% num_users  = micropost.user_recipients.length %>
+						<% num_groups = micropost.group_recipients.length %>
+						<% to = '' %>
+						<% from = '' %>
+						
+						<% if micropost.creator == user %> 
+							<% from = '<span class="display-You">You</span>' %>
+						<% else %>
+							<% from = '<span class="display-User">'+micropost.creator.name+'</span>' %>
+						<% end %>
+						
+						<% if num_users == 1 && micropost.user_recipients[0] == user %>
+							<% to = '<span class="display-You">you</span>' %>
+						<% else %>
+							<% if num_groups == 1 %>
+								<% to = '<span class="display-Group">'+micropost.group_recipients[0].name+'</span>' %>
+							<% elsif num_users == 1 %>
+								<% to = '<span class="display-User">'+micropost.user_recipients[0].name+'</span>' %>
+							<% elsif num_groups == 0 %>
+								<% to = '<span class="display-User">Many users</span>' %>
+							<% elsif num_users == 0 %>
+								<% to = '<span class="display-Group">Many groups</span>' %>
+							<% else %>
+								<% to = 'Many groups and users' %>
+							<% end %>
+						<% end %>
+						<%= [from,'to',to].join(' ').html_safe %>
+						<%= time_ago_in_words(micropost.created_at) %> ago.
+				</div>
+				
+				<div class="icon-panel">
+					<% if (user == micropost.creator) %>
+					<%= link_to '<i class="icon-remove"></i>'.html_safe, micropost_path(micropost), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
 					<% end %>
-				<% end %>
+				</div>
+			</div>
 		</div>
-		<div class="timestamp">
-				<%= time_ago_in_words(micropost.created_at) %> ago
+	</div>
+	<div id="micropost-<%= micropost.id %>" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Message</h3>
+		</div>
+		<div class="modal-body" style="overflow: visible;">
+			To: <%= to.html_safe %>
+			<br/>
+			From: <%= from.html_safe %>
+			<br/>
+			When: <%= time_ago_in_words(micropost.created_at) %> ago.
+			<hr/>
+			<p>
+				<%= micropost.content %>
+			</p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
 		</div>
 	</div>
 </li>

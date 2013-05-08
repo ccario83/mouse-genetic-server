@@ -19,9 +19,8 @@
 		<% else %>
 		<%= f.input :datafile, :input_html => {:value => "#{datafile.filename}", :style => 'width:500px;'}, :label => "Filename", :required => false, :readonly => true %>
 		<% end %>
-
+	<% end %>
 </div>
 <div class="modal-footer">
-	<%= f.submit "Submit", :class => "btn btn-primary" %>
+	<input class="btn btn-primary" name="commit" type="submit" value="Submit">
 </div>
-	<% end %>

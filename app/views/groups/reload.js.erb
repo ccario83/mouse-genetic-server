@@ -13,8 +13,10 @@ rotate($('#collapse-groups'), 0, -5, -90);
 
 
 // Reinitialize the group management modal so button clicks work. 
-var display_modal = ($('#manage-members').css('display') == 'block');
+attach_submit('#new-group');
 
+
+var display_modal = ($('#manage-members').css('display') == 'block');
 if (display_modal)
 {
 $('#manage-members').modal();

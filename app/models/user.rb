@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
 
 	def all_received_posts
 		microposts = self.received_posts + self.group_received_posts
+		microposts = microposts.uniq
 		microposts.sort_by(&:created_at)
 		return microposts
 	end

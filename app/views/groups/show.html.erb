@@ -3,23 +3,25 @@
 <% content_for :page_css do %>
 
 		<%= stylesheet_link_tag('bootstrap-datetimepicker.min') %>
+		<%= stylesheet_link_tag('chosen/chosen') %>
+		<%= stylesheet_link_tag('chosen/chosen-bootstrap-overrides') %>
 <% end %>
 <% content_for :page_js do %>
 
-		<%= javascript_include_tag('jquery.pajinate') %>
 		<%= javascript_include_tag('bootstrap-datetimepicker') %>
+		<%= javascript_include_tag('chosen.jquery') %>
 		<%= javascript_include_tag('ajax_and_pizzaz') %>
 		<%= javascript_include_tag('group_show') %>
 <% end %>
 
 <div class="container-fluid span3">
-	<%= render 'group_left_panel', group: @group %>
+	<%= render 'group_left_panel' %>
 </div>
 
 <div class="container-fluid span5">
-	<%= render 'group_center_panel', micropost: @micropost, microposts: @microposts %>
+	<%= render 'group_center_panel' %>
 </div>
 
 <div class="container-fluid span4">
-	<%= render 'group_right_panel', members: @members, group: @group, task: @task, tasks: @tasks %>
+	<%= render 'group_right_panel' %>
 </div>

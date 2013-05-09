@@ -7,20 +7,19 @@
 <% end %>
 <% content_for :page_js do %>
 
-		<%= javascript_include_tag('jquery.pajinate') %><!-- needed for group management form -->
 		<%= javascript_include_tag('chosen.jquery') %>
 		<%= javascript_include_tag('ajax_and_pizzaz') %>
 		<%= javascript_include_tag('user_show') %>
 <% end %>
 
-				<div class="container-fluid span3">
-					<%= render 'user_left_panel' %>
-				</div>
-				
-				<div id="center-panel" class="container-fluid span5">
-					<%= render 'user_center_panel' %>
-				</div>
-				
-				<div class="container-fluid span4">
-					<%= render 'user_right_panel' %>
-				</div>
+<div class="container-fluid span3">
+	<%= render 'user_left_panel' %>
+</div>
+
+<div id="center-panel" class="container-fluid span5">
+	<%= render 'user_center_panel' %>
+</div>
+
+<div class="container-fluid span4">
+	<%= render 'user_right_panel' %>
+</div>

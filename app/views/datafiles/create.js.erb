@@ -43,7 +43,7 @@ $('#new-datafile :file').change(function()
 });
 // Reattach the :remote=>true form submit functionality
 attach_submit('#new-datafile');
-
+$("[id^=edit-datafile]").each(function() { attach_submit(this.id); });
 
 /*
 $('#new-datafile input:submit').on('click', function()

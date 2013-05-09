@@ -1,5 +1,6 @@
 
 <% user ||= @user %>
+
 <% case job.state.downcase
 	   when 'starting'     %><% bar_classes = "bar-warning" %><%  progress_classes = "progress-striped active" %>
 	<% when 'progressing'  %><% bar_classes = "bar-success" %><%  progress_classes = "progress-striped active" %>
@@ -12,8 +13,17 @@
 	<% when 'otherjob'    %><% label_classes = ""              %>
 <% end %>
 
+<% popover_title = "<span style='font-style:italic;'>" + job.name + "</span>".html_safe %>
+<% popover_text = "" %>
+<% if job.groups.count == 0 %>
+	<% popover_text = popover_text + "(Private)" %>
+<% else %>
+	<% popover_text = popover_text + "Shared with #{job.groups.count} group(s)" %>
+<% end %>
+<% popover_text = popover_text + "<br/>Owned by #{color_tag(job.creator)}<br/>#{job.description}" %>
+
 <li>
-	<div class="listing-panel has-popover content" id="job-<%= job.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%= job.description %>" data-title="<% if job.groups.count == 0 %> (Private) <% else %> Shared with <%= job.groups.count %> group(s). <% end %>" style="height:inherit;">
+	<div class="listing-panel has-popover content" id="job-<%= job.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%=popover_text.html_safe%>" data-title="<%=popover_title.html_safe%>" style="height:inherit;">
 		<div class="display">
 			<a href="/users/<%= user.id %>/jobs/<%= job.id %>">
 				<div class="display-item display-<%= job.state %>">
@@ -24,7 +34,7 @@
 		<div class="icon-panel">
 			<i class="icon-edit" data-toggle="modal" data-target="#edit-job-<%=job.id%>"></i>
 			<% if (user == job.creator) %>
-					<%= link_to '<i class="icon-remove"></i>'.html_safe, user_job_path(user, job), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
+			<%= link_to '<i class="icon-remove"></i>'.html_safe, user_job_path(user, job), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
 			<% end %>
 		</div>
 		<br/>

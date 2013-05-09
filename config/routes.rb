@@ -24,6 +24,7 @@ RorWebsite::Application.routes.draw do
   post '/users/decline_group'
   post '/users/leave_group'
   post '/users/delete_group'
+  post '/:type/:id/members/reload' => 'users#reload'
   
   # Group routes
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]

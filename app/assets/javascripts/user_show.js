@@ -4,15 +4,49 @@ var user_jobs_timer_id;
 $(window).bind("load", function()
 {
 
-	//----------- Group management form listeners ----------------------------------------------------
+	//----------- #group-panel/#edit-groups listeners -------------------------------------------------
 	// AJAX handlers for icon clicks
-	$('.icon-panel i.accept').live('click', function(){ group_change('accept', $(this)[0].id) });
-	$('.icon-panel i.decline').live('click', function(){ group_change('decline', $(this)[0].id) });
-	$('.icon-panel i.leave').live('click', function(){ group_change('leave', $(this)[0].id) });
-	$('.icon-panel i.delete').live('click', function(){ group_change('delete', $(this)[0].id) });
+	$('#edit-groups-listings .icon-panel i.accept').live('click', function(){ group_change('accept', $(this)[0].id) });
+	$('#edit-groups-listings .icon-panel i.decline').live('click', function(){ group_change('decline', $(this)[0].id) });
+	$('#edit-groups-listings .icon-panel i.leave').live('click', function(){ group_change('leave', $(this)[0].id) });
+	$('#edit-groups-listings .icon-panel i.delete').live('click', function(){ group_change('delete', $(this)[0].id) });
+	$('#group_user_ids').chosen({ min_search_term_length: 2 });
+	attach_submit('#new-group');
 	//------------------------------------------------------------------------------------------------
 
-	//----------- Micropost creation form listeners --------------------------------------------------
+	//----------- #datafile-panel listeners ----------------------------------------------------------
+	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	$('#new-datafile :file').change(function()
+	{
+		var file = this.files[0];
+		if(file.name.length < 1 || file.size < 1) 
+		{
+			alert("The file appears empty.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else if(file.size > 1048576)
+		{
+			alert("Please limit file uploads to 1Mb.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else
+		{
+			$('#new-datafile :submit').removeAttr('disabled','');
+			$('#new-datafile :submit').live('click', function(){ ajax_form_submit('#new-datafile'); return false; });
+		}
+	});
+	attach_submit('#new-datafile');
+	$("[id^=edit-datafile]").each(function() { attach_submit(this.id); });
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- #job-panel listeners ---------------------------------------------------------------
+	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	$("[id^=edit-job]").each(function() { attach_submit(this.id); });
+	//------------------------------------------------------------------------------------------------
+
+
+	//----------- #micropost-panel listeners ---------------------------------------------------------
 	// Chosen listeners
 	$('#group_user_ids').chosen({ min_search_term_length: 2 });
 	$('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
@@ -42,19 +76,6 @@ $(window).bind("load", function()
 	attach_submit('#new-micropost');
 	//------------------------------------------------------------------------------------------------
 
-	//----------- Group modifications ---------- -----------------------------------------------------
-	$('#group_user_ids').chosen({ min_search_term_length: 2 });
-	//------------------------------------------------------------------------------------------------
-	
-	
-	//----------- Datafile modifications ---------- --------------------------------------------------
-	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
-	//------------------------------------------------------------------------------------------------
-	
-	
-	//----------- Job modifications ------------------------------------------------------------------
-	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
-	//------------------------------------------------------------------------------------------------
 
 	//----------- will_paginate overrides for AJAX  --------------------------------------------------
 	// Pagination link overrides
@@ -70,53 +91,18 @@ $(window).bind("load", function()
 	$('#datafile-panel .title-panel').live('click', function() { collapse_listing($('#collapse-datafiles'), '#datafile-listing'); });
 	$('#collapse-jobs').live('click', function() { collapse_listing(this, '#job-listing'); });
 	$('#job-panel .title-panel').live('click', function() { collapse_listing($('#collapse-jobs'), '#job-listing'); });
-	$('#micropost-panel .title-panel').live('click', function() { collapse_listing($('#collapse-microposts'), '#micropost-listing'); });
 	$('#collapse-microposts').live('click', function() { collapse_listing(this, '#micropost-listing'); });
-
+	$('#micropost-panel .title-panel').live('click', function() { collapse_listing($('#collapse-microposts'), '#micropost-listing'); });
 	
-	// Initall collapse groups, datafiles, and jobs
+	// Initally collapse groups, datafiles, and jobs
 	rotate($('#collapse-groups'), 0, -5, -90);
 	rotate($('#collapse-datafiles'), 0, -5, -90);
 	rotate($('#collapse-jobs'), 0, -5, -90);
 	//-------------------------------------------------------------------------------------------------
 	
-	
-	
 	// Keep polling the server to update job progress bars
 	//user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);
 	check_jobs_progress();
-	
-	// Pulsate anything with the pulsate class, but stop if it is clicked on
-	(function pulse(){
-		$('.pulsate').delay(200).fadeTo('slow', 0.15).delay(50).fadeTo('slow', 1, pulse);
-	})();
-	$('.pulsate').live('click', function() { $(this).removeClass('pulsate')  });
-	
-	// Depreciated?
-	//$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
-	//$('#managed-groups').show(); //The div is initially hidden to prevent the full list from being shown before pagination. After pagination, show it
-
-
-	$('#new-datafile :file').change(function()
-	{
-		var file = this.files[0];
-		if(file.name.length < 1 || file.size < 1) 
-		{
-			alert("The file appears empty.");
-			$('#new-datafile :submit').attr('disabled','disabled');
-		}
-		else if(file.size > 1048576)
-		{
-			alert("Please limit file uploads to 1Mb.");
-			$('#new-datafile :submit').attr('disabled','disabled');
-		}
-		else
-		{
-			$('#new-datafile :submit').removeAttr('disabled','');
-			$('#new-datafile :submit').live('click', function(){ ajax_form_submit('#new-datafile'); return false; });
-		}
-	});
-
 });
 
 // Error function called on any AJAX fails
@@ -125,12 +111,12 @@ function ajax_error(XMLHttpRequest, textStatus, errorThrown)
 	alert("Error: " + errorThrown);
 }
 
-
-
 function after_update_div()
 {
 	check_jobs_progress();
 }
+
+
 
 function group_change(type, id)
 {
@@ -244,9 +230,7 @@ function post_group_change(response)
 	}
 
 	update_div('#group-panel', this.href, '/groups/reload', true);
-	update_div('#job-panel', this.href, '/jobs/reload');
-	update_div('#datafile-panel', this.href, '/datafiles/reload');
-	update_div('#micropost-panel', this.href, '/microposts/reload');
+	//update_div('#micropost-panel', this.href, '/microposts/reload');
 	
 	return;
 }

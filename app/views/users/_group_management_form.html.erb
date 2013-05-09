@@ -7,8 +7,7 @@
 </div>
 <div class="modal-body">
 
-	<div id="page_container" class="controls">
-		<div class="page_navigation pagination"></div>
+	<div id="edit-groups-listings">
 		<table id="managed-<%= type %>" class="<%= type %> content" style="display:none;">
 		<% for group in groups do %>
 			<%= render :partial => 'users/group_management', :locals => { :group => group } %>

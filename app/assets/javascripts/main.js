@@ -11,7 +11,8 @@ $(window).load(function(){
 	
 	$('body').popover({
 		selector: '.has-popover',
-		trigger: 'hover'
+		trigger: 'hover', 
+		html: true,
 	});
 });
 

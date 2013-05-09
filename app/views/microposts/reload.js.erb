@@ -5,10 +5,13 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
 $("#micropost-panel").html("<%= escape_javascript(render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load, show_filters: true }) %>");
+
 // Chosen listeners
+<% if not @viewer.class == Group %>
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_user_recipient_ids').chosen({ min_search_term_length: 2 });
+<% end %>
 
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-microposts'), 0, -5, -90);

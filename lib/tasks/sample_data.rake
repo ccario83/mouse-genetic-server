@@ -44,28 +44,30 @@ def make_users
 end
 
 def make_groups
+	clint = User.find(1)
 	# A group created by Clint, Annerose and person 3 are members, tasks will appear here
-	group = Group.create(:creator => User.find(1), :name => 'Clint owned group 1', :description => 'To make sure that owned group functions work')
+	group = Group.create(:creator => clint, :name => 'Clint owned group 1', :description => 'To make sure that owned group functions work')
 	group.users << User.all(:limit => 5)
 	group.save!
 	# Confirm Clint's membership for this group
-	User.find(1).confirm_membership(group)
+	clint.confirm_membership(group)
 	
 	
 	# Another group created by Clint
-	group = Group.create(:creator => User.find(1), :name => 'Clint owned group 2', :description => 'Another owned group with no tasks')
+	group = Group.create(:creator => clint, :name => 'Clint owned group 2', :description => 'Another owned group with no tasks')
 	group.users << User.all(:limit => 5)
 	group.save!
 	# Confirm Clint's membership for this group
-	User.find(1).confirm_membership(group)
+	clint.confirm_membership(group)
 	
-	# 15 more groups with random creators and members
-	15.times do |n|
-		name		= Faker::Company.name[0..24]
+	# 30 more groups with random creators and members (always include clint)
+	30.times do |n|
+		name = Faker::Company.name[0..24]
 		description = Faker::Lorem.sentence(1)
 		creator = User.all.sample(1)[0]
 		group = Group.create(:creator => creator, :name => name, :description => description)
 		group.users << User.all.sample(6)
+		group.users << clint if not group.users.include? clint
 		group.save!
 		creator.confirm_membership(group)
 	end

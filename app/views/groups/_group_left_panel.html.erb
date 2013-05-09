@@ -2,11 +2,11 @@
 <div class="row-fluid">
 	<div class="span12">
 		<div class="row-fluid">
-			<%= render 'group_info', group: group %>
+			<%= render 'group_info' %>
 		</div>
 		<!--
 		<div class="row-fluid">
-			<%= render 'shared/stats', group: group %>
+			<%= render 'shared/stats' %>
 		</div>
 	-->
 	</div>
@@ -14,10 +14,9 @@
 <hr>
 
 <div id="member-panel" class="row-fluid">
-	<%= render 'member_panel' %>
+	<%= render 'groups/member_panel' %>
 </div>
 <hr>
-
 
 <div id= "datafile-panel" class="row-fluid">
 	<%= render 'shared/datafile_panel', viewer: @group %>

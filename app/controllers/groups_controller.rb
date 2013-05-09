@@ -46,26 +46,36 @@ class GroupsController < ApplicationController
 	
 	def show
 		@user = current_user
-		@users = User.order(:last_name)
-		
 		@group = Group.find(params[:id])
-		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
-		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
-		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 7)
-
+		
+		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
+		
+		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 5)
+		
+		# Variables required by #member-panel
+		#===========================================
+		@datafiles = @group.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4)
+		
+		# Variables required by #job-panel
+		#===========================================
+		@jobs = @group.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
+		
+		# Variables used by #micropost-panel
+		#===========================================
+		# The paginated list of microposts
 		@micropost ||= current_user.authored_posts.new({:group_recipients => [@group]})
-		@microposts = @group.received_posts
+		@microposts = @group.all_received_posts
 		if params.has_key?(:user_filter)
-			puts "{"+params[:user_filter]+"}"
 			@microposts = @microposts.where(:creator_id => params[:user_filter])
 		end
-		@microposts = @microposts.paginate(:page => params[:microposts_paginate], :per_page => 7)
+		@microposts = @microposts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
+		# Partial defaults for others
 
+		# Variables used by #micropost-panel
+		#===========================================
 		@task ||= current_user.created_tasks.new({:group_id => @group.id, :creator_id => current_user.id })
 		@tasks = @group.tasks.paginate(:page => params[:tasks_paginate], :per_page => 8)
 		
-		@datafiles = []
-		@jobs = []
 	end
 	
 	
@@ -101,10 +111,10 @@ class GroupsController < ApplicationController
 		type = params[:type]
 		page = params[:confirmed_groups_paginate]
 		page = 1 if @page==""
-		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
-
+		
 		@user ||= current_user
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => page, :per_page => 5)
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 		
 		respond_to do |format|
 			format.js { render :controller => "groups", :action => "reload" }

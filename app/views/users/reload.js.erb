@@ -1,0 +1,28 @@
+
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#member-panel").html("<%= escape_javascript(render :partial => 'groups/member_panel', :locals => { is_reloading: true, show_listing_on_load: @show_listing_on_load }) %>");
+
+<% if @show_listing_on_load == false %>
+rotate($('#collapse-members'), 0, -5, -90);
+<% end %>
+
+
+var display_modal = ($('#edit-members').css('display') == 'block');
+if (display_modal)
+{
+$('#edit-members').modal();
+$('#edit-members').removeClass('hide');
+$('#edit-members').removeClass('fade');
+
+// Hack to prevend double backdrops
+$('.modal-backdrop').not(':last').remove();
+}
+
+<% if @members.count == 0 %>
+$('#edit-members').modal('hide');
+<% end %>
+

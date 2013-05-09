@@ -1,4 +1,13 @@
-// This file contains several ajax handlers and 
+$(window).bind("load", function()
+{
+
+	// Pulsate anything with the pulsate class, but stop if it is clicked on
+	(function pulse(){
+		$('.pulsate').delay(200).fadeTo('slow', 0.15).delay(50).fadeTo('slow', 1, pulse);
+	})();
+	$('.pulsate').live('click', function() { $(this).removeClass('pulsate')  });
+	
+});
 
 function collapse_listing(arrow, div)
 {
@@ -208,6 +217,7 @@ function after_form_submit() {};
 
 function attach_submit(div)
 {
+	if (div[0] != '#') { div = '#'+div; }
 	$(div+' input:submit').on('click', function()
 	{
 		var formData = new FormData($(div+' form')[0]);

@@ -1,5 +1,6 @@
 
-<% viewer ||= @user %>
+<% user ||= @user %>
+<% viewer ||= user %>
 <% jobs ||= @jobs %>
 <% show_listing_on_load ||= false %>
 <div class="row-fluid title-bar">
@@ -31,7 +32,7 @@
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal" data-target="#new-job">Close</a>
-		<a href="#" class="btn btn-primary" onclick="window.location = '<%= user_path(@user) %>'">Show</a>
+		<a href="#" class="btn btn-primary" onclick="window.location = '<%= user_path(user) %>'">Show</a>
 	</div>
 </div>
 

@@ -1,12 +1,12 @@
 
-<% defined?(show_current_user) || show_current_user = true %>
+<% show_current_user ||= true %>
 <% if ((not current_user?(user)) || (current_user?(user) && show_current_user)) %>
-	<li id="<%=user.id%>" class="ui-selectee">
-		<div class="user-info-small">
-			<% gravatar_for user, :size =>20 %>
-			<i class="icon-user"></i>
-			<%= user.name %>
-			<span class="gray"><%= user.institution %></span>
-		</div>
-	</li>
+<li id="<%=user.id%>" class="ui-selectee">
+	<div class="user-info-small">
+		<% gravatar_for user, :size =>20 %>
+		<i class="icon-user"></i>
+		<%= color_tag(user) %>
+		<span class="gray"><%= user.institution %></span>
+	</div>
+</li>
 <% end %>

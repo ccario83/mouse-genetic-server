@@ -46,7 +46,7 @@ $(window).bind("load", function()
 	
 	/*-------------------------
 	 For the user-manage modal
-	---------------------------*/
+	---------------------------
 	// Enable pagniation (client-side) with bootstrap theming for the pagination container
 	$('#page_container').pajinate({'bootstrap':true, 'num_page_links_to_display':5, 'show_first_last':false});
 
@@ -65,14 +65,19 @@ $(window).bind("load", function()
 
 	// Populate the modified_member_users list with any values sent from the server (found in the #preselected-users hidden input in the multi_select partial)
 	$('#modified_users').val($('#preselected-users').val());
-	
 	// Style the preselected users so that they appear selected ot the end-user
 	var userIds = jQuery.parseJSON($('#preselected-users').val());
 	for (var i = 0; i< userIds.length; i++)
 	{
 		$('#selectable-users li#'+userIds[i]).addClass("ui-selected");
 	}
-	/* -------------------- */
+	 -------------------- */
+	
+	
+	//----------- #micropost-panel listeners ---------------------------------------------------------
+	attach_submit('#new-micropost');
+	//------------------------------------------------------------------------------------------------
+	
 	
 	//----------- will_paginate overrides for AJAX  --------------------------------------------------
 	// Pagination link overrides
@@ -84,15 +89,24 @@ $(window).bind("load", function()
 	
 	// Collapse functions
 	$('#collapse-members').live('click', function() { collapse_listing(this, '#member-listing'); });
+	$('#member-panel .title-panel').live('click', function() { collapse_listing($('#collapse-members'), '#member-listing'); });
 	$('#collapse-datafiles').live('click', function() { collapse_listing(this, '#datafile-listing'); });
+	$('#datafile-panel .title-panel').live('click', function() { collapse_listing($('#collapse-datafiles'), '#datafile-listing'); });
 	$('#collapse-jobs').live('click', function() { collapse_listing(this, '#job-listing'); });
+	$('#job-panel .title-panel').live('click', function() { collapse_listing($('#collapse-jobs'), '#job-listing'); });
 	$('#collapse-microposts').live('click', function() { collapse_listing(this, '#micropost-listing'); });
+	$('#micropost-panel .title-panel').live('click', function() { collapse_listing($('#collapse-microposts'), '#micropost-listing'); });
 	$('#collapse-tasks').live('click', function() { collapse_listing(this, '#task-listing'); });
+	$('#task-panel .title-panel').live('click', function() { collapse_listing($('#collapse-tasks'), '#task-listing'); });
 
 	rotate($('#collapse-members'), 0, -5, -90);
 	rotate($('#collapse-datafiles'), 0, -5, -90);
 	rotate($('#collapse-jobs'), 0, -5, -90);
 	//-------------------------------------------------------------------------------------------------
+	
+	// Keep polling the server to update job progress bars
+	//user_jobs_timer_id = setInterval('check_jobs_progress()', 5000);
+	check_jobs_progress();
 });
 
 

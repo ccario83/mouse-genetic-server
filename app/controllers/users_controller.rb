@@ -11,18 +11,32 @@ class UsersController < ApplicationController
 		#@user = User.find(params[:id])
 		@user = current_user
 		
-		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
+		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models 
 		
-		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
-		@micropost = @user.authored_posts.new
-		
+		# Variables required by #group-panel
+		#===========================================
 		@confirmed_groups = @user.confirmed_groups.sort_by(&:name).paginate(:page => params[:confirmed_groups_paginate], :per_page => 5)
-		@associated_users = @confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name)
 		
-		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
-		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
-		
+		# Variables required by #datafile-panel
+		#===========================================
 		@datafiles = @user.datafiles.sort_by(&:created_at).reverse.paginate(:page => params[:datafiles_paginate], :per_page => 4)
+		
+		# Variables required by #job-panel
+		#===========================================
+		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
+		
+		# For the center panel if a user clicks on a job
+		#===========================================
+		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
+			
+		# Variables used by #micropost-panel
+		#===========================================
+		# The paginated list of microposts
+		@microposts = @user.all_received_posts.sort_by(&:created_at).reverse.paginate(:page => params[:microposts_paginate], :per_page => 8)
+		# To allow the user to sent a micropost to groups or users in this view
+		@show_filters = true 
+		# Partial defaults for others
+		
 	end
 
 
@@ -46,6 +60,21 @@ class UsersController < ApplicationController
 	def edit
 	end
 
+	def reload
+		id = params[:id]
+		type = params[:type]
+		page = params[:members_paginate]
+		page = 1 if @page==""
+
+		@user ||= current_user
+		@group = Group.find(id)
+		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 5)
+		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
+		
+		respond_to do |format|
+			format.js { render :controller => "groups", :action => "reload" }
+		end
+	end
 
 	def update
 		if @user.update_attributes(params[:user])

@@ -42,6 +42,39 @@ class User < ActiveRecord::Base
 	end
 
 
+	def post_message_to_group(group, message)
+		post_message_to_groups(group, message)
+	end
+
+	# Takes a message as a string and posts it to a group or list groups
+	def post_message_to_groups(groups, message)
+		groups = groups.is_a?(Array) ? groups : [groups]
+		post = Micropost.new(:creator => self, :content => message, :group_recipients => groups)
+
+		if post.save
+			return true
+		else
+			return false
+		end
+	end
+	
+	# A function alias to make the calls more comfortable to the user
+	def post_message_to_user(user, message)
+		post_message_to_users(user, message)
+	end
+
+	# Takes a message as a string and posts it to a user or list users
+	def post_message_to_users(users, message)
+		users = users.is_a?(Array) ? users : [users]
+		post = Micropost.new(:creator => self, :content => message, :user_recipients => users)
+		if post.save
+			return true
+		else
+			return false
+		end
+	end
+
+
 	def group_received_posts
 		microposts = self.groups.map(&:received_posts).flatten
 		microposts.sort_by(&:created_at)

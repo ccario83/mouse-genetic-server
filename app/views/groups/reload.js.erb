@@ -16,17 +16,17 @@ rotate($('#collapse-groups'), 0, -5, -90);
 attach_submit('#new-group');
 
 
-var display_modal = ($('#manage-members').css('display') == 'block');
+var display_modal = ($('#edit-groups').css('display') == 'block');
 if (display_modal)
 {
-$('#manage-members').modal();
-$('#manage-members').removeClass('hide');
-$('#manage-members').removeClass('fade');
+$('#edit-groups').modal();
+$('#edit-groups').removeClass('hide');
+$('#edit-groups').removeClass('fade');
 
 // Hack to prevend double backdrops
 $('.modal-backdrop').not(':last').remove();
 }
 
 <% if @confirmed_groups.count == 0 %>
-$('#manage-members').modal('hide');
+$('#edit-groups').modal('hide');
 <% end %>

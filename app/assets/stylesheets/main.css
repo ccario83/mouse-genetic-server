@@ -686,7 +686,6 @@ h3 span.btn
 	float: inherit;
 	font-size: 14px;
 	padding-right: 0px;
-	
 }
 
 
@@ -701,7 +700,7 @@ h3 span.btn
 	right: 0%;
 	height: 25px;
 	line-height: 25px;
-	/*width: 75px;*/
+	width: 75px !important;
 	
 	/*
 	border: 1px solid #f2f2f2;
@@ -870,7 +869,11 @@ h3 span.btn
 	font-size: 1.0em;
 	display: block;
 }
-
+#edit-groups-listings 
+{
+	height: 250px;
+	overflow-y: scroll;
+}
 
 /* The user partial                                            */
 /* ----------------------------------------------------------- */
@@ -1083,13 +1086,20 @@ img.rounded
 	line-height: 30px;
 	height: 30px;
 }
+
+/*
 .listing-panel .group-info-small [class^="icon-"], .group-info-small [class*=" icon-"], .icon-group { margin-top: 8px; }
 .listing-panel .icon-panel 
 {
-	line-height: 25px;
+	margin-right:7px;
+	position: absolute;
+	top: 0%;
+	right: 0%;
 	height: 25px;
+	line-height: 25px;
 }
 .listing-panel .icon-panel i.icon-sign-blank { color: rgba(0,0,0,0); }
+*/
 
 #to-box { padding-bottom: 10px; }
 #to-group, #to-user

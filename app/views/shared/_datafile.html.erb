@@ -1,12 +1,22 @@
 
 <% user ||= @user %>
+
+<% popover_title = "<span style='font-style:italic;'>" + datafile.filename + "</span>".html_safe %>
+<% popover_text = "" %>
+<% if datafile.groups.count == 0 %>
+	<% popover_text = popover_text + "(Private)" %>
+<% else %>
+	<% popover_text = popover_text + "Shared with #{datafile.groups.count} group(s)" %>
+<% end %>
+<% popover_text = popover_text + "<br/>Owned by #{color_tag(datafile.owner)}<br/>#{datafile.description}" %>
+
 <li>
-	<div class="listing-panel has-popover content" id="datafile-<%= datafile.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%= datafile.description %>" data-title="<% if datafile.groups.count == 0 %> (Private) <% else %> Shared with <%= datafile.groups.count %> group(s). <% end %>">
+	<div class="listing-panel has-popover content" id="datafile-<%= datafile.id %>" data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right" data-content="<%=popover_text.html_safe%>" data-title="<%=popover_title.html_safe%>">
 		<div class="display">
 			<p>
 				
 				<span class="label label-info<% if not datafile.uwf_runnable %> disabled<% end %>">UWF</span> 
-				<%= datafile.filename %>
+				<%= datafile.filename %> <span class="gray"><%= text_tag(datafile.owner) %>
 			</p>
 		</div>
 		<div class="icon-panel">

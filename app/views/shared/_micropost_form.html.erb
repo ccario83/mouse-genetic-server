@@ -1,10 +1,11 @@
 
-<% viewer ||= @user %>
-<% micropost ||= @micropost %>
-<% recipient_type ||= @micropost.recipient_type ||= 'group' %>
-<% groups ||= @user.confirmed_groups.sort_by(&:name) %>
+<% user ||= @user ||= current_user %>
+<% viewer ||= user %>
+<% micropost ||= @micropost ||= user.authored_posts.new %>
+<% recipient_type ||= micropost.recipient_type ||= 'group' %>
+<% groups ||= user.confirmed_groups.sort_by(&:name) %>
 <% users ||= User.all %>
-<% show_filters ||= false %>
+<% show_filters ||= @show_filters ||= false %>
 
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

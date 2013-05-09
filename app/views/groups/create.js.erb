@@ -21,25 +21,12 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 <% else %>
 	$("#new-group").modal('hide');
 	update_div('#group-panel');
+	// This should be removed once the #group-managament div is light enough to be done via AJAX
+	location.reload();
 <% end %>
 
 // Reinitialize the group management modal so button clicks work. 
 attach_submit('#new-group');
-/*
-$('#new-group input:submit').on('click', function()
-{
-	var formData = new FormData($('#new-group form')[0]);
-	$.ajax({
-		type: 'post',
-		url: $('#new-group form').attr('action'), //sumbits it to the given url of the form
-		data: formData,
-		dataType: 'script',
-		cache: false,
-		contentType: false,
-		processData: false
-	});
-	return false;
-});*/
-
 // Reattach chosen handler
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
+

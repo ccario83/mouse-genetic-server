@@ -10,3 +10,6 @@ $('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length:
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-jobs'), 0, -5, -90);
 <% end %>
+
+$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+$("[id^=edit-job]").each(function() { attach_submit(this.id); });

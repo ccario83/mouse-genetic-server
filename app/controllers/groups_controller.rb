@@ -47,6 +47,7 @@ class GroupsController < ApplicationController
 	def show
 		@user = current_user
 		@group = Group.find(params[:id])
+		@viewer = @group
 		
 		# CAUTION: the :per_page values MUST MATCH their respective controller/reload :per_page values... Its best to use the defaults set in the models  
 		

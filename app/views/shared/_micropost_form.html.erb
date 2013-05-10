@@ -1,20 +1,21 @@
 
 <% user ||= @user ||= current_user %>
-<% viewer ||= user %>
+<% viewer ||= @viewer ||= user %>
 <% micropost ||= @micropost ||= user.authored_posts.new %>
 <% recipient_type ||= micropost.recipient_type ||= 'group' %>
 <% groups ||= user.confirmed_groups.sort_by(&:name) %>
 <% users ||= User.all %>
-<% show_filters ||= @show_filters ||= false %>
+<% show_filters = @show_filters || (@show_filters.nil? && viewer == user) %>
 
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h3>New Micropost</h3>
 </div>
 <div class="modal-body" style="overflow-y: hidden;">
-	<%= simple_form_for micropost, :remote => true, :html => {:'data-update-target' => 'new-micropost'} do |f| %>
-	<%= f.input :recipient_type, :as => :hidden, :input_html => { :value => recipient_type } %>
-	<% if show_filters == true %>
+	<%= simple_form_for micropost, :url => user_microposts_path(user), :remote => true, :html => {:'data-update-target' => 'new-micropost'} do |f| %>
+	<%= f.hidden_field :viewer_type, :value => viewer.class %>
+	<%= f.hidden_field :recipient_type, :value => recipient_type %>
+	<% if show_filters %>
 		<div id="to-box">
 			<span style="float: left; margin-right: 10px;">To:</span>
 			<span id="to-group" class="highlighted"><i class="icon-group"></i>Group(s)</span>
@@ -23,7 +24,7 @@
 		<%= f.association :group_recipients, :collection => groups, :label => false, :input_html => { 'data-placeholder'=> 'All groups currently selected', :style => "width:510px;" } %>
 		<%= f.association :user_recipients,  :collection => users, :label => false, :input_html => { 'data-placeholder'=> 'All users currently selected', :style => "width:510px;" } %>
 	<% else %>
-		<%= f.association :group_recipients, :collection => [@viewer], :label => false, :as => :hidden %>
+		<%= f.association :group_recipients, :collection => [viewer], :label => false, :as => :hidden %>
 		<%= f.association :user_recipients, :collection => [], :label => false, :as => :hidden %>
 	<% end %>
 		<%= f.input :content, :label => "Message:", :as => :text, :placeholder => "Compose a new micropost...", :input_html => { :rows => 4, :style => 'width:500px; margin:0px; padding:5px 5px;' }, :required => false %>

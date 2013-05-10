@@ -1,0 +1,16 @@
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+$("#new-task").html("<%= escape_javascript(render :partial => 'shared/task_form', :locals => { user: @user, group: @micropost }) %>");
+
+// Reattach the :remote=>true form submit functionality
+attach_submit('#new-task');
+
+<% if not @micropost.valid? %>
+// Do in model
+<% else %>
+$("#new-task").modal('hide');
+update_div('#task-panel');
+<% end %>

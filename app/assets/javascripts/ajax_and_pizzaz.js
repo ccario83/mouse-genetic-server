@@ -110,7 +110,8 @@ function update_div(target_div, original_link, controller, expand, async)
 	var update_url= [original_link.split('?')[0], controller].join('')
 	
 	// Passes an expand option to the controller
-	expand = typeof expand !== 'undefined' ? expand : $(target_div).find('#' + panel_name + '-listing').is(":visible");
+	//expand = typeof expand !== 'undefined' ? expand : $(target_div).find('#' + panel_name + '-listing').is(":visible");
+	expand = typeof expand !== 'undefined' ? expand : $(target_div).is(":visible");
 	
 	async = typeof async !== 'undefined' ? true : false;
 	

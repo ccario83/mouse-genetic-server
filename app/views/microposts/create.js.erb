@@ -6,53 +6,8 @@ var field = '';
 
 $("#new-micropost").html("<%= escape_javascript(render :partial => 'shared/micropost_form', :locals => { user: @user, micropost: @micropost, show_filters: true }) %>");
 
-
-
-<% if not @micropost.valid? %>
-// Do in model
-/*
-	<% @micropost.errors.messages.each do |field, errors| %>
-		<% if errors.any? %>
-			<% if field == "group_recipient" || field = "user_recipient" %>
-			field = $('#new-micropost #micropost_<%= field %>_ids_chzn');
-			<% else %>
-			field = $('#new-micropost #micropost_<%= field %>');
-			<% end %>
-			field.parent().parent().addClass('error');
-			<% errors.each do |error| %>
-				<% if error == errors[errors.length-1] %>
-					field.after("<p class='help-block'><%= error %></p>")
-				<% end %>
-			<% end %>
-		<% end %>
-	<% end %>
-*/
-<% else %>
-	$("#new-micropost").modal('hide');
-	update_div('#micropost-panel');
-<% end %>
-
-
-// Reattach the :remote=>true form submit functionality
-attach_submit('#new-micropost');
-/*
-$('#new-micropost input:submit').on('click', function()
-{
-	var formData = new FormData($('#new-micropost form')[0]);
-	$.ajax({
-		type: 'post',
-		url: $('#new-micropost form').attr('action'), //sumbits it to the given url of the form
-		data: formData,
-		dataType: 'script',
-		cache: false,
-		contentType: false,
-		processData: false
-	});
-	return false;
-});
-*/
-
 // Chosen listeners
+<% if @viewer_type == 'User' %>
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_user_recipient_ids').chosen({ min_search_term_length: 2 });
@@ -78,3 +33,31 @@ $('#to-user').live('click', function()
 	$("#micropost_user_recipient_ids_chzn").toggle();
 	$('#micropost_recipient_type').val('user');
 });
+<% end %>
+
+// Reattach the :remote=>true form submit functionality
+attach_submit('#new-micropost');
+
+<% if not @micropost.valid? %>
+// Do in model
+/*
+	<% @micropost.errors.messages.each do |field, errors| %>
+		<% if errors.any? %>
+			<% if field == "group_recipient" || field = "user_recipient" %>
+			field = $('#new-micropost #micropost_<%= field %>_ids_chzn');
+			<% else %>
+			field = $('#new-micropost #micropost_<%= field %>');
+			<% end %>
+			field.parent().parent().addClass('error');
+			<% errors.each do |error| %>
+				<% if error == errors[errors.length-1] %>
+					field.after("<p class='help-block'><%= error %></p>")
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+*/
+<% else %>
+$("#new-micropost").modal('hide');
+update_div('#micropost-panel');
+<% end %>

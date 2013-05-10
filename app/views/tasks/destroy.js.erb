@@ -1,0 +1,5 @@
+
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+update_div('#task-panel');

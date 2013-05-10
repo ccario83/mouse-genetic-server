@@ -1,31 +1,32 @@
 
-								<li id="<%= task.id %>" class="clear-fix">
-									<div class="container-fluid" style="padding:0px;">
-										<div class="row-fluid">
-											
-											<div class="row-fluid span1">
-												<i id="<%= task.id %>" class="task <% if task.completed %> icon-check <% else %> icon-check-empty <% end %> icon-2x <% if !(task.creator == current_user || task.assignee == current_user) %> gray <% end %>"></i>
-											</div>	
-											
-											<div class="content span11">
-												<div class="row-fluid">
-													<% if current_user?(task.creator) %>
-													<a href="/tasks/<%= task.id %>" data-confirm="You sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
-													<% end %>
+<% user ||= @user %>
+<% group ||= @group %>
+<li>
+	<div class="container-fluid" style="padding:0px;">
+		<div class="row-fluid">
+			<div class="row-fluid span1" style="line-height: 52px;">
+				<i id="<%= task.id %>" class="task <% if task.completed %> icon-check <% else %> icon-check-empty <% end %> icon-2x <% if !(task.creator == current_user || task.assignee == current_user) %> gray <% end %>"></i>
+			</div>	
+			
+			<div class="span11 listing-panel content" style="height:inherit; cursor: pointer;" data-toggle="modal" data-target="#task-<%= task.id %>">
+				<div class="row-fluid">
+					<div class="display">
+						<%= task.description %>
+					</div>
 
-													<%= task.description %>
-												</div>
-												<div class="display-User">
-													<% if task.creator == current_user %> You <% else %><%= task.creator.name %><% end %>
-													 to 
-													<% if task.assignee == current_user %> You <% else %><%= task.assignee.name %><% end %>
-												</div>
-												<div class="row-fluid timestamp">
-												due in <%= distance_of_time_in_words_to_now(task.due_date) %>
-												</div>
-											
-											</div>
-										</div>
-									</div>
-								</li>
+					<br/>
+					<div style="line-height: 15px;">
+							<%= to_from_color_tag(task.creator, task.assignee) %>
+							due in <%= distance_of_time_in_words_to_now(task.due_date) %>
+					</div>
+					
+					<div class="icon-panel">
+						<% if (user == task.creator) %>
+						<%= link_to '<i class="icon-remove"></i>'.html_safe, group_task_path(group, task), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
+						<% end %>
+					</div>
+			</div>
+		</div>
+	</div>
+</li>
 

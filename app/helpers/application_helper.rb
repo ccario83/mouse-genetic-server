@@ -11,15 +11,30 @@ module ApplicationHelper
 	end
 	
 	def color_tag(record)
-		if record.class == User
-			if record == current_user
-				"<span class='display-You'>You</span>".html_safe
-			else
-				("<span class='display-User'>" + record.name + "</span>").html_safe
+		tag = ""
+		record[0] if record.is_a? Array and record.length == 1
+		if record.is_a? Array
+			if record[0].class == User
+				if record == current_user
+					tag = tag + "<span class='display-User'>You and others</span>"
+				else
+					tag = tag + "<span class='display-User'>Many people</span>"
+				end
+			elsif record[0].class == Group
+				tag = tag + "<span class='display-Group'>Many groups</span>"
 			end
-		elsif record.class == Group
-			("<span class='display-Group'>" + record.name + "</span>").html_safe
+		else
+			if record.class == User
+				if record == current_user
+					tag = tag + "<span class='display-You'>You</span>"
+				else
+					tag = tag + "<span class='display-User'>" + record.name + "</span>"
+				end
+			elsif record.class == Group
+				tag = tag + "<span class='display-Group'>" + record.name + "</span>"
+			end
 		end
+		return tag.html_safe
 	end
 	
 	def text_tag(record)
@@ -34,33 +49,12 @@ module ApplicationHelper
 		end
 	end
 	
-	def to_from_color_tag(to, from)
+	def to_from_color_tag(from, to)
 		tag = ""
-		[to, from].each do |obj|
-			if obj.length == 1
-				if obj.class == User
-					if obj == current_user
-						tag = tag + "<span class='display-You'>you</span>"
-					else
-						tag = tag + "<span class='display-User'>" + obj.creator.name + "</span>"
-					end
-				elsif obj.class == Group
-					tag = tag + "<span class='display-Group'>" + obj.name + "</span>"
-				end
-			else
-				if obj.class == User
-					if obj == current_user
-						tag = tag + "<span class='display-User'>You and others</span>"
-					else
-						tag = tag + "<span class='display-User'>many people</span>"
-					end
-				elsif obj.class == Group
-					tag = tag + "<span class='display-Group'>many groups</span>"
-				end
-			end
-			tag = tag + ' to '
+		[from, to].each_with_index do |obj, index|
+			tag = tag + color_tag(obj)
+			tag = index == 0? tag + ' to ' : tag
 		end
-		
 		return tag.html_safe
 	end
 end

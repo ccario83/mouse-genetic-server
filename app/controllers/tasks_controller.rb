@@ -4,8 +4,10 @@ class TasksController < ApplicationController
 	before_filter :suspicious?, :only => :create # Verify hidden fields weren't altered
 
 	def create
-		@creator = User.find(params[:task][:creator_id].to_i)
+		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
+		@user = current_user
 		@group = Group.find(params[:task][:group_id].to_i)
+		@creator = User.find(params[:task][:creator_id].to_i)
 		@assignee_id = params[:task][:assignee_id].to_i
 		
 		if !(@assignee_id == 0)
@@ -17,21 +19,29 @@ class TasksController < ApplicationController
 		end
 		
 		@task = Task.new({:creator => @creator, :group => @group, :assignee => @assignee, :description => params[:task][:description], :due_date => params[:task][:due_date]})
+		
 		if @task.save
 			flash[:success] = "The task was successfully created."
-			redirect_to :back
 		else
-			flash[:error] = "A task must have a description and due date entered."
-			redirect_to :back
+			flash[:error] = "Please correct form errors."
 		end
+		
+		respond_to do |format|
+			format.js { render :controller => "tasks", :action => "create" } and return
+		end
+		
 	end
 
 	def destroy
 		if @task.destroy
-			flash[:notice] = "The task was successfully deleted."
-			redirect_to :back
+			flash[:success] = "The task was successfully deleted."
 		else
 			flash[:error] = "The task deletion failed!"
+		end
+		
+		respond_to do |format|
+			format.js { }
+			format.html {  }
 		end
 	end
 
@@ -51,6 +61,7 @@ class TasksController < ApplicationController
 		id = params[:id]
 		type = params[:type]
 		page = params[:tasks_paginate]
+
 		page = 1 if @page==""
 		
 		@user = current_user
@@ -58,8 +69,10 @@ class TasksController < ApplicationController
 
 		@task = @user.created_tasks.new({:group_id => @group.id, :creator_id => @user.id })
 		@tasks = @group.tasks.paginate(:page => page, :per_page => 8)
-
-		render :partial => 'shared/task_panel', :locals => { viewer: @group, show_listing_on_load: true }
+		
+		respond_to do |format|
+			format.js { render :controller => "tasks", :action => "reload" }
+		end
 	end
 
 	private

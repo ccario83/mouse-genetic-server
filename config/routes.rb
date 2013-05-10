@@ -31,8 +31,10 @@ RorWebsite::Application.routes.draw do
   # Group AJAX calls
   post '/:type/:id/groups/reload' => 'groups#reload'
   
-  # Micropost routs
-  resources :microposts, :only => [:create, :destroy,]
+  # Micropost routes
+  resources :users do
+    resources :microposts, :only => [:create, :destroy,]
+  end
   # Micropost AJAX calls
   post '/:type/:id/microposts/reload' => 'microposts#reload'
   
@@ -53,6 +55,9 @@ RorWebsite::Application.routes.draw do
   
 
   # Task AJAX calls
+  resources :groups do
+    resources :tasks
+  end
   post '/tasks/check'
   post '/:type/:id/tasks/reload' => 'tasks#reload'
 

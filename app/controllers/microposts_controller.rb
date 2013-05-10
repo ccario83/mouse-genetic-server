@@ -5,7 +5,9 @@ class MicropostsController < ApplicationController
 	def create
 		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
 		@user = current_user
-		
+		@viewer_type = params[:micropost][:viewer_type]
+		@show_filters = @viewer_type == 'User'
+
 		@micropost = @user.authored_posts.new()
 		@micropost.recipient_type = params[:micropost][:recipient_type]
 		@micropost.content = params[:micropost][:content]
@@ -52,31 +54,34 @@ class MicropostsController < ApplicationController
 	
 	
 	def destroy
-		# verifies correct user
 		if @micropost.destroy
-			flash[:notice] = "The micropost was successfully deleted."
-			redirect_to :back
+			flash[:success] = "The datafile was successfully deleted."
 		else
-			flash[:error] = "The micropost deletion failed!"
-			redirect_to :back
+			flash[:error] = "The datafile deletion failed!"
+		end
+		
+		respond_to do |format|
+			format.js { }
+			format.html {  }
 		end
 	end
 	
 	def reload
 		id = params[:id]
-		type = params[:type]
+		# params[:type] as parsed by the routes uses a url type, whereas @viewer_type is based on a Model name, so convert here
+		@viewer_type = params[:type] == 'users'? 'User' : 'Group'
 		page = params[:microposts_paginate]
 		page = 1 if @page==""
 		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
-		
+
 		@user = nil
 		@viewer = nil
 		@micropost = nil
-		if type == 'users'
+		if @viewer_type == 'User'
 			@user = User.find(id)
 			@viewer = @user
 			@micropost = @viewer.authored_posts.new
-		elsif type == 'groups'
+		elsif @viewer_type == 'Group'
 			@user = current_user
 			@viewer = Group.find(id)
 			@micropost = @user.authored_posts.new({:group_recipients => [@viewer]})

@@ -16,39 +16,13 @@
 
 				<br/>
 				<div style="line-height: 15px;">
-						<% num_users  = micropost.user_recipients.length %>
-						<% num_groups = micropost.group_recipients.length %>
-						<% to = '' %>
-						<% from = '' %>
-						
-						<% if micropost.creator == user %> 
-							<% from = '<span class="display-You">You</span>' %>
-						<% else %>
-							<% from = '<span class="display-User">'+micropost.creator.name+'</span>' %>
-						<% end %>
-						
-						<% if num_users == 1 && micropost.user_recipients[0] == user %>
-							<% to = '<span class="display-You">you</span>' %>
-						<% else %>
-							<% if num_groups == 1 %>
-								<% to = '<span class="display-Group">'+micropost.group_recipients[0].name+'</span>' %>
-							<% elsif num_users == 1 %>
-								<% to = '<span class="display-User">'+micropost.user_recipients[0].name+'</span>' %>
-							<% elsif num_groups == 0 %>
-								<% to = '<span class="display-User">Many users</span>' %>
-							<% elsif num_users == 0 %>
-								<% to = '<span class="display-Group">Many groups</span>' %>
-							<% else %>
-								<% to = 'Many groups and users' %>
-							<% end %>
-						<% end %>
-						<%= [from,'to',to].join(' ').html_safe %>
+						<%= to_from_color_tag(micropost.creator, micropost.group_recipients+micropost.user_recipients) %>
 						<%= time_ago_in_words(micropost.created_at) %> ago.
 				</div>
 				
 				<div class="icon-panel">
 					<% if (user == micropost.creator) %>
-					<%= link_to '<i class="icon-remove"></i>'.html_safe, micropost_path(micropost), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
+					<%= link_to '<i class="icon-remove"></i>'.html_safe, user_micropost_path(user, micropost), :confirm => 'Are you sure?', :method => :delete, :remote => true %>
 					<% end %>
 				</div>
 			</div>
@@ -60,9 +34,9 @@
 			<h3>Message</h3>
 		</div>
 		<div class="modal-body" style="overflow: visible;">
-			To: <%= to.html_safe %>
+			To: <%= color_tag(micropost.creator) %>
 			<br/>
-			From: <%= from.html_safe %>
+			From: <%= color_tag(micropost.group_recipients+micropost.user_recipients) %>
 			<br/>
 			When: <%= time_ago_in_words(micropost.created_at) %> ago.
 			<hr/>

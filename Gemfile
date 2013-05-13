@@ -8,6 +8,7 @@ gem 'rails', '3.2.3'
 gem 'mysql'
 group :development, :test do
   gem 'sqlite3'
+  gem 'debugger'
 end
 
 

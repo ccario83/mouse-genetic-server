@@ -57,4 +57,4 @@ gem 'bootstrap-will_paginate', '0.0.6'
 
 
 # To use debugger
-gem 'ruby-debug19', :require => 'ruby-debug'
+#gem 'ruby-debug19', :require => 'ruby-debug'

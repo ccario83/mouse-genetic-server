@@ -15,7 +15,7 @@ $(window).bind("load", function()
 	//------------------------------------------------------------------------------------------------
 
 	//----------- #datafile-panel listeners ----------------------------------------------------------
-	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	$('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); });
 	$('#new-datafile :file').change(function()
 	{
 		var file = this.files[0];

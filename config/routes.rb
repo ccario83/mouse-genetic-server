@@ -56,7 +56,7 @@ RorWebsite::Application.routes.draw do
 
   # Task AJAX calls
   resources :groups do
-    resources :tasks
+    resources :tasks, :only => [:create, :destroy,]
   end
   post '/tasks/check'
   post '/:type/:id/tasks/reload' => 'tasks#reload'
@@ -64,7 +64,6 @@ RorWebsite::Application.routes.draw do
 
   # Other app routes
   resources :sessions, :only => [:new, :create, :destroy]
-  resources :tasks, :only => [:create, :destroy ]
 
   
   # UWF routes

@@ -9,7 +9,7 @@ class Task < ActiveRecord::Base
 
 
 	validates :creator, :presence => true
-	validates :assignee, :presence => true
+	validates :assignee, :presence => { :message => "A task must have an assignee."}
 	validates :due_date, :presence => true
 	validates :description, :presence => true, :length => { :minimum => 1, :maximum => 140 }
 

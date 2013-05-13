@@ -29,6 +29,7 @@
 #  2012 08 30 --    Removed BEerror, replaced with write_error and sys.exit(1)
 #  2012 11 28 --    Modified write_error to also echo to command line for easier debugging.
 #  2013 04 08 --    Redis key now passed as an argument in the configuration file
+#  2013 05 13 --    Added compress_results flag as class variable to toggle compressed result files
 #===============================================================================
 
 import sys              # for various system functions
@@ -84,6 +85,7 @@ class EmmaRunner(object):
         self.pheno_strains = None
         self.geno_strains = None
         self.verbose = True
+        self.compress_results = True
         self._phenos_were_processed = False
         self._genos_were_processed = False
         self._chosen_snp_set = None
@@ -1203,6 +1205,9 @@ class EmmaRunner(object):
         '''
         This function takes a list of 'requested_files' in the current job directory and compresses them to a file called 'gz_filename' in the job folder or a 'requested_location'
         '''
+        if not self.compress_results:
+            return
+        
         try:
             tf = tarfile.open(requested_location + gz_filename, 'w:gz')
             for requested_file in requested_files:

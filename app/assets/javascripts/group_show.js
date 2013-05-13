@@ -15,35 +15,7 @@ $(window).bind("load", function()
 		lessAni: 0,
 	});
 
-	$('.task').live('click',function()
-	{ 
-		// If this element has the 'gray' class, its because rails added it to indicate its state should not change.
-		// Only the task creator and assignee can modify this state (this is also checked by rails after the AJAX call 
-		if (!($(this).hasClass('gray')))
-		{
-			var id  = parseInt($(this)[0].id);
-			var box = $(this);
-			$.ajax(
-			{
-				// Send the request as a get to the url /tasks/check
-				//async: false,
-				type:'post',
-				url: '/tasks/check',
-				headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-				data: { id: id },
-				dataType: 'json',
-				success: function(id) 
-				{
-					var selector = '#' + id + '.task';
-					$(selector).toggleClass('icon-check');  
-					$(selector).toggleClass('icon-check-empty');
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
-			});
-		}
-	});
-	
-	
+
 	/*-------------------------
 	 For the user-manage modal
 	---------------------------
@@ -74,8 +46,79 @@ $(window).bind("load", function()
 	 -------------------- */
 	
 	
+	//----------- #datafile-panel listeners ----------------------------------------------------------
+	$(".edit_datafile_groups:input:not([type='hidden'])").each(function() { $(this).chosen({ min_search_term_length: 2 }); });
+	$('#new-datafile :file').change(function()
+	{
+		var file = this.files[0];
+		if(file.name.length < 1 || file.size < 1) 
+		{
+			alert("The file appears empty.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else if(file.size > 1048576)
+		{
+			alert("Please limit file uploads to 1Mb.");
+			$('#new-datafile :submit').attr('disabled','disabled');
+		}
+		else
+		{
+			$('#new-datafile :submit').removeAttr('disabled','');
+			$('#new-datafile :submit').live('click', function(){ ajax_form_submit('#new-datafile'); return false; });
+		}
+	});
+	attach_submit('#new-datafile');
+	$("[id^=edit-datafile]").each(function() { attach_submit(this.id); });
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- #job-panel listeners ---------------------------------------------------------------
+	$('.edit_job_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
+	$("[id^=edit-job]").each(function() { attach_submit(this.id); });
+	//------------------------------------------------------------------------------------------------
+	
+	
 	//----------- #micropost-panel listeners ---------------------------------------------------------
 	attach_submit('#new-micropost');
+	//------------------------------------------------------------------------------------------------
+	
+	
+	//----------- #task-panel listeners ----------------------------------------------------------
+	$('.task').live('click',function()
+	{ 
+		// If this element has the 'gray' class, its because rails added it to indicate its state should not change.
+		// Only the task creator and assignee can modify this state (this is also checked by rails after the AJAX call 
+		if (!($(this).hasClass('gray')))
+		{
+			var id  = parseInt($(this)[0].id);
+			var box = $(this);
+			$.ajax(
+			{
+				// Send the request as a get to the url /tasks/check
+				//async: false,
+				type:'post',
+				url: '/tasks/check',
+				headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+				data: { id: id },
+				dataType: 'json',
+				success: function(id) 
+				{
+					var selector = '#' + id + '.task';
+					$(selector).toggleClass('icon-check');  
+					$(selector).toggleClass('icon-check-empty');
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) { alert("Error: " + errorThrown);},
+			});
+		}
+	});
+	$('#duedate').datetimepicker(
+	{
+		language: 'en',
+		format: 'yyyy-MM-dd hh:mm',
+		pick12HourFormat: false,
+		pickSeconds: false
+	});
+	attach_submit('#new-task');
 	//------------------------------------------------------------------------------------------------
 	
 	
@@ -119,14 +162,3 @@ function after_update_div()
 {
 	check_jobs_progress();
 }
-
-$(function()
-{
-	$('#duedate').datetimepicker(
-	{
-		language: 'en',
-		format: 'yyyy-MM-dd hh:mm',
-		pick12HourFormat: false,
-		pickSeconds: false
-	});
-});

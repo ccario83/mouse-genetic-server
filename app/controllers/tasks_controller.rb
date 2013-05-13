@@ -9,13 +9,10 @@ class TasksController < ApplicationController
 		@group = Group.find(params[:task][:group_id].to_i)
 		@creator = User.find(params[:task][:creator_id].to_i)
 		@assignee_id = params[:task][:assignee_id].to_i
+		@members = @group.members.sort_by(&:last_name).paginate(:page => params[:members_paginate], :per_page => 5)
 		
 		if !(@assignee_id == 0)
 			@assignee = User.find(params[:task][:assignee_id].to_i)
-		else
-			flash[:error] = "A task must have an assignee."
-			redirect_to :back
-			return
 		end
 		
 		@task = Task.new({:creator => @creator, :group => @group, :assignee => @assignee, :description => params[:task][:description], :due_date => params[:task][:due_date]})
@@ -25,7 +22,6 @@ class TasksController < ApplicationController
 		else
 			flash[:error] = "Please correct form errors."
 		end
-		
 		respond_to do |format|
 			format.js { render :controller => "tasks", :action => "create" } and return
 		end

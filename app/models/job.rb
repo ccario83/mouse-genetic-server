@@ -9,6 +9,7 @@ class Job < ActiveRecord::Base
 	belongs_to :datafile
 	has_and_belongs_to_many :groups
 	
+	validates :name, :presence => true
 	validates :creator,	:presence => true
 	validates :runner,	:presence => true, :inclusion => { :in => ['UWF'], :message => "Invalid job type" }
 	validates :state, :inclusion => { :in => ['Starting', 'Progressing', 'Completed', 'Failed'], :message => "Invalid job state" }

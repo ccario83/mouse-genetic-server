@@ -12,6 +12,13 @@ class Datafile < ActiveRecord::Base
 	# Set the default number of posts per page for will_paginate
 	self.per_page = 4
 
+	def to_s
+		s = "#{self.filename} - #{self.description}"
+		s = s.length > 18? s[0..15]+'...' : s 
+		return s
+	end
+
+
 	def get_filehandle(flag)
 		return File.open(self.get_path, flag)
 	end
@@ -54,6 +61,7 @@ class Datafile < ActiveRecord::Base
 		end
 		return File.join(self.directory,self.filename)
 	end
+	
 	
 	private
 	

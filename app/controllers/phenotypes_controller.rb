@@ -296,7 +296,7 @@ class PhenotypesController < ApplicationController
     @job = current_user.jobs.new(:runner => 'UWF', :name => job_name.titleize, :parameters => parameters)
 
     # Flag that this job is not new
-    @enabled_upload = false
+    @enable_file_selection = false
     render 'uwf/new'
   end
 

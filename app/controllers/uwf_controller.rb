@@ -6,41 +6,36 @@ class UwfController < ApplicationController
   end
   
   def new
-    @enabled_upload = true
-    @job = current_user.jobs.new
-    @datafile = Datafile.new
+    @user = current_user
+    @enable_file_selection = true
+    @job = @user.jobs.new
+    @datafiles = @user.datafiles.where(:uwf_runnable => true)
     @job_name = "Enter a job name"
   end
   
   
   def create
-    # Get the form data
-    if params['job']['datafile'].has_key?(:id)
-        id = params['job']['datafile']['id'].to_i
-        if current_user.datafiles.map(&:id).include?(id)
-            params['job']['datafile'] = Datafile.find(id)
-        else
-            debugger
-            flash[:error] = "Nice try..."
-            redirect_to :back
-        end
+    @user = current_user
+    
+    @job_name = params[:job][:name]
+    @emma_type = params[:job][:parameters][:emma_type]
+    @snp_set = params[:job][:parameters][:snp_set]
+    
+    @datafile = []
+    if @user.datafiles.map(&:id).include?(params[:job][:datafile_id].to_i)
+        @datafile = Datafile.find(params[:job][:datafile_id].to_i)
     else
-        # Process new file
-        datafile = current_user.datafiles.new()
-        datafile.process_uploaded_file(params['job']['datafile'])
-        datafile.save!
-        params['job']['datafile'] = datafile
+        flash[:error] = "Nice try..."
+         redirect_to :back
     end
 
     # Create the new job object
-    @job = current_user.jobs.new(params['job'])
-    # Set the runner
-    @job.runner = 'UWF'
+    @job = current_user.jobs.new(:name => @job_name, :runner => 'UWF', :state => 'Starting', :parameters => params[:job][:parameters], :datafile => @datafile)
     @job.save!
 
     UwfWorker.perform_async(@job.id)
 
-    redirect_to "/users/#{current_user.id}/jobs/#{@job.id}"
+    redirect_to "/users/#{@user.id}/jobs/#{@job.id}"
     return
   end
   

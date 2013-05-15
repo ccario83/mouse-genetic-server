@@ -7,7 +7,7 @@
 	<h3>New Task</h3>
 </div>
 <div class="modal-body">
-	<%= simple_form_for task, :url => group_tasks_path(group, task), :remote => true, do |f| %>
+	<%= simple_form_for task, :url => group_tasks_path(group, task), :remote => true do |f| %>
 		<%= f.input :description, :label => "Task", :as => :text, :placeholder => "Compose a new task...", :input_html => { :style => 'width:500px;', :rows => 1 } %>
 		<div class="control-group datetime required">
 			<label class="datetime required control-label" for="due_date">Due date</label>

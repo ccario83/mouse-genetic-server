@@ -458,7 +458,6 @@ select, input[type="file"] { line-height: 0px;}
 
 .users li, .groups li
 {
-	overflow: auto;
 	padding: 2px 0;
 	/*border-top: 1px solid #999;*/
 }
@@ -825,9 +824,10 @@ h3 span.btn
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow:ellipsis;
-
 	display: table-cell;
 	vertical-align: bottom;
+	width: 100%;
+	float: left;
 }
 .group-info-small a{ color: #FAA732; }
 .group-info-small a:hover

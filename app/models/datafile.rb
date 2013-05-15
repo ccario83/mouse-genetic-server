@@ -87,7 +87,7 @@ class Datafile < ActiveRecord::Base
 			end
 			contents.each do |entry|
 				# Verify strain contains any letter, number, underscore, <, >, +, or / character
-				if (entry[contents.headers[0]] =~ /^[\w\/\+<> ]+$/).nil?
+				if (entry[contents.headers[0]] =~ /^[\w\/\+<>\-\. ]+$/).nil?
 					puts "Bad strain" 
 					return
 				# Verify the second ID column is alpha numeric word

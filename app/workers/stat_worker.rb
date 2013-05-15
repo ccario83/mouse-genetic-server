@@ -1,4 +1,4 @@
-require('rinruby')
+require 'rinruby'
 
 class StatWorker
     include Sidekiq::Worker
@@ -8,30 +8,39 @@ class StatWorker
     @@myr = {}
     # The function takes an owner key job key, list of individual values, and corresponding list of strains as arguments
     def perform(owner_key, job_key, values, strains)
+
+	# To debug:
+	# @@myr   = {}
+	# job_key = '32da5c'
+	# values  = [ 6,  8,  3,  3,  1,  1,  9,  9,  3,  0,  7,  6 ]
+	# strains = ['a','a','b','b','b','b','a','a','a','b','a','b']
+	# Now copy and paste from below
+
         # Create a new rinruby connection for this job
         @@myr[job_key] = RinRuby.new(echo = true, interactive = false)
         # Load the agricolae package
-        @@myr[job_key].eval 'library(agricolae)'
+        @@myr[job_key].eval "library(agricolae)"
         # Import the values and strains into the R namespace
-        @@myr[job_key].assign 'values', values
-        @@myr[job_key].assign 'strains', strains
+        @@myr[job_key].assign "values", values
+        @@myr[job_key].assign "strains", strains
         # Convert the data to the dataframe and perform a analysis of variance on it, using strain as a factor 
-        @@myr[job_key].eval 'data = data.frame(values = values, strains = factor(strains))'
-        @@myr[job_key].eval 'amod <- aov(data$values ~ data$strains ,data)'
+        @@myr[job_key].eval "data = data.frame(values = values, strains = factor(strains))"
+        @@myr[job_key].eval "amod <- aov(data$values ~ data$strains ,data)"
         # Perform a Tukey HSD test on the model to find strain significance groupings
-        @@myr[job_key].eval 'results <- HSD.test(amod, "data$strains")'
+        @@myr[job_key].eval "results <- HSD.test(amod, 'data$strains')"
         # Pull out the relavant data from the results
-        @@myr[job_key].eval 'strains <- as.vector(results$trt)'
-        @@myr[job_key].eval 'means <- as.vector(results$means)'
-        @@myr[job_key].eval 'stderrs <- as.vector(results$std.err)'
-        @@myr[job_key].eval 'letters <- as.vector(results$M)'
+	# ===> NOTE: The agricolae package seems to switch between whether or not the '$groups' container is needed or not <=== 
+        @@myr[job_key].eval "strains <- as.vector(results$groups$trt)"
+        @@myr[job_key].eval "means <- as.vector(results$groups$means)"
+        @@myr[job_key].eval "stderrs <- as.vector(results$means$std.err)"
+        @@myr[job_key].eval "letters <- as.vector(results$groups$M)"
 
         # Bring these results back into ruby
-        @returned_strains = @@myr[job_key].pull 'strains'
+        @returned_strains = @@myr[job_key].pull "strains"
         @returned_strains.map! { |x| x.rstrip() }
-        @unsorted_means = @@myr[job_key].pull 'means'
-        @unsorted_stderrs = @@myr[job_key].pull 'stderrs'
-        @unsorted_letters = @@myr[job_key].pull 'letters'
+        @unsorted_means = @@myr[job_key].pull "means"
+        @unsorted_stderrs = @@myr[job_key].pull "stderrs"
+        @unsorted_letters = @@myr[job_key].pull "letters"
 
         # Sort the strains and prepare variables with sorted values
         @strains = @returned_strains.sort

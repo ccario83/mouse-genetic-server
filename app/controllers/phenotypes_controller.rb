@@ -258,7 +258,7 @@ class PhenotypesController < ApplicationController
 
     # Create a new datafile ActiveRecord, and give it a name
     filename = 'phenotypes.' + SecureRandom.hex(2)
-    @datafile = current_user.datafiles.create!(:filename => filename, :uwf_runnable => true)
+    @datafile = current_user.datafiles.new(:filename => filename, :uwf_runnable => true)
     
     sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
     File.open(@datafile.get_path, 'w') do |pheno_file|
@@ -289,6 +289,9 @@ class PhenotypesController < ApplicationController
             end
         end
     end
+
+    @datafile.save!
+    puts "File created at #{@datafile.get_path}"
 
     # Create a new UFW job
     job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure

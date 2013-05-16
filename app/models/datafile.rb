@@ -116,8 +116,8 @@ class Datafile < ActiveRecord::Base
 			end
 			# Write cleaned up version
 			File.open(self.get_path, 'w') do |f|
-				f.write uwf_header << contents.headers[3]
-				contents.each {|e| f.write e.to_s.gsub(',','\t') }
+				(uwf_header << contents.headers[3]).each {|e| e.to_s.gsub(",","\t")}
+				contents.each {|e| f.write e.to_s.gsub(",","\t") }
 			end
 
 			self.uwf_runnable = true

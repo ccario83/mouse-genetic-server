@@ -70,11 +70,12 @@ class Job < ActiveRecord::Base
 		error_log = []
 		begin
 			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:error:log"
-				error_log = $redis.smembers "#{redis_key}:error:log"
+				error_log = $redis.smembers "#{self.creator.redis_key}:#{self.redis_key}:error:log"
 			end
 		rescue
 			return nil
 		end
+		return error_log
 	end
 	
 	private

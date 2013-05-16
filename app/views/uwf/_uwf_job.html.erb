@@ -20,12 +20,51 @@
 			<center><h3>Click here for full screen interactive mode</h3></center>
 		</div>
 	</div>
-<% else %>
+<% elsif job.state == 'Progressing' || job.state == 'Starting'%>
 	<% content_for :page_js do %>
 			<%= javascript_include_tag('uwf_show') %>
 	<% end %>
 	<div class="row-fluid" style = "">
 		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
+		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
+		<div id="job-progress" style="padding-left: 20px">
+			<ul>
+				<li id="starting" class="incomplete">Starting</li>
+				<li id="configuring-gwa" class="incomplete">Configuring <%= job.get_parameter('emma_type') %></li>
+				<li id="starting-gwa" class="incomplete">Starting <%= job.get_parameter('emma_type') %>
+					<ul>
+						<li id="reading-phenotypes" class="incomplete">Reading phenotypes</li>
+						<li id="processing-phenotypes" class="incomplete">Processing phenotypes</li>
+						<li id="processing-genotypes" class="incomplete">Processing genotypes</li>
+						<li id="running-associations" class="incomplete">Running associations</li>
+						<li id="post-processing" class="incomplete">Post processing</li>
+					</ul>
+				</li>
+				<li id="configuring-circos" class="incomplete">Configuring Circos</li>
+				<li id="starting-circos" class="incomplete"> Starting Circos</li>
+					<ul>
+						<li id="populating-tracks" class="incomplete">Populating tracks</li>
+						<li id="generating-datapoints" class="incomplete">Generating datapoints</li>
+						<li id="drawing-image" class="incomplete">Drawing the full genome Circos plot</li>
+						<li id="completed" class="incomplete">Completed!</li>
+					</ul>
+				<li>
+		</div>
+	</div>
+	
+<% elsif job.state == 'Failed' %>
+	<% content_for :page_js do %>
+			<%= javascript_include_tag('uwf_show') %>
+	<% end %>
+	<div class="row-fluid" style = "">
+		<h3 style="padding-left: 20px;"><i class="icon-exclamation error"></i> Job State:</h3>
+		<div id="job-errors">
+			<ul>
+				<% job.runtime_errors.each do |e| %>
+					<li><%= e %>
+				<% end %>
+			</ul>
+		</div>
 		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
 		<div id="job-progress" style="padding-left: 20px">
 			<ul>

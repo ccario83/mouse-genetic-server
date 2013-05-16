@@ -14,10 +14,18 @@ html { height: 100%; }
 
 
 /* PANEL CSS */
+
 #job-progress *
 {
-	font-size: 24px;
-	line-height: 30px
+	font-size: 17px;
+	line-height: 21px;
+}
+#job-progress
+{
+	background: rgba(0, 0, 0, 0.02);
+	padding: 12px;
+	border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
 }
 #job-progress ul
 {
@@ -27,15 +35,50 @@ html { height: 100%; }
 .complete
 {
 	color: #448744;
-	text-shadow: 0 0 5px #D1FFD1;
-	list-style-image: url("/assets/ok.png");
-	
 }
+li.complete:before
+{
+	content: "\F00C";
+	font-family: FontAwesome;
+	display: inline-block;
+	margin-left: -1.2em;
+	width: 1.2em;
+	font-size: 16px;
+	vertical-align: middle;
+}
+
 .incomplete
 {
-	color: #ddd;
-	text-shadow: #888 0 -1px 0;
+	color: rgba(0, 0, 0, 0.28);
 }
+.error
+{
+	color: #b94a48;
+}
+li.error:before
+{
+	content: "\F00D";
+	font-family: FontAwesome;
+	display: inline-block;
+	margin-left: -1.2em;
+	width: 1.2em;
+	font-size: 16px;
+	vertical-align: middle;
+}
+#job-errors
+{
+	border: 1px solid rgba(185, 74, 72, 0.3);
+	border-radius: 5px;
+	background: rgba(185, 74, 72, 0.06);
+	margin-bottom: 10px;
+}
+#job-errors ul 
+{
+	list-style: none;
+	margin: 5px;
+}
+#job-errors li { color: #b94a48; }
+
 
 .main-panel
 {

@@ -41,9 +41,10 @@ class UwfController < ApplicationController
   
   
   def progress
-    @job = Job.find(params['id'])
-    @log = $redis.smembers("#{current_user.redis_key}:#{@job.redis_key}:progress:log")
-    render :json => @log.to_json
+    job = Job.find(params['id'])
+    log = $redis.smembers("#{current_user.redis_key}:#{job.redis_key}:progress:log")
+    errors = $redis.smembers("#{current_user.redis_key}:#{job.redis_key}:error:log")
+    render :json => {log: log, errors: errors}.to_json
   end
   
   

@@ -1,5 +1,5 @@
 class Job < ActiveRecord::Base
-	attr_accessible :creator, :groups, :directory, :name, :description, :datafile, :state, :runner, :parameters 
+	attr_accessible :creator, :groups, :directory, :name, :description, :datafile, :resultfile, :state, :runner, :parameters 
 	before_create :create_job_directory
 	after_initialize :default_values
 	before_save :ensure_paramaters_are_JSON
@@ -11,7 +11,7 @@ class Job < ActiveRecord::Base
 	
 	validates :name, :presence => true
 	validates :creator,	:presence => true
-	validates :runner,	:presence => true, :inclusion => { :in => ['UWF'], :message => "Invalid job type" }
+	validates :runner,	:presence => true, :inclusion => { :in => ['UWF', 'Circos'], :message => "Invalid job type" }
 	validates :state, :inclusion => { :in => ['Starting', 'Progressing', 'Completed', 'Failed'], :message => "Invalid job state" }
 	validates :datafile, :presence => true
 	validates_associated :datafile

@@ -257,9 +257,11 @@ class PhenotypesController < ApplicationController
     @frequencies.each{|key,val| val>0? @dichotomized[key]=1 : @dichotomized[key]=0} 
 
     # Create a new datafile ActiveRecord, and give it a name
-    filename = 'phenotypes.' + SecureRandom.hex(2)
-    @datafile = current_user.datafiles.new(:filename => filename, :uwf_runnable => true)
+    job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure
     
+    
+    filename = 'phenotypes.' + SecureRandom.hex(2)
+    @datafile = current_user.datafiles.new(:filename => filename, :uwf_runnable => true, :description => job_name)
     sex_long = { 'M'=>'male', 'F'=>'female', 'B'=>'NA' }
     File.open(@datafile.get_path, 'w') do |pheno_file|
         if @measure == 'severity'
@@ -294,13 +296,11 @@ class PhenotypesController < ApplicationController
     puts "File created at #{@datafile.get_path}"
 
     # Create a new UFW job
-    job_name = PathBaseTerm.find(@mpath_id_list[0]).term + " " + MouseAnatomyTerm.find(@anat_id_list[0]).term + " " + @measure
     parameters = {:mpath_id_list => @mpath_id_list, :anat_id_list => @anat_id_list, :sex => @sex, :measure => @measure, :selected_strains => @selected_strains, :youngest => @youngest, :oldest => @oldest, :code => @code}.to_json
     @job = current_user.jobs.new(:runner => 'UWF', :name => job_name.titleize, :parameters => parameters)
 
     # Flag that this job is not new
-    @enable_file_selection = false
-    render 'uwf/new'
+    render 'uwf/new', :locals => { :enable_file_selection => false, :datafile => @datafile }
   end
 
   # AJAX to load phenotype selector tree data

@@ -116,7 +116,8 @@ class Datafile < ActiveRecord::Base
 			end
 			# Write cleaned up version
 			File.open(self.get_path, 'w') do |f|
-				(uwf_header << contents.headers[3]).each {|e| e.to_s.gsub(",","\t")}
+				uwf_header.each {|e| f.write e + "\t"}
+				f.write contents.headers[3] + "\n"
 				contents.each {|e| f.write e.to_s.gsub(",","\t") }
 			end
 

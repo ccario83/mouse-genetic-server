@@ -3,7 +3,7 @@
 <div class="user-info-large">
 		<%= gravatar_for user, :size =>65 %>
 		<span id="user-name">
-		<% if user.admin? && !current_user?(user) %>
+		<% if current_user.admin? && !current_user?(user) %>
 			<a href="/users/<%=user.id%>" data-confirm="Are you sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
 		<% end %>
 			<%= user.name %>

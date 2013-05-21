@@ -183,10 +183,9 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         return gene_of
     
     # STUBBED!
-    if track_name == 'PPH2_track':
-        # Not yet implemented
-        return '/home/clinto/Desktop/AED697/Circos/PPH2_track.txt'
-
+    if track_name == 'PPH2_track':        
+	# Not yet implemented
+        pass
 
 # Try to open communication with redis
 if use_redis:

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130502175616) do
+ActiveRecord::Schema.define(:version => 20130521191548) do
 
   create_table "communications", :force => true do |t|
     t.integer "recipient_id"
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20130502175616) do
     t.text     "parameters"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "resultfile"
   end
 
   add_index "jobs", ["creator_id"], :name => "index_jobs_on_creator_id"

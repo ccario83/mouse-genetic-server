@@ -5,12 +5,12 @@
 <% content_for :page_js do %>
 <% end %>
 
-			<div class="span11 offset1">
-				<div id="user-index">
-					<h1>All users</h1>
-					<%= will_paginate %>
-					<%= render :partial => 'user_info', :collection => @users, :as => :user %>
-				</div>
-			</div>
+<div class="span11 offset1">
+	<div id="user-index">
+		<h1>All users</h1>
+		<%= will_paginate %>
+		<%= render :partial => 'user_info', :collection => @users, :as => :user %>
+	</div>
+</div>
 
 

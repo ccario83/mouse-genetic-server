@@ -8,6 +8,7 @@ class UwfWorker
     
     def perform(job_id, chromosome = -1, start_position = -1, stop_position = -1, bin_size = 5000000)
         
+        
         # Get the required parameters from the job ActiveRecord
         job = Job.find(job_id)
         job.state = 'Starting'
@@ -26,19 +27,31 @@ class UwfWorker
         $redis.set    "#{redis_key}:completed", false
         $redis.expire "#{redis_key}:completed", 86400
         
-        # Set the additional parameters in the job ActiveRecord
-        job.store_parameters({ :chromosome => chromosome, :start_position => start_position, :stop_position => stop_position, :bin_size => bin_size })
-        
-
+        # Set the additional parameters in the job's ActiveRecord
         job.state = 'Progressing'
         job.save!
+        
+        
         ## ----------- Run EMMA -----------
         # Signal to redis that the configuration of emma has begun for this job
         $redis.sadd "#{redis_key}:progress:log",'configuring-gwa'
-        # Get the BerndtEmma configuration template
+        
+        # Declare other variables in the config file
+        # snp_set        = defined above
+        # pheno_file     = defined above
+        # emma_type      = defined above
+        # redis_key      = defined above
+        
+        location    = File.join(job_location, 'Plots')
+        config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
+        config_file     = File.join(location, 'CG.conf')
+        
+        
+        # Determine paths for the BerndtEmma configuration file template ('BE.conf') and its destination
         config_template = File.join(Rails.root,'app/views/uwf/BE_conf_template.erb')
         config_file     = File.join(job_location, 'BE.conf')
-        # And populate it with the parameters passed to this function
+        
+        # Create the BerndtEmma config file with run parameters passed to this function
         config = ERB.new(File.read(config_template))
         File.open(config_file, 'w') { |f| f.write(config.result(binding)) }
 
@@ -51,32 +64,51 @@ class UwfWorker
         #FileUtils.cp('/raid/WWW/data/e38ff5/emmax_results.txt',job_location)
         ## ---------------------------------
         
+        
         if $redis.exists "#{redis_key}:error:log"
             job.state = 'Failed'
             job.save!
             return
         end
-        # Get the name of the result file for the circos plots 
-        emma_result_file = job_location + '/' + emma_type + '_results.txt'
+        
+        # Get the name of the result file for the circos plots, add it as a resultfile to the job. 
+        result_filename  = emma_type + '_results.txt'
+        result_directory = job_location
+        job.resultfile   = File.join(result_directory, result_filename)
+        # Create this as a datafile for the user
+        datafile = job.creator.datafiles.new({:filename => result_filename, :directory => result_directory, :description => "Result for #{job.redis_key}" })
+        datafile.save!
         
         
         ## ----------- Run Circos to make the full plot -----------
-        # Get the path where plots should be saved, and create it
-        job_location    = File.join(job_location, 'Plots')
-        Dir.mkdir(job_location)
         # Signal to redis that circos plot configuration has begun for this job
         $redis.sadd "#{redis_key}:progress:log",'configuring-circos'
         
-        # Get the circos_generator configuration template 
+        # Declare other variables in the config file
+        # redis_key      = defined above
+        emma_result_file = job.resultfile
+        # start_position = defined above
+        # stop_position  = defined above
+        # bin_size       = defined above
+        # snp_set        = defined above
+        
+        # Get the path where plots should be saved, and create it
+        location    = File.join(job_location, 'Plots')
+        # Make a directory for this job to write output to
+        Dir.mkdir(location)
+        
+        # Determine paths for the circos_generator configuration file template ('GC.conf') and its destination
         config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
-        config_file     = File.join(job_location, 'CG.conf')
-        # And populate it with the parameters passed to this function
+        config_file     = File.join(location, 'CG.conf')
+        
+        # Create the Circos config file with run parameters passed to this function
         config = ERB.new(File.read(config_template))
         File.open(config_file, 'w') { |f| f.write(config.result(binding)) }
 
+
         # Signal to redis that the full genome Circos plot generation has begun, and run it
         $redis.sadd "#{redis_key}:progress:log",'starting-circos'
-        cmd = "python #{CIRCOS_PATH}circos_generator.py -p #{job_location}"
+        cmd = "python #{CIRCOS_PATH}circos_generator.py -p #{location}"
         puts cmd
         system(cmd)
         
@@ -86,9 +118,11 @@ class UwfWorker
             return
         end
         
+        
         # Signal to redis we are now all done!
         $redis.sadd "#{redis_key}:progress:log",'completed'
         $redis.set "#{redis_key}:completed", true
+        $redis.sadd "#{redis_key}:ready_images:",'-1_-1_-1'
         job.state = 'Completed'
         job.store_parameter({circos_root_url: File.join('/data', job.creator.redis_key, 'jobs', job.redis_key, 'Plots')})
         job.save!
@@ -117,7 +151,7 @@ end
                 stop_pos = slices[i+1].to_i
                 job_location = File.join(job_location, "Plots/Chr#{chromosome}/#{start_pos}_#{stop_pos}")
                 # Uncomment the line below to generate level 3 plots (full chromosomes) with level 1 plots (full genome)
-                #CircosWorker.perform_async(job_location, snp_set, emma_result_file, chromosome, start_pos, stop_pos, 12500)
+                #CircosWorker.perform_async(job_location, snp_set, datafile.get_path, chromosome, start_pos, stop_pos, 12500)
             end
         end
 =end 

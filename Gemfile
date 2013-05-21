@@ -49,7 +49,8 @@ gem 'bootstrap-will_paginate', '0.0.6'
 
 # Use unicorn as the app server
 # gem 'unicorn'
-
+# Thin doesn't have the content-length WARN errors
+gem 'thin'
 
 # Deploy with Capistrano
 # gem 'capistrano'

@@ -20,7 +20,8 @@ class UwfController < ApplicationController
     @job_name = params[:job][:name]
     @emma_type = params[:job][:parameters][:emma_type]
     @snp_set = params[:job][:parameters][:snp_set]
-    
+    @job_description = params[:job][:description]
+
     @datafile = []
     if @user.datafiles.map(&:id).include?(params[:job][:datafile_id].to_i)
         @datafile = Datafile.find(params[:job][:datafile_id].to_i)
@@ -30,7 +31,17 @@ class UwfController < ApplicationController
     end
 
     # Create the new job object
-    @job = current_user.jobs.new(:name => @job_name, :runner => 'UWF', :state => 'Starting', :parameters => params[:job][:parameters], :datafile => @datafile)
+    image_parameters = { "-1_-1_-1" => { chromosome: -1, start_pos: -1, stop_pos: -1, bin_size: 5000000 } }
+    @job = current_user.jobs.new(:name        => @job_name,         \
+                                 :description => @job_description,  \
+                                 :runner      => 'UWF',             \
+                                 :state       => 'Starting',        \
+                                 :datafile    => @datafile,         \
+                                 :parameters  => {  :image_parameters   => image_parameters,            \
+                                                    :emma_type          => @emma_type,                  \
+                                                    :snp_set            => @snp_set                     \
+                                                 }
+                                )
     @job.save!
 
     UwfWorker.perform_async(@job.id)
@@ -50,34 +61,37 @@ class UwfController < ApplicationController
   
   def generate
     # Get the job id and remember the parameters from this job with Jobber
-    @job = Job.find(params['id'])
-    @emma_type = @job.get_parameter('emma_type')
-    @snp_set = @job.get_parameter('snp_set')
-    @emma_result_file = File.join(@job.datafile.get_path, @emma_type + '_results.txt')
+    debugger
+    job = Job.find(params['id'])
     
     # Get the requested image tag and figure out which region to show
-    @image_tag = params['image_tag']
-    @chromosome = @image_tag.split("_")[0]
-    @start_pos = @image_tag.split("_")[1]
-    @stop_pos = @image_tag.split("_")[2]
+    image_tag  = params['image_tag']
+    chromosome = image_tag.split("_")[0].to_i
+    start_pos  = image_tag.split("_")[1].to_i
+    stop_pos   = image_tag.split("_")[2].to_i
 
     # Density is how many points should be placed on the Circos plot. This sets the default vlaue for the CircosWorker
-    @density = 12500
+    density = 12500
     
-    # Determine the job location (which subfolder to place the image, organized by chromosome)
-    @job_location = ''
     # A -1 start and stop position signifies the full chromosome should be shown
-    if (@start_pos == '-1' and @stop_pos == '-1')
-        @job_location = File.join(@job.directory, "Plots/Chr#{@chromosome}")
+    dirctory = ''
+    if (start_pos == -1 and stop_pos == -1)
+        directory = File.join(job.directory, "Plots/Chr#{chromosome}")
         # Change the default density for the full chromosome plot
-        @density = 125000
+        density = 125000
     else
         # Within the chromosome folder, sub plots are stored in start_pos_stop_pos folders
-        @job_location = File.join(@job.directory, "Plots/Chr#{@chromosome}/#{@start_pos}_#{@stop_pos}")
+        directory = File.join(job.directory, "Plots/Chr#{chromosome}/#{start_pos}_#{stop_pos}")
     end
 
+    image_parameters = { "-1_-1_-1" => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, directory: directory } }
+    params = job.get_parameters(:image_parameters)
+    params << image_parameters
+    job.store_parameters(params)
+
     # Ask the CircosWorker to create this plot
-    CircosWorker.perform_async(@job_location, @snp_set, @emma_result_file, @chromosome, @start_pos, @stop_pos, @density)
+    CircosWorker.perform_async(job.id, directory, chromosome, start_pos, stop_pos, density)
+    
     render :json => "Ok! Job started!"
   end
 

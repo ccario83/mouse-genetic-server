@@ -870,7 +870,7 @@ h3 span.btn
 	display: table-cell;
 	vertical-align: bottom;
 	width: 100%;
-	float: left;
+	/*float: left; interferes with highlight effect, but needed for ellipsis to work */
 }
 .group-info-small a{ color: #FAA732; }
 .group-info-small a:hover

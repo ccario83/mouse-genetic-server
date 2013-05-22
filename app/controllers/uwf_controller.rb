@@ -61,7 +61,6 @@ class UwfController < ApplicationController
   
   def generate
     # Get the job id and remember the parameters from this job with Jobber
-    debugger
     job = Job.find(params['id'])
     
     # Get the requested image tag and figure out which region to show
@@ -84,15 +83,25 @@ class UwfController < ApplicationController
         directory = File.join(job.directory, "Plots/Chr#{chromosome}/#{start_pos}_#{stop_pos}")
     end
 
-    image_parameters = { "-1_-1_-1" => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, directory: directory } }
-    params = job.get_parameters(:image_parameters)
-    params << image_parameters
+    image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, directory: directory } }
+    params = job.get_parameter('image_parameters')
+    params ||= {}
+    params.merge!(image_parameters)
     job.store_parameters(params)
 
     # Ask the CircosWorker to create this plot
     CircosWorker.perform_async(job.id, directory, chromosome, start_pos, stop_pos, density)
     
     render :json => "Ok! Job started!"
+  end
+  
+  def update_image_params_table
+    image_tag = params['image_tag']
+    job = Job.find(params['job_id'])
+    @params = job.get_parameter('image_parameters')[image_tag]
+    respond_to do |format|
+        format.js { render :controller => "uwf_controller", :action => "update_image_params_table" }
+    end
   end
 
 end

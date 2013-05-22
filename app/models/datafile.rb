@@ -62,6 +62,10 @@ class Datafile < ActiveRecord::Base
 		return File.join(self.directory,self.filename)
 	end
 	
+	def download_link
+		return File.join('/data', self.get_path.split(USER_DATA_PATH)[1])
+	end
+	
 	
 	private
 	

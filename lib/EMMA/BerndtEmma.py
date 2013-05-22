@@ -30,6 +30,7 @@
 #  2012 11 28 --    Modified write_error to also echo to command line for easier debugging.
 #  2013 04 08 --    Redis key now passed as an argument in the configuration file
 #  2013 05 13 --    Added compress_results flag as class variable to toggle compressed result files
+#  2013 05 22 --    Redis output is not echoed to command line for debugging
 #===============================================================================
 
 import sys              # for various system functions
@@ -121,6 +122,7 @@ class EmmaRunner(object):
                 log_ofh.close()
             if not self._redis_log is None:
                 self._redis_channel.sadd(self._redis_log, entry)
+                print entry
             if self._log_file is None and self._redis_log is None:
                 print entry
         except:

@@ -71,6 +71,7 @@ RorWebsite::Application.routes.draw do
   # UWF AJAX calls
   get '/uwf/progress/:id' => 'uwf#progress'
   get '/uwf/generate/:id' => 'uwf#generate'
+  post '/uwf/update_image_params_table' => 'uwf#update_image_params_table'
   
   # Phenotype routes
   get '/phenotypes/index'
@@ -91,7 +92,7 @@ RorWebsite::Application.routes.draw do
   match '/tool_descriptions' => 'static_pages#tool_descriptions'
   
   # Static handlers for development mode
-  match 'data/*path' => 'static#show'
+  match 'data/*path' => 'static#show', :defaults => { :format => 'txt' }
   match 'exists/data/*path' => 'static#exists'
 
   # The priority is based upon order of creation:

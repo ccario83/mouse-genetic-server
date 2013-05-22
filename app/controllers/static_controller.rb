@@ -1,5 +1,13 @@
 # app/controllers/static_controller.rb
 class StaticController < ApplicationController
+  before_filter :default_format_txt
+
+  # Set format to xml unless client requires a specific format
+  # Works on Rails 3.0.9
+  def default_format_txt
+    request.format = 'txt' unless params[:format]
+  end
+
 
   def show
     begin
@@ -7,11 +15,13 @@ class StaticController < ApplicationController
     rescue Errno::ENOENT => e
         raise ActionController::RoutingError.new('Not Found')
     end
-    contents = file.read
     respond_to do |format|
-        format.svg { send_data(contents, :type=>"image/svg+xml", :disposition =>"inline") }
-        format.png { render :text => contents }
+        format.svg { send_data(file.read, :type=>"image/svg+xml", :disposition =>"inline") and return }
+        format.png { render :text => file.read and return }
+        format.txt { send_file(file, :type=>"text/plain") and return }
     end
+    send_file(file, :type=>"text/plain") 
+    
   end
 
   def exists

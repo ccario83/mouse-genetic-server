@@ -43,9 +43,13 @@ function full(el)
 	color_loaded_segments();
 
 	// Disable the 'last' and zoom-out buttons
-	$.plots.last_image_tag = ""
+	$.plots.current_image_tag = "-1_-1_-1";
+	$.plots.last_image_tag = "";
 	button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "disable");
+	
+	// Update the table
+	update_table();
 };
 
 
@@ -82,7 +86,7 @@ function image_exists(image_path)
 	image_found = true;
 	$.ajax(
 	{
-		url: '/exists/'+image_path,
+		url: '/exists'+image_path,
 		async: false,
 		error: function(){alert("The server isn't sure if that file exists or not!");},
 		success: function(data) { image_found = data['status'] },
@@ -115,6 +119,7 @@ function request_circos_image(image_tag)
 	
 	// Disable the 'last' button, enable the zoom-out button
 	$.plots.last_image_tag = ""
+	$.plots.current_image_tag = image_tag;
 	button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "enable");
 };
@@ -143,7 +148,7 @@ function generate_circos_image(image_tag)
 	
 	$.plots.loading_images.push(image_tag);
 	// Periodically poll for the new images
-	$.plots.timerID = setInterval('check_on_images()', 1000);
+//	$.plots.timerID = setInterval('check_on_images()', 1000);
 
 };
 
@@ -308,6 +313,22 @@ function button_toggle(selector, state)
 	button.attr('onclick', fun);
 };
 
+
+function update_table()
+{
+	// Update groups AJAX
+	$.ajax(
+	{
+		type:'post',
+		url: '/uwf/update_image_params_table',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: $.extend(decode_url(window.location.href), {'image_tag' : $.plots.current_image_tag }),
+		dataType: 'script',
+		success: function(response) { },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
+	});
+	return;
+}
 
 $(document).ready(function () 
 {

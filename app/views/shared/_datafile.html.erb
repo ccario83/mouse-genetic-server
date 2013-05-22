@@ -16,7 +16,7 @@
 			<p>
 				
 				<span class="label label-info<% if not datafile.uwf_runnable %> disabled<% end %>">UWF</span> 
-				<%= datafile.filename %> <span class="gray"><%= text_tag(datafile.owner) %>
+				<a href="<%= datafile.download_link %>"><%= datafile.filename %></a> <span class="gray"><%= text_tag(datafile.owner) %>
 			</p>
 		</div>
 		<div class="icon-panel">

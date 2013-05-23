@@ -1,13 +1,15 @@
 function unfull()
 {
-	// Only do this if we are in full screen mode...
+	// Return if not in full screen mode...
 	if (document.fullscreen) { return; }
-	if (document.mozFullScreen) { return; }
-	if (document.webkitIsFullScreen) { return; }
+	else if (document.mozFullScreen) { return; }
+	else if (document.webkitIsFullScreen) { return; }
+
+	$('#fs').html('');
 	
 	var job_root_path = $('#job_root_path').text();
 	image = job_root_path+"/circos.png";
-	var newElement = "<img alt='Circos' id='circos_thumb' src="+image+" width='75%' />"
+	var newElement = $.thumb_html;
 
 	var parent = document.getElementById('fs');
 	parent.innerHTML = newElement;
@@ -19,6 +21,10 @@ function unfull()
 
 function full(el)
 {
+	if (document.fullscreen) { return; }
+	else if (document.mozFullScreen) { return; }
+	else if (document.webkitIsFullScreen) { return; }
+	
 	$.timer_attempts = 0;
 	// Go fullscreen
 	if(el.webkitRequestFullScreen) 
@@ -36,7 +42,8 @@ function full(el)
 	
 	
 	// Replace the PNG thumbnail with the SVG image
-	var newElement = "<iframe id='circos_img' src='"+image_path+"' type='image/svg+xml' style='border: 0px;'></iframe>";
+	$.thumb_html = $('#fs').html();
+	var newElement = get_circos(image_path);
 	document.getElementById('fs').innerHTML = newElement;
 
 	// Color any loaded segments
@@ -48,8 +55,6 @@ function full(el)
 	button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "disable");
 	
-	// Update the table
-	update_table();
 };
 
 
@@ -330,6 +335,22 @@ function update_table()
 	return;
 }
 
+function get_circos(image_path)
+{
+	// Update groups AJAX
+	return $.ajax(
+	{
+		async: false, 
+		type:'post',
+		url: '/uwf/get_circos_panel',
+		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
+		data: $.extend(decode_url(window.location.href), {'image_tag' : $.plots.current_image_tag, 'image_path':image_path }),
+		dataType: 'html',
+		success: function(response) { return response },
+		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
+	}).responseText;
+}
+
 $(document).ready(function () 
 {
 	$.plots = {}
@@ -341,6 +362,10 @@ $(document).ready(function ()
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
 	$.timer_attempts_threshold = 40;
 	$.timer_attempts = 0;
+	
+	
+	
+	
 });
 
 

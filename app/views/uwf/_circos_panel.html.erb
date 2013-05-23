@@ -1,0 +1,101 @@
+
+<% job ||= @job %>
+<% show_image_params ||= false %>
+<div id="circos_panel" style="float:left; width:30%; padding: 20px;">
+	<div id='image-parameters-fs'>
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Parameter</th>
+					<th>Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Name</td><td><%= job.name %></td>
+				</tr>
+				<tr>
+					<td>Description</td><td><%= job.description %></td>
+				</tr>
+				<% job.get_parameters.each do |parameter, value| %>
+					<% # The Image Parameters hash contains all image parameters, but shouldn't be shown. A jquery ajax call is used instead %>
+					<% if parameter.titlecase == 'Image Parameters' and show_image_params == false %>
+						<% next %>
+					<% elsif parameter.titlecase == 'Image Parameters' %>
+						<% value.each do |tag, tag_vals| %>
+							<% tag_vals.each do |tag_param, tag_val| %>
+								<% if tag_val == -1 %><% tag_val = 'All' %><% end %>
+								<% if (tag_param == 'start_pos' || tag_param == 'stop_pos') && tag_val == 'All' %><% next %><% end %>
+								<tr>
+									<td><%= tag_param.titlecase %></td><td><%= tag_val %></td>
+								</tr>
+							<% end %>
+						<% end %>
+						<% next %>
+					<% end %>
+					<tr>
+						<% if parameter.titlecase == 'Circos Root Url' %>
+							<td>Circos Image (SVG)</td><td><a href="<%= value %>/circos.svg">Download</a></td>
+						<% else %>
+							<td><%= parameter.titlecase %></td><td><%= value %></td>
+						<% end %>
+					</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
+	<div  class="btn btn-primary" onclick="$('#circos_legend').show();">Figure Legend</div>
+</div>
+
+<div id="circos_legend" style="display: none; position: absolute; background: white; height:100%; width:84%; padding: 50px 8%;">
+	<h3> Legend </h3>
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Track</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><img src="/snp_density_closeup.png" style="height:175px; width:350px"  /></td>
+				<td>
+					The SNP density track indicates the
+					number of SNPs in each bin relative
+					to other bins. Warmer colors indicate 
+					greate SNP density.
+				</td>
+			</tr>
+			<tr>
+				<td><img src="/mhp_closeup.png" style="height:175px; width:350px" /></td>
+				<td>
+					The Manhattan plot track shows the
+					scores (-log p-value) of the best SNP
+					in each bin. Warmer colors also 
+					indicate better scoring SNPs. 
+				</td>
+			</tr>
+			<tr>
+				<td><img src="/ensembl_closeup.png" style="height:175px; width:350px"  /></td>
+				<td>
+					The Annotation track uses subtracks
+					to indicate SNP type for the best
+					SNP of each bin. These annotations
+					are retrieved from Ensembl.
+				</td>
+			</tr>
+			<tr>
+				<td><img src="/genes_closeup.png" style="height:175px; width:350px"  /></td>
+				<td>
+					The Gene track indicates the closest gene
+					to each best SNP of a bin, and the name is
+					scaled larger as the distance between the 
+					gene center and the SNP position decrease.
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="btn btn-primary" onclick="$('#circos_legend').hide();">Close</div>
+</div>
+
+<iframe id="circos_img" src="<%= @image_path %>" type='image/svg+xml' style='border: 0px;'></iframe>

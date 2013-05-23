@@ -13,17 +13,17 @@
 	<div class="row-fluid" style = "">
 		<div id="fs-container" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
 			<center>
-			<div id="fs">
-				<%= image_tag(File.join(job.get_parameter('circos_root_url'),'circos.png'), :id => 'circos_thumb', :width => '75%')%>
+			<div id="fs" style="border: 1px solid #ddd; border-radius: 5px;">
+				<%= image_tag(File.join(job.get_parameter('circos_root_url'),'circos.png'), :id => 'circos_thumb', :width => '55%')%>
+				<h3>Click here for full screen interactive mode</h3>
 			</div>
 			</center>
-			<center><h3>Click here for full screen interactive mode</h3></center>
 		</div>
 	</div>
 <% elsif job.state == 'Progressing' || job.state == 'Starting'%>
 	<% content_for :page_js do %>
 			<%= javascript_include_tag('uwf_show') %>
-	<% end %>
+	<% end %>z
 	<div class="row-fluid" style = "">
 		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
 		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
@@ -93,6 +93,34 @@
 <% end %>
 
 <br/>
-<div id="image-paramaters" class="row-fluid">
-	<%= render 'uwf/image_params_table' %>
+<div id="image-parameters" class="row-fluid">
+	<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Parameter</th>
+			<th>Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Name</td><td><%= job.name %></td>
+		</tr>
+		<tr>
+			<td>Description</td><td><%= job.description %></td>
+		</tr>
+		<% job.get_parameters.each do |parameter, value| %>
+			<% # The Image Parameters hash contains all image parameters, and is only shown in full screen mode %>
+			<% if parameter.titlecase == 'Image Parameters' || parameter.titlecase == 'Circos Root'%>
+				<% next %>
+			<% end %>
+			<tr>
+				<% if parameter.titlecase == 'Circos Root Url' %>
+					<td>Circos Image (SVG)</td><td><a href="<%= value %>/circos.svg">Download</a></td>
+				<% else %>
+					<td><%= parameter.titlecase %></td><td><%= value %></td>
+				<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+	</table>
 </div>

@@ -95,12 +95,13 @@ class UwfController < ApplicationController
     render :json => "Ok! Job started!"
   end
   
-  def update_image_params_table
+  def get_circos_panel
     image_tag = params['image_tag']
-    job = Job.find(params['job_id'])
-    @params = job.get_parameter('image_parameters')[image_tag]
+    @image_path = params['image_path']
+    @job = Job.find(params['job_id'])
+    @params = @job.get_parameter('image_parameters')[image_tag]
     respond_to do |format|
-        format.js { render :controller => "uwf_controller", :action => "update_image_params_table" }
+        format.html { render :partial => "circos_panel" }
     end
   end
 

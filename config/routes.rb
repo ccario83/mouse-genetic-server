@@ -71,7 +71,7 @@ RorWebsite::Application.routes.draw do
   # UWF AJAX calls
   get '/uwf/progress/:id' => 'uwf#progress'
   get '/uwf/generate/:id' => 'uwf#generate'
-  post '/uwf/update_image_params_table' => 'uwf#update_image_params_table'
+  post '/uwf/get_circos_panel' => 'uwf#get_circos_panel'
   
   # Phenotype routes
   get '/phenotypes/index'

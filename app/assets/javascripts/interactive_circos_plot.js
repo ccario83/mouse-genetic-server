@@ -5,14 +5,7 @@ function unfull()
 	else if (document.mozFullScreen) { return; }
 	else if (document.webkitIsFullScreen) { return; }
 
-	$('#fs').html('');
-	
-	var job_root_path = $('#job_root_path').text();
-	image = job_root_path+"/circos.png";
-	var newElement = $.thumb_html;
-
-	var parent = document.getElementById('fs');
-	parent.innerHTML = newElement;
+	$('#fs').html($.thumb_html);
 	
 	$.plots.zoom_image_list = [];
 	$.plots.image_found = false;
@@ -41,20 +34,36 @@ function full(el)
 	image_path = job_root_path+"/circos_im.svg";
 	
 	
-	// Replace the PNG thumbnail with the SVG image
-	$.thumb_html = $('#fs').html();
-	var newElement = get_circos(image_path);
-	document.getElementById('fs').innerHTML = newElement;
-
-	// Color any loaded segments
-	color_loaded_segments();
-
-	// Disable the 'last' and zoom-out buttons
 	$.plots.current_image_tag = "-1_-1_-1";
 	$.plots.last_image_tag = "";
-	button_toggle("polygon#right", "disable");
-	button_toggle("polygon#left", "disable");
+	// Replace the PNG thumbnail with the SVG image
+	$.thumb_html = $('#fs').html();
 	
+	/*
+	var img = new Image();
+	img.onload = function(){
+		$('#fs').html(get_circos(image_path));
+	}
+	$('#fs').html("Loading...");
+	img.src = get_circos(image_path);
+	*/
+
+	$('#fs').html(get_circos(image_path));
+
+	
+	$("#fs").load(function()
+	{
+
+		// Disable the 'last' and zoom-out buttons
+		button_toggle("polygon#right", "disable");
+		button_toggle("polygon#left", "disable");
+		
+		// Color any loaded segments
+		color_loaded_segments();
+		
+	});
+
+
 };
 
 
@@ -257,7 +266,7 @@ function color_loaded_segments()
 	var content = $("#circos_img").contents().find("#sections");
 
 	// JIK, wait for DOM tree to fully update
-	if(content.length == 0)
+	/*if(content.length == 0)
 	{
 		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
 		console.log("content not yet available to color sections; trying again...");
@@ -265,6 +274,7 @@ function color_loaded_segments()
 		return;
 	}
 	console.log("DOM looks ready now...");
+	*/
 	
 	var IDs = [];
 	content.find('path').each(function(){ IDs.push(this.id); });
@@ -357,14 +367,11 @@ $(document).ready(function ()
 	$.plots.zoom_image_list = [];
 	$.plots.last_image_tag = "";
 	$.plots.loading_images = [];
-	$.plots.simultaneous_request_limit = 2;
+	$.plots.simultaneous_request_limit = 3;
 	$.plots.timerID;
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
 	$.timer_attempts_threshold = 40;
 	$.timer_attempts = 0;
-	
-	
-	
 	
 });
 

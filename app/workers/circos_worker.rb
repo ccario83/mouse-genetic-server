@@ -22,7 +22,7 @@ class CircosWorker
         snp_set          = job.get_parameter('snp_set')
         
         # Make a directory for this job to write output to
-        Dir.mkdir(location)
+        Dir.mkdir(location) unless File.exists?(location)
         
         # Determine paths for the circos_generator configuration file template ('GC.conf') and its destination
         config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
@@ -34,7 +34,7 @@ class CircosWorker
 
         # Run the Circos Generator Script
         #puts "Circos running with job [#{job.id} #{location}, #{job.resultfile}, #{chromosome}, #{start_position}, #{stop_position}, #{bin_size}]"
-        cmd = "python #{CIRCOS_PATH}circos_generator.py -p #{job_location}"
+        cmd = "python #{CIRCOS_PATH}circos_generator.py -p #{location}"
         puts cmd
         system(cmd)
         

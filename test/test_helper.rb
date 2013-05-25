@@ -13,12 +13,14 @@ class ActiveSupport::TestCase
   # Context for users
   def create_user_context
   	@jack = FactoryGirl.create(:user, first_name: "Jack", last_name: "Jones", email: "jack@example.com", institution: "ABC")
-    @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "ABC")
+    @jill = FactoryGirl.create(:user, first_name: "Jill", last_name: "Jones", email: "jill@example.com", institution: "ABC")
     @john = FactoryGirl.create(:user, first_name: "John", last_name: "Jones", email: "john@example.com", institution: "ABC")
+    @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "ABC")
   end
 
   def remove_user_context
   	@jack.delete
+    @jill.delete
   	@john.delete
   	@jane.delete
   end

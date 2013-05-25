@@ -9,4 +9,14 @@ FactoryGirl.define do
 		institution "University of Pittsburgh"
 	end
 
+	factory :membership do
+		association :user
+		association :group
+	end
+
+	factory :group do
+		name "Sample Group"
+		description "This a sample group"
+		association :creator, factory: :user
+	end
 end

@@ -3,7 +3,6 @@
 <% viewer ||= user %>
 <% microposts ||= @microposts ||= viewer.all_received_posts %>
 <% confirmed_groups ||= user.confirmed_groups.sort_by(&:name) %>
-<% associated_users ||= confirmed_groups.map(&:users).flatten.uniq.sort_by(&:name) %>
 <% show_listing_on_load ||= false %>
 <div class="row-fluid title-bar">
 	<div class="drop-panel">
@@ -21,7 +20,7 @@
 </div>
 
 <div id="new-micropost" class="modal hide fade">
-	<%= render 'shared/micropost_form', groups: confirmed_groups, users: associated_users %>
+	<%= render 'shared/micropost_form', groups: confirmed_groups %>
 </div>
 
 <div id="micropost-listing">

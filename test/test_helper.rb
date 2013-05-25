@@ -1,13 +1,26 @@
+require 'simplecov'
+SimpleCov.start 'rails'
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
 class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
-  fixtures :all
+  # Method to improve readability of tests
+  def deny(condition, msg="")
+  	assert !condition, msg
+  end
 
-  # Add more helper methods to be used by all tests here...
+  # Context for users
+  def create_user_context
+  	@jack = FactoryGirl.create(:user, first_name: "Jack", last_name: "Jones", email: "jack@example.com", institution: "ABC")
+    @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "ABC")
+    @john = FactoryGirl.create(:user, first_name: "John", last_name: "Jones", email: "john@example.com", institution: "ABC")
+  end
+
+  def remove_user_context
+  	@jack.delete
+  	@john.delete
+  	@jane.delete
+  end
+  
 end

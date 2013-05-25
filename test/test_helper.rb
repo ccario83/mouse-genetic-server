@@ -4,7 +4,11 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
+
 class ActiveSupport::TestCase
+  # the following code is commented out because it is not used in testing
+  # fixtures :all
+
   # Method to improve readability of tests
   def deny(condition, msg="")
   	assert !condition, msg

@@ -1,4 +1,3 @@
-
 <div class="row-fluid">
 	<span class="title"> Tools </span>
 </div>
@@ -26,3 +25,29 @@
 		</div>
 	</div>
 </a>
+<% if is_admin? %>
+<a href="/report">
+	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
+
+		<div style="float:left; padding-left: 10px;">
+			<%= image_tag '/report.png' %>
+		</div>
+		<div style="padding: 2px 85px;">
+			<h3> Report Generator </h3>
+		</div>
+	</div>
+</a>
+<% end %>
+<% if is_admin? %>
+<a href="/bulk">
+	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
+
+		<div style="float:left; padding-left: 10px;">
+			<%= image_tag '/bulk.png' %>
+		</div>
+		<div style="padding: 2px 85px;">
+			<h3> Bulk Processor </h3>
+		</div>
+	</div>
+</a>
+<% end %>

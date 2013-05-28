@@ -65,7 +65,11 @@ RorWebsite::Application.routes.draw do
   # Other app routes
   resources :sessions, :only => [:new, :create, :destroy]
 
-  
+  # Bulk routes
+  resources :bulk
+  get '/bulk/progress/:id' => 'uwf#progress'
+  get '/bulk/generate/:id' => 'uwf#generate'  
+
   # UWF routes
   resources :uwf, :only => [:index, :new, :create]
   # UWF AJAX calls

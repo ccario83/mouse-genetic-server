@@ -4,6 +4,9 @@
 	<% if job.runner == 'UWF' %>
 		<%= render 'uwf/uwf_job' %>
 	<% end %>
+	<% if job.runner == 'BULK' %>
+		<%= render 'bulk/bulk_job' %>
+	<% end %>
 <% else %>
 	<%= render 'tools_panel' %>
 <% end %>

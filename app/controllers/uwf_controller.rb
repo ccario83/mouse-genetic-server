@@ -87,8 +87,9 @@ class UwfController < ApplicationController
     params = job.get_parameter('image_parameters')
     params ||= {}
     params.merge!(image_parameters)
-    job.store_parameters(params)
-
+    job.store_parameters({'image_parameters' => params})
+    job.save!
+    
     # Ask the CircosWorker to create this plot
     CircosWorker.perform_async(job.id, directory, chromosome, start_pos, stop_pos, density)
     
@@ -96,10 +97,10 @@ class UwfController < ApplicationController
   end
   
   def get_circos_panel
-    image_tag = params['image_tag']
+    @image_tag = params['image_tag']
     @image_path = params['image_path']
     @job = Job.find(params['job_id'])
-    @params = @job.get_parameter('image_parameters')[image_tag]
+    @params = @job.get_parameter('image_parameters')[@image_tag]
     respond_to do |format|
         format.html { render :partial => "circos_panel" }
     end

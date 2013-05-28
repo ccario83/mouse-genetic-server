@@ -1,6 +1,7 @@
-
 <% job ||= @job %>
-<% show_image_params ||= false %>
+<% image_tag = @image_tag %>
+<% image_path = @image_path %>
+<% show_image_params = true %>
 <div id="circos_panel" style="float:left; width:30%; padding: 20px;">
 	<div id='image-parameters-fs'>
 		<table class="table table-bordered table-striped">
@@ -23,7 +24,9 @@
 						<% next %>
 					<% elsif parameter.titlecase == 'Image Parameters' %>
 						<% value.each do |tag, tag_vals| %>
+							<% if not tag == image_tag %><% next %><% end %>
 							<% tag_vals.each do |tag_param, tag_val| %>
+								<% if tag_param.titlecase == "Directory" %><% next %><% end %>
 								<% if tag_val == -1 %><% tag_val = 'All' %><% end %>
 								<% if (tag_param == 'start_pos' || tag_param == 'stop_pos') && tag_val == 'All' %><% next %><% end %>
 								<tr>
@@ -33,9 +36,10 @@
 						<% end %>
 						<% next %>
 					<% end %>
+					<% if parameter.titlecase == 'Circos Root Url' %><% next %><% end %>
 					<tr>
-						<% if parameter.titlecase == 'Circos Root Url' %>
-							<td>Circos Image (SVG)</td><td><a href="<%= value %>/circos.svg">Download</a></td>
+						<% if parameter.titlecase == 'Circos Root' %>
+							<td>Circos Image (SVG)</td><td><a href="<%= value %>circos.svg">Download</a></td>
 						<% else %>
 							<td><%= parameter.titlecase %></td><td><%= value %></td>
 						<% end %>
@@ -98,4 +102,4 @@
 	<div class="btn btn-primary" onclick="$('#circos_legend').hide();">Close</div>
 </div>
 
-<iframe id="circos_img" src="<%= @image_path %>" type='image/svg+xml' style='border: 0px;'></iframe>
+<iframe name= "<%= image_tag%>" id="circos_img" src="<%= image_path %>" type='image/svg+xml' style='border: 0px;'></iframe>

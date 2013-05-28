@@ -41,6 +41,12 @@ class Job < ActiveRecord::Base
 		self.parameters = self.parameters.to_json
 	end
 	
+	def delete_parameter(parameter_key)
+		self.parameters = JSON.parse(self.parameters)
+		parameters.delete(parameter_key)
+		self.parameters = self.parameters.to_json
+	end
+	
 	def progress
 		if self.state  == 'Completed'
 			return 100.0

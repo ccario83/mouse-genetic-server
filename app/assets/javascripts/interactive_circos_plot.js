@@ -1,10 +1,12 @@
 function unfull()
 {
+	
 	// Return if not in full screen mode...
 	if (document.fullscreen) { return; }
 	else if (document.mozFullScreen) { return; }
 	else if (document.webkitIsFullScreen) { return; }
-
+	console.log('[ICP] Leaving fullscreen mode.');
+	
 	$('#fs').html($.thumb_html);
 	
 	$.plots.zoom_image_list = [];
@@ -14,6 +16,7 @@ function unfull()
 
 function full(el)
 {
+	console.log('[ICP] Entering fullscreen mode.');
 	if (document.fullscreen) { return; }
 	else if (document.mozFullScreen) { return; }
 	else if (document.webkitIsFullScreen) { return; }
@@ -48,20 +51,15 @@ function full(el)
 	img.src = get_circos(image_path);
 	*/
 
-	$('#fs').html(get_circos(image_path));
-
+	$('#fs').html(get_circos($.plots.current_image_tag));
 	
-	$("#fs").load(function()
-	{
-
-		// Disable the 'last' and zoom-out buttons
-		button_toggle("polygon#right", "disable");
-		button_toggle("polygon#left", "disable");
-		
-		// Color any loaded segments
-		color_loaded_segments();
-		
-	});
+	
+	
+	color_loaded_segments();
+	
+	// Disable the 'last' and zoom-out buttons
+	button_toggle("polygon#right", "disable");
+	button_toggle("polygon#left", "disable");
 
 
 };
@@ -69,6 +67,7 @@ function full(el)
 
 function image_tag_to_path(image_tag)
 {
+	console.log('[ICP]     getting path for image tag[' + image_tag + ']');
 	var job_root_path = $('#job_root_path').text();
 	var location = image_tag.split('_');
 	var chromosome = location[0];
@@ -96,6 +95,7 @@ function image_tag_to_path(image_tag)
 
 function image_exists(image_path)
 {
+	console.log('[ICP]     checking if [' + image_path + '] exists.');
 	//Check that the image exists
 	image_found = true;
 	$.ajax(
@@ -103,7 +103,7 @@ function image_exists(image_path)
 		url: '/exists'+image_path,
 		async: false,
 		error: function(){alert("The server isn't sure if that file exists or not!");},
-		success: function(data) { image_found = data['status'] },
+		success: function(data) { image_found = data['status']; if (image_found) {console.log('[ICP]     Image exists.');} },
 	});
 	return image_found;
 };
@@ -111,6 +111,7 @@ function image_exists(image_path)
 
 function request_circos_image(image_tag) 
 {
+	console.log('[ICP]     requesting image with tag [' + image_tag + ']');
 	var image_path = image_tag_to_path(image_tag);
 	if (!image_exists(image_path))
 	{ 
@@ -121,19 +122,18 @@ function request_circos_image(image_tag)
 	}
 
 	// Store the old element for zooming out
-	var oldElement = $('iframe#circos_img').attr('src');
-	$.plots.zoom_image_list.push(oldElement);
+	$.plots.zoom_image_list.push(image_tag);
+	$.plots.last_image_tag = ""
+	$.plots.current_image_tag = image_tag;
 	
 	// Generate the new SVG element and replace the iframe source with it
-	var newElement = "<iframe id='circos_img' src='"+image_path+"' type='image/svg+xml' style='border: 0px;'></iframe>";
-	document.getElementById('fs').innerHTML = newElement;
+	$('#fs').html(get_circos(image_tag));
 
 	// Color any loaded segments
 	color_loaded_segments();
 	
 	// Disable the 'last' button, enable the zoom-out button
-	$.plots.last_image_tag = ""
-	$.plots.current_image_tag = image_tag;
+
 	button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "enable");
 };
@@ -141,7 +141,7 @@ function request_circos_image(image_tag)
 
 function generate_circos_image(image_tag)
 {
-
+	console.log('[ICP]     image being generated with tag [' + image_tag + ']');
 	if ($.plots.loading_images.length == $.plots.simultaneous_request_limit)
 	{
 		alert("Please, only " + $.plots.simultaneous_request_limit + " image request at a time!");
@@ -162,13 +162,14 @@ function generate_circos_image(image_tag)
 	
 	$.plots.loading_images.push(image_tag);
 	// Periodically poll for the new images
-//	$.plots.timerID = setInterval('check_on_images()', 1000);
+	$.plots.timerID = setInterval('check_on_images()', 1000);
 
 };
 
 
 function check_on_images()
 {
+	console.log('[ICP] Checking for finished image(s).');
 	finished_images = [];
 	if ($.plots.loading_images.length == 0)
 	{
@@ -181,6 +182,7 @@ function check_on_images()
 		var image_tag = $.plots.loading_images[i];
 		if (image_exists(image_tag_to_path(image_tag)))
 		{
+			console.log('[ICP]     image finished for tag [' + image_tag + ']');
 			stop_pulsate($("#circos_img").contents().find("#"+image_tag));
 			finished_images.push(image_tag);
 		}
@@ -196,18 +198,19 @@ function check_on_images()
 
 function zoom_out()
 {
+	console.log('[ICP] Zooming out.');
 	if ($.plots.zoom_image_list.length != 0)
 	{
 		// Get the old SVG elements source and remember it for the 'last' button click
-		var oldElement = $('iframe#circos_img').attr('src');
-		$.plots.last_image_tag = oldElement;
+		var old_tag = $('#fs iframe').attr('name');
+		$.plots.last_image_tag = old_tag;
 	
 		// Get the higher zoom level's SVG element
-		var lastImage = $.plots.zoom_image_list.pop();
-
+		var last_tag = $.plots.zoom_image_list.pop();
+		$.plots.current_image_tag = last_tag;
+		
 		// Generate the new SVG element and replace the iframe source with it
-		var newElement = "<iframe id='circos_img' src='"+lastImage+"' type='image/svg+xml' style='border: 0px;'></iframe>";
-		document.getElementById('fs').innerHTML = newElement;
+		$('#fs').html(get_circos(last_tag));
 
 		// Color any loaded segments
 		color_loaded_segments();
@@ -224,6 +227,7 @@ function zoom_out()
 
 function zoom_back_in()
 {
+	console.log('[ICP] Zooming back in.');
 	if ($.plots.last_image_tag != "")
 	{
 		$.plots.zoom_image_list.push($.plots.last_image_tag);
@@ -266,15 +270,15 @@ function color_loaded_segments()
 	var content = $("#circos_img").contents().find("#sections");
 
 	// JIK, wait for DOM tree to fully update
-	/*if(content.length == 0)
+	if(content.length == 0)
 	{
+		console.log('[ICP] Attempting to color segments, but content not yet available, retry in 1s...');
 		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
-		console.log("content not yet available to color sections; trying again...");
 		setTimeout(function(){color_loaded_segments()}, 1000);
 		return;
 	}
-	console.log("DOM looks ready now...");
-	*/
+	console.log('[ICP] Attempting to color segments, content now available and is being colored.');
+	
 	
 	var IDs = [];
 	content.find('path').each(function(){ IDs.push(this.id); });
@@ -300,11 +304,11 @@ function button_toggle(selector, state)
 	if(button.length == 0)
 	{
 		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
-		console.log("content not yet available to toggle buttons; trying again...");
+		console.log('[ICP] Attempting to toggle button [' + selector + '], but content not yet available, retry in 1s...');
 		setTimeout(function(){button_toggle(selector, state)}, 1000);
 		return;
 	}
-	console.log("DOM looks ready now...");
+	console.log('[ICP] Attempting to toggle button [' + selector + '], content now available and toggling.');
 
 	var opacity = 0;
 	var fun = ""
@@ -328,12 +332,14 @@ function button_toggle(selector, state)
 	button.attr('onclick', fun);
 };
 
-
+/*
 function update_table()
 {
+	console.log('[ICP] Updating the circos image parameter table.');
 	// Update groups AJAX
 	$.ajax(
 	{
+		async: false,
 		type:'post',
 		url: '/uwf/update_image_params_table',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
@@ -343,10 +349,12 @@ function update_table()
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
 	});
 	return;
-}
+}*/
 
-function get_circos(image_path)
+function get_circos(image_tag)
 {
+	var image_path = image_tag_to_path(image_tag);
+	console.log('[ICP] Asking server for image with tag [' + image_tag + ']');
 	// Update groups AJAX
 	return $.ajax(
 	{
@@ -354,10 +362,11 @@ function get_circos(image_path)
 		type:'post',
 		url: '/uwf/get_circos_panel',
 		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: $.extend(decode_url(window.location.href), {'image_tag' : $.plots.current_image_tag, 'image_path':image_path }),
+		data: $.extend(decode_url(window.location.href), {'image_tag' : image_tag, 'image_path':image_path }),
 		dataType: 'html',
-		success: function(response) { return response },
+		success: function(response) { },
 		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
+		complete: function(resonse) { },
 	}).responseText;
 }
 
@@ -374,5 +383,3 @@ $(document).ready(function ()
 	$.timer_attempts = 0;
 	
 });
-
-

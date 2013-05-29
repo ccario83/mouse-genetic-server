@@ -38,7 +38,7 @@ class BulkController < ApplicationController
 
     BulkWorker.perform_async(@job.id)
 
-    #redirect_to "/users/#{@user.id}/jobs/#{@job.id}"
+    redirect_to "/users/#{@user.id}/jobs/#{@job.id}"
     return
   end
   

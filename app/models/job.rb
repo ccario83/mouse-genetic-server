@@ -11,7 +11,7 @@ class Job < ActiveRecord::Base
 	
 	validates :name, :presence => true
 	validates :creator,	:presence => true
-	validates :runner,	:presence => true, :inclusion => { :in => ['UWF', 'BULK'], :message => "Invalid job type" }
+	validates :runner,	:presence => true, :inclusion => { :in => ['UWF', 'Circos', 'BULK'], :message => "Invalid job type" }
 	validates :state, :inclusion => { :in => ['Starting', 'Progressing', 'Completed', 'Failed'], :message => "Invalid job state" }
 	validates :datafile, :presence => true
 	validates_associated :datafile

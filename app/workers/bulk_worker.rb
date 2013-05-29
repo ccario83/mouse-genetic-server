@@ -34,7 +34,7 @@ class BulkWorker
         $redis.sadd "#{redis_key}:progress:log",'starting bulk runner'
 
         # Signal to redis that an EMMA algorighm analysis has begun for this job and run it
-        cmd = "python /bin/bulk.py -i #{pheno_file} -a #{emma_type} -s #{snp_set} -t #{threads}"
+        cmd = "python /bin/bulk.py -i #{pheno_file} -a #{emma_type} -s #{snp_set} -t #{threads} -p #{job.directory}"
         puts cmd
         system(cmd)
         $redis.set    "#{redis_key}:completed", true

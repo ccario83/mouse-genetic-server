@@ -1,0 +1,67 @@
+
+<% job ||= @job %>
+<span id="job_id" style="display:none;"><%= job.id %></span>
+<span id="job_root_path" style="display:none;"><%= job.get_parameter('circos_root_url') %></span>
+
+<% if job.state == 'Completed' %>
+	<!--NOTE: This also should be done when the progress controller redirects to show instead of returning JSON, 
+	This causes the check_progress() JS function to stop the timer as an error function
+	-->
+	<% content_for :page_js do %>
+		<%= javascript_include_tag('interactive_circos_plot') %>
+	<% end %>
+	<div class="row-fluid" style = "">
+		<% Dir.glob("#{job.directory}") %>
+		<% Dir.glob("#{job.directory}/**/*.png").each do |q| %>
+			<%= q.split('/')[-1].split('.')[0] %>
+			<br>
+			<br>
+				<%= image_tag(q.split('..')[1], :id => 'circos_thumb', :width => '100%')%>
+			<br>
+			<br>
+				<a href="<%= job.directory.split('..')[1] + '/' + q.split('/')[-1] .split('.')[0] %>.csv" class="btn">Link to</a>
+			<hr>
+	<% end %>
+	</div>
+
+<!-- Job State is Progressing -->
+
+<% elsif job.state == 'Progressing' || job.state == 'Starting'%>
+	<% content_for :page_js do %>
+			<%= javascript_include_tag('uwf_show') %>
+	<% end %>
+	
+	<div class="row-fluid" style = "">
+		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
+		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
+		<div id="job-progress" style="padding-left: 20px">
+			<ul>
+				<li id="starting" class="incomplete">Running</li>
+		</div>
+	</div>
+<% end %>
+
+<br/>
+<div class="row-fluid">
+	<table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>Parameter</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Name</td><td><%= job.name %></td>
+			</tr>
+			<tr>
+				<td>Description</td><td><%= job.description %></td>
+			</tr>
+			<% job.get_parameters.each do |parameter, value| %>
+			<tr>
+				<td><%= parameter.titlecase %></td><td><%= value %></td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>

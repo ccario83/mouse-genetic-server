@@ -84,7 +84,7 @@ class Datafile < ActiveRecord::Base
 			uwf_header = ["Strain", "Animal_Id", "Sex"]
 
 			contents = CSV.read(self.get_path, :headers => true, :quote_char => '"', :col_sep =>"\t", :row_sep =>:auto)
-			if contents.headers.length < 4
+			if contents.headers.length != 4
 				return
 			elsif (uwf_header.map {|x| x.downcase} != contents.headers.slice(0,3).map{|x| x.downcase})
 				return

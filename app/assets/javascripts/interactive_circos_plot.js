@@ -144,7 +144,7 @@ function generate_circos_image(image_tag)
 	console.log('[ICP]     image being generated with tag [' + image_tag + ']');
 	if ($.plots.loading_images.length == $.plots.simultaneous_request_limit)
 	{
-		alert("Please, only " + $.plots.simultaneous_request_limit + " image request at a time!");
+		alert("Please, only " + $.plots.simultaneous_request_limit + " image requests at a time!");
 		return;
 	}
 
@@ -162,7 +162,8 @@ function generate_circos_image(image_tag)
 	
 	$.plots.loading_images.push(image_tag);
 	// Periodically poll for the new images
-	$.plots.timerID = setInterval('check_on_images()', 1000);
+	if ($.plots.timerID == null)
+	{ $.plots.timerID = setInterval('check_on_images()', 2000); }
 
 };
 
@@ -173,7 +174,8 @@ function check_on_images()
 	finished_images = [];
 	if ($.plots.loading_images.length == 0)
 	{
-		clearInterval($.plots.timerID)
+		clearInterval($.plots.timerID);
+		$.plots.timerID = null;
 		return;
 	}
 	
@@ -377,9 +379,9 @@ $(document).ready(function ()
 	$.plots.last_image_tag = "";
 	$.plots.loading_images = [];
 	$.plots.simultaneous_request_limit = 3;
-	$.plots.timerID;
+	$.plots.timerID = null;
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
-	$.timer_attempts_threshold = 40;
+	// This threshold is for all timers. 
+	$.timer_attempts_threshold = 50;
 	$.timer_attempts = 0;
-	
 });

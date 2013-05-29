@@ -12,9 +12,11 @@ class CircosWorker
         # -1 indicates the subprocess should to write progress to STDOUT instead
         # A job_ID is really only specified for the first circos plot (the full chomosome plot) because we want to indicate to the user some progress indication while they wait
         job_ID = -1
-
+        job_key = job.redis_key
+        owner_key = job.creator.redis_key
+        
         # Declare other variables in the config file
-        redis_key        = job.redis_key
+        #redis_key = "#{owner_key}:#{job_key}" # NOT NEEDED FOR SUB IMAGES
         emma_result_file = job.resultfile
         # start_position = defined during method call
         # stop_position  = defined during method call
@@ -38,6 +40,7 @@ class CircosWorker
         puts cmd
         system(cmd)
         
+        redis_key = "#{owner_key}:#{job_key}"
         $redis.sadd "#{redis_key}:ready_images:","#{chromosome}_#{start_position}_#{stop_position}"
         # All done!
     end

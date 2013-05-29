@@ -1,9 +1,12 @@
 <% job ||= @job %>
 <% image_tag = @image_tag %>
 <% image_path = @image_path %>
-<% show_image_params = true %>
 <div id="circos_panel" style="float:left; width:30%; padding: 20px;">
 	<div id='image-parameters-fs'>
+
+<%= job.creator.redis_key + "  " %>
+<%= job.redis_key %>
+
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
@@ -19,14 +22,18 @@
 					<td>Description</td><td><%= job.description %></td>
 				</tr>
 				<% job.get_parameters.each do |parameter, value| %>
+					<% parameter = parameter.titlecase %>
+					<% if parameter == 'Circos Root Url' %><% next %><% end %>
+					<% if parameter == 'Circos Root' %><% next %><% end %>
+					<% if parameter == 'Emma Type' %><% parameter = 'Algorithm' %><% end %>
+					<% if parameter == 'Snp Set' %><% parameter = 'SNP set' %><% end %>
+					
 					<% # The Image Parameters hash contains all image parameters, but shouldn't be shown. A jquery ajax call is used instead %>
-					<% if parameter.titlecase == 'Image Parameters' and show_image_params == false %>
-						<% next %>
-					<% elsif parameter.titlecase == 'Image Parameters' %>
+					<% if parameter == 'Image Parameters' %>
 						<% value.each do |tag, tag_vals| %>
-							<% if not tag == image_tag %><% next %><% end %>
+							<% if not (tag == image_tag) %><% next %><% end %>
 							<% tag_vals.each do |tag_param, tag_val| %>
-								<% if tag_param.titlecase == "Directory" %><% next %><% end %>
+								<% if tag_param.titlecase == "Image Download" %><% tag_val = "<a href=\"#{tag_val}\">Download</a> (Right click, Save Link as)".html_safe %><% end %>
 								<% if tag_val == -1 %><% tag_val = 'All' %><% end %>
 								<% if (tag_param == 'start_pos' || tag_param == 'stop_pos') && tag_val == 'All' %><% next %><% end %>
 								<tr>
@@ -36,19 +43,24 @@
 						<% end %>
 						<% next %>
 					<% end %>
-					<% if parameter.titlecase == 'Circos Root Url' %><% next %><% end %>
+					
+					
 					<tr>
-						<% if parameter.titlecase == 'Circos Root' %>
-							<td>Circos Image (SVG)</td><td><a href="<%= value %>circos.svg">Download</a></td>
-						<% else %>
-							<td><%= parameter.titlecase %></td><td><%= value %></td>
-						<% end %>
+						<td><%= parameter %></td><td><%= value %></td>
 					</tr>
 				<% end %>
 			</tbody>
 		</table>
 	</div>
-	<div  class="btn btn-primary" onclick="$('#circos_legend').show();">Figure Legend</div>
+	<div class="btn btn-primary" onclick="$('#circos_legend').show();">Figure Legend</div>
+	
+	<div id="circos_hints">
+		<h5>Click on any segment to begin generating a full view of that area. <br/>
+			After a few moments the segment will loaded and stop flashing. <br/>
+			You can then click on it again to see the full view <br/>
+			Light yellow areas have already been generated and are ready to view.
+		</h5>
+	</div>
 </div>
 
 <div id="circos_legend" style="display: none; position: absolute; background: white; height:100%; width:84%; padding: 50px 8%;">

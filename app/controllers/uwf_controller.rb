@@ -31,17 +31,18 @@ class UwfController < ApplicationController
     end
 
     # Create the new job object
-    image_parameters = { "-1_-1_-1" => { chromosome: -1, start_pos: -1, stop_pos: -1, bin_size: 5000000 } }
     @job = current_user.jobs.new(:name        => @job_name,         \
                                  :description => @job_description,  \
                                  :runner      => 'UWF',             \
                                  :state       => 'Starting',        \
                                  :datafile    => @datafile,         \
-                                 :parameters  => {  :image_parameters   => image_parameters,            \
-                                                    :emma_type          => @emma_type,                  \
-                                                    :snp_set            => @snp_set                     \
+                                 :parameters  => {  :emma_type          => @emma_type,  \
+                                                    :snp_set            => @snp_set     \
                                                  }
                                 )
+    @job.save!
+    image_parameters = { "-1_-1_-1" => { chromosome: -1, start_pos: -1, stop_pos: -1, bin_size: 5000000, image_download: File.join(@job.download_link,'Plots','circos.svg') } }
+    @job.store_parameter({"image_parameters" => image_parameters})
     @job.save!
 
     UwfWorker.perform_async(@job.id)
@@ -74,16 +75,19 @@ class UwfController < ApplicationController
     
     # A -1 start and stop position signifies the full chromosome should be shown
     dirctory = ''
+    image_path = ''
     if (start_pos == -1 and stop_pos == -1)
-        directory = File.join(job.directory, "Plots/Chr#{chromosome}")
+        directory = File.join(job.directory, "Plots","Chr#{chromosome}")
+        image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "circos.svg")
         # Change the default density for the full chromosome plot
         density = 125000
     else
         # Within the chromosome folder, sub plots are stored in start_pos_stop_pos folders
-        directory = File.join(job.directory, "Plots/Chr#{chromosome}/#{start_pos}_#{stop_pos}")
+        directory = File.join(job.directory, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}")
+        image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos.svg")
     end
 
-    image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, directory: directory } }
+    image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, image_download: image_path } }
     params = job.get_parameter('image_parameters')
     params ||= {}
     params.merge!(image_parameters)
@@ -104,6 +108,10 @@ class UwfController < ApplicationController
     respond_to do |format|
         format.html { render :partial => "circos_panel" }
     end
+  end
+  
+  def loaded_images
+    $redis.sadd "#{redis_key}:ready_images","#{chromosome}_#{start_position}_#{stop_position}"
   end
 
 end

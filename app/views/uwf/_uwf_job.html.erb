@@ -12,59 +12,32 @@
 	<% end %>
 	<div class="row-fluid" style = "">
 		<div id="fs-container" onclick="full(document.getElementById('fs'))"  onmouseover="this.style.cursor='pointer'">
-			<center>
 			<div id="fs" style="border: 1px solid #ddd; border-radius: 5px;">
+				<center>
 				<%= image_tag(File.join(job.get_parameter('circos_root_url'),'circos.png'), :id => 'circos_thumb', :width => '55%')%>
 				<h3>Click here for full screen interactive mode</h3>
+				</center>
 			</div>
-			</center>
 		</div>
 	</div>
-<% elsif job.state == 'Progressing' || job.state == 'Starting'%>
+<% elsif job.state == 'Progressing' || job.state == 'Starting' || job.state == 'Failed' %>
 	<% content_for :page_js do %>
 			<%= javascript_include_tag('uwf_show') %>
 	<% end %>
 	<div class="row-fluid" style = "">
-		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
-		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
-		<div id="job-progress" style="padding-left: 20px">
-			<ul>
-				<li id="starting" class="incomplete">Starting</li>
-				<li id="configuring-gwa" class="incomplete">Configuring <%= job.get_parameter('emma_type') %></li>
-				<li id="starting-gwa" class="incomplete">Starting <%= job.get_parameter('emma_type') %>
-					<ul>
-						<li id="reading-phenotypes" class="incomplete">Reading phenotypes</li>
-						<li id="processing-phenotypes" class="incomplete">Processing phenotypes</li>
-						<li id="processing-genotypes" class="incomplete">Processing genotypes</li>
-						<li id="running-associations" class="incomplete">Running associations</li>
-						<li id="post-processing" class="incomplete">Post processing</li>
-					</ul>
-				</li>
-				<li id="configuring-circos" class="incomplete">Configuring Circos</li>
-				<li id="starting-circos" class="incomplete"> Starting Circos</li>
-					<ul>
-						<li id="populating-tracks" class="incomplete">Populating tracks</li>
-						<li id="generating-datapoints" class="incomplete">Generating datapoints</li>
-						<li id="drawing-image" class="incomplete">Drawing the full genome Circos plot</li>
-						<li id="completed" class="incomplete">Completed!</li>
-					</ul>
-				<li>
-		</div>
-	</div>
-	
-<% elsif job.state == 'Failed' %>
-	<% content_for :page_js do %>
-			<%= javascript_include_tag('uwf_show') %>
-	<% end %>
-	<div class="row-fluid" style = "">
-		<h3 style="padding-left: 20px;"><i class="icon-exclamation error"></i> Job State:</h3>
-		<div id="job-errors">
-			<ul>
-				<% job.runtime_errors.each do |e| %>
-					<li><%= e %>
-				<% end %>
-			</ul>
-		</div>
+		<% if job.state == 'Failed' %>
+			<h3 style="padding-left: 20px;"><i class="icon-exclamation error"></i> Job State:</h3>
+			<div id="job-errors">
+				<ul>
+					<% job.runtime_errors.each do |e| %>
+						<li><%= e %>
+					<% end %>
+				</ul>
+			</div>
+		<% else %>
+			<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
+		<% end %>
+		
 		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
 		<div id="job-progress" style="padding-left: 20px">
 			<ul>
@@ -109,15 +82,19 @@
 			<td>Description</td><td><%= job.description %></td>
 		</tr>
 		<% job.get_parameters.each do |parameter, value| %>
+			<% parameter = parameter.titlecase %>
+			<% if parameter == 'Circos Root' %><% next %><% end %>
+			<% if parameter == 'Emma Type' %><% parameter = 'Algorithm' %><% end %>
+			<% if parameter == 'Snp Set' %><% parameter = 'SNP set' %><% end %>
+			
 			<% # The Image Parameters hash contains all image parameters, and is only shown in full screen mode %>
-			<% if parameter.titlecase == 'Image Parameters' || parameter.titlecase == 'Circos Root'%>
-				<% next %>
-			<% end %>
+			<% if parameter == 'Image Parameters'  %><% next %><% end %>
+			
 			<tr>
-				<% if parameter.titlecase == 'Circos Root Url' %>
+				<% if parameter == 'Circos Root Url' %>
 					<td>Circos Image (SVG)</td><td><a href="<%= value %>/circos.svg">Download</a></td>
 				<% else %>
-					<td><%= parameter.titlecase %></td><td><%= value %></td>
+					<td><%= parameter %></td><td><%= value %></td>
 				<% end %>
 			</tr>
 		<% end %>

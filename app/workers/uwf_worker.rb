@@ -122,7 +122,7 @@ class UwfWorker
         # Signal to redis we are now all done!
         $redis.sadd "#{redis_key}:progress:log",'completed'
         $redis.set "#{redis_key}:completed", true
-        $redis.sadd "#{redis_key}:ready_images:",'-1_-1_-1'
+        $redis.sadd "#{redis_key}:ready_images",'-1_-1_-1'
         job.state = 'Completed'
         job.store_parameter({circos_root_url: File.join('/data', job.creator.redis_key, 'jobs', job.redis_key, 'Plots')})
         job.save!

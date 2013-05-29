@@ -47,6 +47,10 @@ class Job < ActiveRecord::Base
 		self.parameters = self.parameters.to_json
 	end
 	
+	def download_link
+		return File.join('/data', self.directory.split(USER_DATA_PATH)[1])
+	end
+	
 	def progress
 		if self.state  == 'Completed'
 			return 100.0
@@ -55,17 +59,7 @@ class Job < ActiveRecord::Base
 			if $redis.exists "#{self.creator.redis_key}:#{self.redis_key}:progress:log"
 				return ($redis.scard "#{self.creator.redis_key}:#{self.redis_key}:progress:log")/15.0*100
 			else
-				if self.name == 'Starting'
-					return 5
-				elsif self.name == 'Progressing'
-					return 68
-				elsif self.name == 'Completed'
-					return 100
-				elsif self.name == 'Failed'
-					return 25
-				else
-					return nil
-				end
+				return nil
 			end
 		rescue
 			return nil

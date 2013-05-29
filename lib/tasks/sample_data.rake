@@ -27,6 +27,14 @@ def make_users
 						:password_confirmation	=> "foobar")
 	admin.save!
 	admin.toggle!(:admin)
+	admin = User.create(:first_name 			=> "An",
+						:last_name				=> "Heimann",
+						:institution			=> "University of Pittsburgh",
+						:email 					=> "heimanna@upmc.edu",
+						:password 				=> "foobar",
+						:password_confirmation	=> "foobar")
+	admin.save!
+	admin.toggle!(:admin)
 	20.times do |n|
 		first_name	= Faker::Name.name.split()[0]
 		last_name 	= Faker::Name.name.split()[1]
@@ -140,10 +148,5 @@ def make_jobs
 	
 	isgood = Datafile.first
 	nogood = Datafile.find(2)
-
-	user.jobs.create!(:name => 'Starting', :description => 'A test UWF that is still starting', :runner => 'UWF', :state => 'Starting', :datafile => isgood)
-	user.jobs.create!(:name => 'Progressing', :description => 'A test UWF job in progress', :runner => 'UWF', :state => 'Progressing', :datafile => isgood)
-	user.jobs.create!(:name => 'Failed', :description => 'A test UWF job that failed', :runner => 'UWF', :state => 'Failed', :datafile => nogood)
-	user.jobs.create!(:name => 'Completed', :description => 'A test UWF job that completed', :runner => 'UWF', :state => 'Completed', :datafile => isgood)
 end
 

@@ -7,6 +7,9 @@
 	<% if job.runner == 'BULK' %>
 		<%= render 'bulk/bulk_job' %>
 	<% end %>
+	<% if job.runner == 'reports' %>
+		<%= render 'reports/reports_job' %>
+	<% end %>
 <% else %>
 	<%= render 'tools_panel' %>
 <% end %>

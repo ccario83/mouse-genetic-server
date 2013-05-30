@@ -67,8 +67,10 @@ RorWebsite::Application.routes.draw do
 
   # Bulk routes
   resources :bulk
-  get '/bulk/progress/:id' => 'uwf#progress'
-  get '/bulk/generate/:id' => 'uwf#generate'  
+
+  # Reports routes
+  resources :reports
+  get '/reports/progress/:id' => 'reports#progress'  
 
   # UWF routes
   resources :uwf, :only => [:index, :new, :create]

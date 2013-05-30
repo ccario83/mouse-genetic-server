@@ -8,4 +8,5 @@ GENO_DATA_PATH = File.join(Rails.root, '../../Genotype Data/')
 EMMA_PATH      = File.join(Rails.root, 'lib/EMMA/')
 CIRCOS_PATH    = File.join(Rails.root, 'lib/Circos/')
 BULK_PATH      = File.join(Rails.root, 'lib/Bulk/')
+REPORTS_PATH   = File.join(Rails.root, 'lib/reports/')
 

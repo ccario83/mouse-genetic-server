@@ -41,15 +41,6 @@ function full(el)
 	$.plots.last_image_tag = "";
 	// Replace the PNG thumbnail with the SVG image
 	$.thumb_html = $('#fs').html();
-	
-	/*
-	var img = new Image();
-	img.onload = function(){
-		$('#fs').html(get_circos(image_path));
-	}
-	$('#fs').html("Loading...");
-	img.src = get_circos(image_path);
-	*/
 
 	$('#fs').html(get_circos($.plots.current_image_tag));
 	
@@ -58,7 +49,7 @@ function full(el)
 	color_loaded_segments();
 	
 	// Disable the 'last' and zoom-out buttons
-	button_toggle("polygon#right", "disable");
+	//button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "disable");
 
 
@@ -67,7 +58,7 @@ function full(el)
 
 function image_tag_to_path(image_tag)
 {
-	console.log('[ICP]     getting path for image tag[' + image_tag + ']');
+	//console.log('[ICP]     getting path for image tag[' + image_tag + ']');
 	var job_root_path = $('#job_root_path').text();
 	var location = image_tag.split('_');
 	var chromosome = location[0];
@@ -95,7 +86,7 @@ function image_tag_to_path(image_tag)
 
 function image_exists(image_path)
 {
-	console.log('[ICP]     checking if [' + image_path + '] exists.');
+	//console.log('[ICP]     checking if [' + image_path + '] exists.');
 	//Check that the image exists
 	image_found = true;
 	$.ajax(
@@ -103,7 +94,7 @@ function image_exists(image_path)
 		url: '/exists'+image_path,
 		async: false,
 		error: function(){alert("The server isn't sure if that file exists or not!");},
-		success: function(data) { image_found = data['status']; if (image_found) {console.log('[ICP]     Image exists.');} },
+		success: function(data) { image_found = data['status']; if (image_found) {/*console.log('[ICP]     Image exists.');*/} },
 	});
 	return image_found;
 };
@@ -111,7 +102,7 @@ function image_exists(image_path)
 
 function request_circos_image(image_tag) 
 {
-	console.log('[ICP]     requesting image with tag [' + image_tag + ']');
+	console.log('[ICP] Requesting image with tag [' + image_tag + ']');
 	var image_path = image_tag_to_path(image_tag);
 	if (!image_exists(image_path))
 	{ 
@@ -122,7 +113,7 @@ function request_circos_image(image_tag)
 	}
 
 	// Store the old element for zooming out
-	$.plots.zoom_image_list.push(image_tag);
+	$.plots.zoom_image_list.push($.plots.current_image_tag);
 	$.plots.last_image_tag = ""
 	$.plots.current_image_tag = image_tag;
 	
@@ -134,17 +125,17 @@ function request_circos_image(image_tag)
 	
 	// Disable the 'last' button, enable the zoom-out button
 
-	button_toggle("polygon#right", "disable");
+	//button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "enable");
 };
 
 
 function generate_circos_image(image_tag)
 {
-	console.log('[ICP]     image being generated with tag [' + image_tag + ']');
+	console.log('[ICP] Image being generated with tag [' + image_tag + ']');
 	if ($.plots.loading_images.length == $.plots.simultaneous_request_limit)
 	{
-		alert("Please, only " + $.plots.simultaneous_request_limit + " image requests at a time!");
+		alert("At most only " + $.plots.simultaneous_request_limit + " image can be requested at a time.");
 		return;
 	}
 
@@ -184,7 +175,7 @@ function check_on_images()
 		var image_tag = $.plots.loading_images[i];
 		if (image_exists(image_tag_to_path(image_tag)))
 		{
-			console.log('[ICP]     image finished for tag [' + image_tag + ']');
+			console.log('[ICP]     Image finished for tag [' + image_tag + ']');
 			stop_pulsate($("#circos_img").contents().find("#"+image_tag));
 			finished_images.push(image_tag);
 		}
@@ -193,6 +184,7 @@ function check_on_images()
 	// Remove finished images from the loading_images list
 	for (var i = 0; i < finished_images.length; i++) 
 	{
+		var image_tag = finished_images[i];
 		$.plots.loading_images.splice($.plots.loading_images.indexOf(image_tag), 1);
 	}
 };
@@ -216,15 +208,16 @@ function zoom_out()
 
 		// Color any loaded segments
 		color_loaded_segments();
-	}
-	if ($.plots.zoom_image_list.length == 0) 
-	{ 
-		button_toggle("polygon#left", "disable");
-	}
-	else
-	{
 		button_toggle("polygon#left", "enable");
 	}
+		if ($.plots.zoom_image_list.length == 0) 
+		{
+			button_toggle("polygon#left", "disable");
+		}
+		else
+		{
+			button_toggle("polygon#left", "enable");
+		}
 };
 
 function zoom_back_in()
@@ -306,11 +299,11 @@ function button_toggle(selector, state)
 	if(button.length == 0)
 	{
 		if ($.timer_attempts++ > $.timer_attempts_threshold) { return; }
-		console.log('[ICP] Attempting to toggle button [' + selector + '], but content not yet available, retry in 1s...');
+		console.log('[ICP] Attempting to ' + state + ' button [' + selector + '], but content not yet available, retry in 1s...');
 		setTimeout(function(){button_toggle(selector, state)}, 1000);
 		return;
 	}
-	console.log('[ICP] Attempting to toggle button [' + selector + '], content now available and toggling.');
+	console.log('[ICP] Attempting to ' + state + ' button [' + selector + '], content now available and toggling.');
 
 	var opacity = 0;
 	var fun = ""

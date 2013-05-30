@@ -282,7 +282,7 @@ for section in sections:
         for rule_no in range(1,10):
             rule = {'condition':              '_VALUE_ >= 9' if rule_no==9 else '_VALUE_ <= %d'%(rule_no), 
                     'color':                  'spectral-9-div-%d'%(10-rule_no),
-                    'glyph_size':             2*(rule_no - 3) if rule_no>7 else 7}
+                    'glyph_size':             4.5*(rule_no - 4) if rule_no>4 else 7}
             plot['rules'].append(rule)
         plots.append(plot)
     if section == 'VEP_track':
@@ -379,4 +379,10 @@ subprocess.call(cmd, cwd = script_dir, shell=True)
 # Create an image map
 cmd = 'python circos_image_mapper.py -p %s -c %s -b %s -e %s'%(os.path.join(circos_od, 'circos.svg'), gen_conf.get('general','chromosome'), gen_conf.get('general','start_position'), gen_conf.get('general','stop_position'))
 #print cmd
+subprocess.call(cmd, cwd = script_dir, shell=True)
+
+# Merge a results file
+cmd = 'echo -e "Chr\tStart Pos\tStop Pos\tSNPs per bin\tMHP score\tVEP annotation\tClosest Gene" > results.txt'
+subprocess.call(cmd, cwd = script_dir, shell=True)
+cmd = "paste -d'\t' <(cut -f1,2,3,4 SNP_track.txt) <(cut -f4 MHP_track.txt) <(cut -f4 VEP_track.txt) <(cut -f4 gene_track.txt) >> results.txt"
 subprocess.call(cmd, cwd = script_dir, shell=True)

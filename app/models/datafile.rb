@@ -5,6 +5,7 @@ class Datafile < ActiveRecord::Base
 	
 	belongs_to :owner, :class_name => 'User', :foreign_key => 'owner_id'
 	has_and_belongs_to_many :groups
+	has_many :jobs, :dependent => :destroy
 
 	validates :owner, :presence => true
 	validates :filename, :presence => true

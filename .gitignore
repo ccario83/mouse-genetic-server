@@ -23,3 +23,7 @@
 # Dev directories
 s/
 server/
+
+# Server lock files
+ror_website-lock
+ror_website.pid

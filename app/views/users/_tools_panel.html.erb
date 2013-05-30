@@ -1,19 +1,6 @@
 <div class="row-fluid">
 	<span class="title"> Tools </span>
 </div>
-<% if is_admin? %>
-<a href="/phenotypes">
-	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
-
-		<div style="float:left; padding-left: 10px;">
-			<%= image_tag '/phenotype.png' %>
-		</div>
-		<div style="padding: 2px 85px;">
-			<h3> Phenotype Explorer </h3>
-		</div>
-	</div>
-</a>
-<% end %>
 <a href="/uwf">
 	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
 
@@ -26,14 +13,33 @@
 	</div>
 </a>
 <% if is_admin? %>
-<a href="/reports">
+<a href="/phenotypes">
 	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
 
 		<div style="float:left; padding-left: 10px;">
+			<%= image_tag '/phenotype.png' %>
+		</div>
+		<div style="padding: 2px 85px;">
+			<h3> Phenotype Explorer </h3>
+		</div>
+		<div style="position: relative">
+			<i style="border-radius: 5px; background-color: rgba(0,0,0,.0); padding: 3px 10px; color:rgba(255,215,0,1); position: absolute; bottom: 50%; right: 10px;" class="icon-lock icon-4x"></i>
+		</div>
+	</div>
+</a>
+<% end %>
+<% if is_admin? %>
+<a href="/reports">
+	<div style="border: 1px solid #ddd; padding:10px; background-color: #FDFDFD; margin-top:5px;">
+
+		<div style="position: relative; float:left; padding-left: 10px;">
 			<%= image_tag '/report.png' %>
 		</div>
 		<div style="padding: 2px 85px;">
 			<h3> Report Generator </h3>
+		</div>
+		<div style="position: relative">
+			<i style="border-radius: 5px; background-color: rgba(0,0,0,.0); padding: 3px 10px; color:rgba(255,215,0,1); position: absolute; bottom: 50%; right: 10px;" class="icon-lock icon-4x"></i>
 		</div>
 	</div>
 </a>
@@ -47,6 +53,9 @@
 		</div>
 		<div style="padding: 2px 85px;">
 			<h3> Bulk Processor </h3>
+		</div>
+		<div style="position: relative">
+			<i style="border-radius: 5px; background-color: rgba(0,0,0,.0); padding: 3px 10px; color:rgba(255,215,0,1); position: absolute; bottom: 50%; right: 10px;" class="icon-lock icon-4x"></i>
 		</div>
 	</div>
 </a>

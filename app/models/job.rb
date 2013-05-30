@@ -106,10 +106,13 @@ class Job < ActiveRecord::Base
 		end
 		
 		def remove_files
+			require 'fileutils'
 			# Delete all files in this job directory
-			Dir["#{self.directory}/**/*"].each{ |file| File.delete(file) if File.file? file }
-			Dir["#{self.directory}/**/*/"].each{ |dir| Dir.delete(dir) }
-			Dir.delete(self.directory)
-			# Delete redis key?
+			#Dir["#{self.directory}/**/*"].each{ |file| File.delete(file) if File.file? file }
+			#Dir["#{self.directory}/**/*/"].each{ |dir| Dir.delete(dir) }
+			#Dir.delete(self.directory)
+			FileUtils.rm_rf self.directory
+			# Delete redis key? (Below doens't work)
+			#$redis.del "#{self.creator.redis_key}:#{self.redis_key}:*"
 		end
 end

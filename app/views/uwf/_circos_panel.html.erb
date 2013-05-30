@@ -63,10 +63,10 @@
 	<div class="btn btn-primary" onclick="$('#circos_legend').show();">Figure Legend</div>
 	
 	<div id="circos_hints">
-		<h5>Click on any segment to begin generating a full view of that area. <br/>
-			After a few moments the segment will loaded and stop flashing. <br/>
-			You can then click on it again to see the full view <br/>
-			Light yellow areas have already been generated and are ready to view.
+		<h5>Clicking on any segment will start the generation a full view image of that area. <br/>
+			When the segment stops flashing, the image is ready. <br/>
+			You can then click it to see the full view. <br/>
+			Light yellow areas have previously been generated and are ready to view.
 		</h5>
 	</div>
 </div>
@@ -86,17 +86,18 @@
 				<td>
 					The SNP density track indicates the
 					number of SNPs in each bin relative
-					to other bins. Warmer colors indicate 
-					greate SNP density.
+					to other bins in the current image. 
+					Warmer colors indicate 
+					greater SNP density.
 				</td>
 			</tr>
 			<tr>
 				<td><img src="/mhp_closeup.png" style="height:175px; width:350px" /></td>
 				<td>
 					The Manhattan plot track shows the
-					scores (-log p-value) of the best SNP
-					in each bin. Warmer colors also 
-					indicate better scoring SNPs. 
+					scores (-log <i>P-value</i>) of the best SNP
+					in each bin. Warmer colors 
+					indicate greater SNP scores. 
 				</td>
 			</tr>
 			<tr>
@@ -112,9 +113,9 @@
 				<td><img src="/genes_closeup.png" style="height:175px; width:350px"  /></td>
 				<td>
 					The Gene track indicates the closest gene
-					to each best SNP of a bin, and the name is
-					scaled larger as the distance between the 
-					gene center and the SNP position decrease.
+					to each best SNP of a bin and the name is
+					scaled by its proximity to the SNP. Larger names
+					indicate that a gene's central position is closer to the SNP.
 				</td>
 			</tr>
 		</tbody>

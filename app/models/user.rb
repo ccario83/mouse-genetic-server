@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 	# A user has many microposts using the communication polymorphic relationship (recipient_id, recipient_type columns)
 	has_many :authored_posts, :class_name => 'Micropost', :foreign_key => 'creator_id', :dependent => :destroy
 	# Microposts are called received_posts (of type Micropost) and are found through the communication model
-	has_many :communications, :as => :recipient
+	has_many :communications, :as => :recipient, :dependent => :destroy
 	has_many :received_posts, :source => :micropost, :through => :communications, :dependent => :destroy
 
 	# Group/membership relations

@@ -1,0 +1,12 @@
+import sys
+import subprocess
+
+# Run the EMMA Job
+print 'UWF is starting an emma job [%s]'%'<%= job.location %>'
+emma_cmd = 'python %sBerndtEmma.py -c %s -p %s' % ('<%= EMMA_path %>', '<%= job.location %>'+'BE.conf', '<%= job.location %>')
+subprocess.call(emma_cmd, shell=True)
+
+print 'UWF is starting an circos job [%s]'%'<%= job.location %>'
+# Run the Circos Plot Generator
+circos_cmd = 'python %scircos_generator.py -g  %s -p %s' % ('<%= CIRCOS_path %>', '<%= job.location %>'+'CG.conf', '<%= job.location %>')
+subprocess.call(circos_cmd, shell=True)

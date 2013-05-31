@@ -108,6 +108,7 @@ function check_stats(response)
 		poll_counter = 0;
 		clearInterval(stats_timerID);
 		stats_timerID = 0;
+		alert("The stat worker has not responded in 15s, which is unusual. Giving up.");
 		return;
 	}
 	// The server will return null if the job isn't done, otherwise it returns the letters

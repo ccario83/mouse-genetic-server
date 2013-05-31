@@ -51,10 +51,11 @@ class JobsController < ApplicationController
 			flash[:error] = "The job deletion failed!"
 		end
 		
-		respond_to do |format|
-			format.js { }
-			format.html {  }
-		end
+		redirect_to current_user
+		#respond_to do |format|
+		#	format.js { }
+		#	format.html {  }
+		#end
 	end
 
 	def reload

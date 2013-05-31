@@ -34,14 +34,14 @@
 							<% if not (tag == image_tag) %><% next %><% end %>
 							<% tag_vals.each do |tag_param, tag_val| %>
 								<% tag_param = tag_param.titlecase %>
-								<% if tag_param == "Bin Size" %><% next %><% end %>
-								<% if tag_param == "Density" %><% tag_param = "Density (SNPs per dot)" %><% end %>
+								<% if tag_param == "Bin Size" %><% tag_param = "Bin Size (BP per bin)" %><% end %>
 								<% if tag_param == "Start Pos" %><% tag_param = "Start Position (bp)" %><% end %>
 								<% if tag_param == "Stop Pos" %><% tag_param = "Stop Position (bp)" %><% end %>
 								
 								<% if tag_val.class == Fixnum or tag_val.class == Float %><% tag_val = number_with_delimiter(tag_val) %><% end %>
 							
 								<% if tag_param == "Image Download" %><% tag_val = "<a href=\"#{tag_val}\">High Resolution</a> (To download: Right Click, 'Save Link As...')".html_safe %><% end %>
+								<% if tag_param == "Circos Data" %><% tag_val = "<a href=\"#{tag_val}\">Download</a>".html_safe %><% end %>
 								<% if tag_val == '-1' %><% tag_val = 'All' %><% end %>
 								<% if (tag_param != 'Chromosome') && tag_val == 'All' %><% next %><% end %>
 								<tr>

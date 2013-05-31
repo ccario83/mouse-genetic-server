@@ -15,12 +15,12 @@
 
 <% popover_title = "<span style='font-style:italic;'>" + job.name + "</span><br/>".html_safe %>
 <% popover_text = "Owned by: #{color_tag(job.creator)}" %>
-<% popover_text = popover_text + "<br/>ID: #{job.redis_key}" %>
 <% if job.groups.count == 0 %>
-	<% popover_text = popover_text + " (Private)" %>
+	<% popover_text = popover_text + "<br/>(Private)" %>
 <% else %>
-	<% popover_text = popover_text + " Shared with #{job.groups.count} group(s)" %>
+	<% popover_text = popover_text + "<br/>Shared with #{pluralize(job.groups.count, 'group')}" %>
 <% end %>
+<% popover_text = popover_text + "<br/>ID: #{job.redis_key}" %>
 <% popover_text = popover_text + "<br/>Data: #{job.datafile}" %>
 <% popover_text = popover_text + "<br/><br/><i>#{job.description}</i>" %>
 

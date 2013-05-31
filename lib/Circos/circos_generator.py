@@ -21,6 +21,7 @@
 #  2012 10 01 --    Updated command line call for image_mapper.py
 #  2012 12 12 --    Added gene track
 #  2013 04 08 --    Redis key now passed as an argument in the configuration file
+#  2013 05 31 --    Minor modification to parse final result file for user
 #===============================================================================
 
 import sys              # General system functions
@@ -142,19 +143,19 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
             redis_channel.sadd("%s:progress:log" % redis_key, "generating-datapoints")
         else:
             print "Generating SNP datapoints..."
-        #print "\nGenerating MHP track"
+        print "\nGenerating MHP track"
         cmd = './circos_MHP_track %s %s %s %s %s %s'%(gen_settings['bin_size'], gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], gen_settings['emma_file'], MHP_of)
-        #print cmd
+        print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
     
     if track_name == 'SNP_track':
-        #print "\nGenerating SNP track"
+        print "\nGenerating SNP track"
         SNP_if = str(gen_settings['snp_set'])+'_chr_pos_only.tab'
         SNP_of = os.path.join(project_dir, 'SNP_track.txt')
-        # Reduce the density of the SNP plot a bit compared to the others
-        bin_size = str(int(gen_settings['bin_size'])*5)
+        # Reduce the density of the SNP plot a bit compared to the others (NOTE: not done anymore, used to scale by 5)
+        bin_size = str(int(gen_settings['bin_size'])*1)
         cmd = './circos_SNP_track %s %s %s %s %s %s'%(bin_size, gen_settings['chromosome'], gen_settings['start_position'], gen_settings['stop_position'], SNP_if , SNP_of)
-        #print cmd
+        print cmd
         #print script_dir
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return SNP_of
@@ -163,27 +164,27 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         return MHP_of
     
     if track_name == 'VEP_track':
-        #print "\nGenerating VEP track"
+        print "\nGenerating VEP track"
         VEP_if = MHP_of
         VEP_of = os.path.join(project_dir, 'VEP_track.txt')
         params = map(lambda k: db_settings[k], ['host','user','password','port','database','vep_table','cons_table','mut_table'])
         cmd = 'python circos_VEP_track.py -H %s -u %s -p %s -P %s -d %s -v %s -c %s -m %s -i %s -o %s'%tuple(params+[VEP_if, VEP_of])
-        #print cmd
+        print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return VEP_of
     
     if track_name == 'gene_track':
-        #print "\nGenerating SNP track"
+        print "\nGenerating gene track"
         gene_if = MHP_of
         gene_of = os.path.join(project_dir, 'gene_track.txt')
         params = map(lambda k: db_settings[k], ['host','user','password','port'])
         cmd = 'python circos_gene_track.py -H %s -u %s -p %s -P %s -i %s -o %s'%tuple(params+[gene_if, gene_of])
-        #print cmd
+        print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return gene_of
     
     # STUBBED!
-    if track_name == 'PPH2_track':        
+    if track_name == 'PPH2_track':
 	# Not yet implemented
         pass
 
@@ -360,6 +361,7 @@ circos_buf = buf.getvalue()
 
 if use_redis:
     redis_channel.sadd("%s:progress:log" % redis_key, "drawing-image")
+    print "\nDrawing the image..."
 else:
     print "Drawing the image..."
     
@@ -371,18 +373,19 @@ circos_ofh.write(circos_buf)
 circos_ofh.close()
 
 cmd = 'circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
-#print "Running Circos script"
-#print cmd
+print "Running Circos script"
+print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)
 
 
 # Create an image map
+print "Adding image map..."
 cmd = 'python circos_image_mapper.py -p %s -c %s -b %s -e %s'%(os.path.join(circos_od, 'circos.svg'), gen_conf.get('general','chromosome'), gen_conf.get('general','start_position'), gen_conf.get('general','stop_position'))
-#print cmd
+print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)
 
 # Merge a results file
-cmd = 'echo -e "Chr\tStart Pos\tStop Pos\tSNPs per bin\tMHP score\tVEP annotation\tClosest Gene" > results.txt'
+cmd = 'echo -e "Chr\tStart Pos\tStop Pos\tSNPs per bin\tMHP score\tVEP annotation\tClosest Gene" > circos_data.txt'
 subprocess.call(cmd, cwd = script_dir, shell=True)
-cmd = "paste -d'\t' <(cut -f1,2,3,4 SNP_track.txt) <(cut -f4 MHP_track.txt) <(cut -f4 VEP_track.txt) <(cut -f4 gene_track.txt) >> results.txt"
+cmd = "paste -d'\t' <(cut -f1,2,3,4 SNP_track.txt) <(cut -f4 MHP_track.txt) <(cut -f4 VEP_track.txt2) <(cut -f4 gene_track.txt) >> circos_data.txt"
 subprocess.call(cmd, cwd = script_dir, shell=True)

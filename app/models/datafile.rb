@@ -2,6 +2,7 @@ class Datafile < ActiveRecord::Base
 	attr_accessible :owner, :filename, :description, :directory, :uwf_runnable
 	before_create :create_data_directory, :check_uwf_compatibility
 	before_save :verify_quota
+	after_destroy :remove_file
 	
 	belongs_to :owner, :class_name => 'User', :foreign_key => 'owner_id'
 	has_and_belongs_to_many :groups
@@ -129,4 +130,16 @@ class Datafile < ActiveRecord::Base
 			self.uwf_runnable = true
 			return
 		end
+		
+		def remove_file
+			require 'fileutils'
+			# Delete all files in this job directory
+			#Dir["#{self.directory}/**/*"].each{ |file| File.delete(file) if File.file? file }
+			#Dir["#{self.directory}/**/*/"].each{ |dir| Dir.delete(dir) }
+			#Dir.delete(self.directory)
+			FileUtils.rm_rf self.get_path
+			# Delete redis key? (Below doens't work)
+			#$redis.del "#{self.creator.redis_key}:#{self.redis_key}:*"
+		end
+		
 end

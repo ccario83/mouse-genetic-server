@@ -4,9 +4,9 @@
 <% popover_title = "<span style='font-style:italic;'>" + datafile.filename + "</span>".html_safe %>
 <% popover_text = "Owned by #{color_tag(datafile.owner)}" %>
 <% if datafile.groups.count == 0 %>
-	<% popover_text = popover_text + " (Private)" %>
+	<% popover_text = popover_text + "<br/>(Private)" %>
 <% else %>
-	<% popover_text = popover_text + " Shared with #{datafile.groups.count} group(s)" %>
+	<% popover_text = popover_text + "<br/>Shared with #{pluralize(datafile.groups.count, 'group')}" %>
 <% end %>
 <% popover_text = popover_text + "<br/><br/><i>#{datafile.description}</i>" %>
 

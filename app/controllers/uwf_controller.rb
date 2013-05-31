@@ -41,7 +41,7 @@ class UwfController < ApplicationController
                                                  }
                                 )
     @job.save!
-    image_parameters = { "-1_-1_-1" => { chromosome: -1, start_pos: -1, stop_pos: -1, bin_size: 5000000, image_download: File.join(@job.download_link,'Plots','circos.svg') } }
+    image_parameters = { "-1_-1_-1" => { chromosome: -1, start_pos: -1, stop_pos: -1, bin_size: 5000000, image_download: File.join(@job.download_link,'Plots','circos.svg'), circos_data: File.join(@job.download_link,'Plots','circos_data.txt') } }
     @job.store_parameter({"image_parameters" => image_parameters})
     @job.save!
 
@@ -70,8 +70,9 @@ class UwfController < ApplicationController
     start_pos  = image_tag.split("_")[1].to_i
     stop_pos   = image_tag.split("_")[2].to_i
 
-    # Density is how many points should be placed on the Circos plot. This sets the default vlaue for the CircosWorker
-    density = 12500
+    # bin_size is BP range to bin SNPs when generating the Circos plot. This sets the default vlaue for the CircosWorker
+    # The target size should reduce the number of plotted points to ~500. This value is in BP and is used for a full chromosome
+    bin_size = 600000
     
     # A -1 start and stop position signifies the full chromosome should be shown
     dirctory = ''
@@ -79,15 +80,18 @@ class UwfController < ApplicationController
     if (start_pos == -1 and stop_pos == -1)
         directory = File.join(job.directory, "Plots","Chr#{chromosome}")
         image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "circos.svg")
-        # Change the default density for the full chromosome plot
-        density = 125000
+        circos_data = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos_data.txt")
+        # Change the default bin_size for the full chromosome plot
     else
         # Within the chromosome folder, sub plots are stored in start_pos_stop_pos folders
         directory = File.join(job.directory, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}")
         image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos.svg")
+        circos_data = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos_data.txt")
+        # Assuming this will always generate a positive value, and a 4M SNP set
+        bin_size = (stop_pos - start_pos)/ 15000
     end
 
-    image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: 5000000, density: density, image_download: image_path } }
+    image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: bin_size, image_download: image_path, circos_data: circos_data } }
     params = job.get_parameter('image_parameters')
     params ||= {}
     params.merge!(image_parameters)
@@ -95,7 +99,7 @@ class UwfController < ApplicationController
     job.save!
     
     # Ask the CircosWorker to create this plot
-    CircosWorker.perform_async(job.id, directory, chromosome, start_pos, stop_pos, density)
+    CircosWorker.perform_async(job.id, directory, chromosome, start_pos, stop_pos, bin_size)
     
     render :json => "Ok! Job started!"
   end

@@ -9,6 +9,7 @@
 # Modification History:
 #  2012 07 20 --    First version completed
 #  2012 07 26 --    Modified SQL query for 3x speed improvement across entire genome
+#  2013 05 31 --    Also outputs file identical to circos but with VEP annotation instead of code (for final result file d/l by user)
 #===============================================================================
 # Load Libraries
 import MySQLdb          # 
@@ -76,10 +77,12 @@ except:
     print "There was a problem opening your input file. Please check the path and try again."
     exit()
     
-# Attempt to open the input file and read it as a tab-delimited file
+# Attempt to open the output file and read it as a tab-delimited file
 try:
     circos_ofh = open(args.circos_of, 'w')
     circos_w = csv.writer(circos_ofh, delimiter='\t')
+    circos2_ofh = open(args.circos_of+'2', 'w')
+    circos2_w = csv.writer(circos2_ofh, delimiter='\t')
 except:
     print "There was a problem opening your output file. Please check the path and try again."
     exit()
@@ -104,7 +107,7 @@ cursor.execute('SELECT chromosome, position, classification FROM snp_positions s
 classifications = cursor.fetchall()
 # Write the results to an output file
 circos_w.writerows([[snp[0], snp[1], snp[1], coded_classes[snp[2]]] for snp in classifications])
-
+circos2_w.writerows([[snp[0], snp[1], snp[1], snp[2]] for snp in classifications])
 '''
 #OLDER SLOWER METHOD (about 3x slower)
 for snp in SNPs:
@@ -124,6 +127,7 @@ for snp in SNPs:
 '''
 snp_ifh.close()
 circos_ofh.close()
+circos2_ofh.close()
 
 
 

@@ -373,19 +373,22 @@ circos_ofh.write(circos_buf)
 circos_ofh.close()
 
 cmd = 'circos-0.62-1/bin/circos --conf %s --outputdir %s'%(circos_of, circos_od)
-print "Running Circos script"
+print "\nRunning Circos script"
 print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)
 
 
 # Create an image map
-print "Adding image map..."
+print "\nAdding image map..."
 cmd = 'python circos_image_mapper.py -p %s -c %s -b %s -e %s'%(os.path.join(circos_od, 'circos.svg'), gen_conf.get('general','chromosome'), gen_conf.get('general','start_position'), gen_conf.get('general','stop_position'))
 print cmd
 subprocess.call(cmd, cwd = script_dir, shell=True)
 
 # Merge a results file
-cmd = 'echo -e "Chr\tStart Pos\tStop Pos\tSNPs per bin\tMHP score\tVEP annotation\tClosest Gene" > circos_data.txt'
-subprocess.call(cmd, cwd = script_dir, shell=True)
-cmd = "paste -d'\t' <(cut -f1,2,3,4 SNP_track.txt) <(cut -f4 MHP_track.txt) <(cut -f4 VEP_track.txt2) <(cut -f4 gene_track.txt) >> circos_data.txt"
-subprocess.call(cmd, cwd = script_dir, shell=True)
+print "\nMerging results file..."
+cmd = 'echo -e "Chr\tBin Start BP\tBin Stop BP\tSNPs per bin\tBest SNP BP\tBest SNP score\tBest SNP VEP annotation\tClosest Gene to Best SNP\tGene Center BP" > circos_data.txt'
+print cmd
+subprocess.call(cmd, cwd = circos_od, shell=True, executable='/bin/bash')
+cmd = "paste -d'\t' <(cut -f1,2,3,4 SNP_track.txt) <(cut -f3,4 MHP_track.txt) <(cut -f4 VEP_track.txt2) <(cut -f3,4 gene_track.txt) >> circos_data.txt"
+print cmd
+subprocess.call(cmd, cwd = circos_od, shell=True, executable='/bin/bash')

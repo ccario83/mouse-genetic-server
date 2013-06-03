@@ -136,7 +136,25 @@ paths = """
      points="165,155 15,155 90,32 "
      id="left"
      onclick="top.zoom_out()" />
-<g id="sections">"""
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="2862.8835"
+     y="119.13911"
+     id="close"><tspan
+       x="2862.8835"
+       y="119.13911"
+       style="font-size:144px">x</tspan></text>
+  <rect
+     style="fill:#fefefe;fill-opacity:0;stroke:#000000;stroke-width:8;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;opacity:0"
+     id="close_box"
+     width="103.36942"
+     height="114.60523"
+     x="2853.895"
+     y="24.758327"
+     onclick="top.unfull()" />
+<g id="sections">
+"""
 
 """
   <polygon

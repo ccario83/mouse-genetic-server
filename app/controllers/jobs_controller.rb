@@ -51,7 +51,7 @@ class JobsController < ApplicationController
 			flash[:error] = "The job deletion failed!"
 		end
 		
-		redirect_to current_user
+		redirect_to user_path(current_user)
 		#respond_to do |format|
 		#	format.js { }
 		#	format.html {  }

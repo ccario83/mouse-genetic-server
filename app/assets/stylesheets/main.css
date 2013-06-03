@@ -859,7 +859,7 @@ h3 span.btn
 	margin-right: 10px;
 }
 .group-info-small i.icon-group.faded { color: #fae5c8; }
-
+#edit-groups .group-info-small .icon-group, #edit-groups .group-info-small .icon-star-empty {margin-top: 8px;} 
 
 /* Parent container for each group */
 .group-info-small

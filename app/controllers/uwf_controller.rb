@@ -80,7 +80,7 @@ class UwfController < ApplicationController
     if (start_pos == -1 and stop_pos == -1)
         directory = File.join(job.directory, "Plots","Chr#{chromosome}")
         image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "circos.svg")
-        circos_data = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos_data.txt")
+        circos_data = File.join(job.download_link, "Plots","Chr#{chromosome}", "circos_data.txt")
         # Change the default bin_size for the full chromosome plot
     else
         # Within the chromosome folder, sub plots are stored in start_pos_stop_pos folders
@@ -88,7 +88,7 @@ class UwfController < ApplicationController
         image_path = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos.svg")
         circos_data = File.join(job.download_link, "Plots","Chr#{chromosome}", "#{start_pos}_#{stop_pos}", "circos_data.txt")
         # Assuming this will always generate a positive value, and a 4M SNP set
-        bin_size = (stop_pos - start_pos)/ 15000
+        bin_size = (stop_pos - start_pos)/ 500
     end
 
     image_parameters = { image_tag => { chromosome: chromosome, start_pos: start_pos, stop_pos: stop_pos, bin_size: bin_size, image_download: image_path, circos_data: circos_data } }

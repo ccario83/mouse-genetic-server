@@ -15,6 +15,7 @@
 #  2012 07 20 --    Broke SNP list into 4 million chunks to be more memory efficient
 #  2012 07 20 --    Added biallelic support
 #  2012 07 27 --    Fixed bug near line 323 regarding cursor class
+#  2013 06 03 --    Updated to use local VEP install within ror_website
 #===============================================================================
 
 import MySQLdb          # 
@@ -36,11 +37,12 @@ parser.add_argument('-u', '--user',                 action='store',         defa
 parser.add_argument('-p', '--password',             action='store',         default='',                         dest='password',    help='mysql --password')
 parser.add_argument('-P', '--port',                 action='store',         default=3306,                       dest='port',        help='mysql --port')
 parser.add_argument('-d', '--database',             action='store',         default='4M_development',           dest='database',    help='The database to update or regenerate tables for. Defaults to 4M_development')
-parser.add_argument('-v', '--VEP_table',            action='store',         default='vep_consequences',         dest='VEP_table',   help='The name of the VEP annotation table, if not "VEP_consequences"')
+parser.add_argument('-v', '--VEP_table',            action='store',         default='vep_consequences',         dest='VEP_table',   help='The name of the VEP annotation table, if not "vep_consequences"')
 parser.add_argument('-c', '--consequence_table',    action='store',         default='consequences',             dest='cons_table',  help='The name of the VEP consequence table, if not "consequences"')
 parser.add_argument('-m', '--mutation_table',       action='store',         default='mutations',                dest='mut_table',   help='The name of the mutation table, if not "mutations"')
 parser.add_argument('-r', '--regenerate',           action='store_true',    default=False,                      dest='regen',       help='Regenerate the VEP tables, dropping all table information first')
-parser.add_argument('-l', '--VEP_location',         action='store',         default='/raid/WWW/website/VEP',    dest='VEP_dir',     help='Direcotry where the VEP script can be found (no trailing slash)')
+parser.add_argument('-l', '--VEP_location',         action='store',         default='/raid/WWW/ror_website/lib/VEP',          dest='VEP_dir',     help='Direcotry where the VEP script can be found (no trailing slash)')
+parser.add_argument('-l', '--VEP_location',         action='store',         default='/raid/WWW/ror_website/lib/VEP/vep.conf', dest='VEP_conf',    help='Where the VEP config file can be found')
 parser.add_argument('-b', '--biallelic',            action='store_true',    default=False,                      dest='biallelic',   help='Use this flag if the SNP set is biallelic')
 
 parser.add_argument('--clint',                      action='store_true',    default=False,                      dest='show_clint',  help='Meet the creator')
@@ -372,6 +374,7 @@ while True:
                     cursor.execute('SELECT id from mutations WHERE ref="%s" AND alt="%s"' % (allele1, allele2))
                     mutation_id = cursor.fetchone()['id']
                     # Chromsome, Start, Stop, Alleles (Maj/Min and Min/Maj), Strand = '+', ID
+                    #VEPinput.append([ snp['rs_number'] ])
                     VEPinput.append([ snp['chromosome'], snp['position'], snp['position'], allele1+'/'+allele2, '+', str(snp['id'])+'-'+str(mutation_id) ]) # A->B
                     # NOTE: The below is not needed due to loop design                
                     # Find out what the id of the mutation from B->A is and create an VEP input entry
@@ -433,16 +436,8 @@ while True:
             cmd =   'perl ' + args.VEP_dir + '/variant_effect_predictor.pl' \
             + ' --input_file ' + VEP_if \
             + ' --output_file ' + VEP_of \
-            + ' --no_progress' \
-            + ' --force_overwrite' \
-            + ' --species mus_musculus' \
-            + ' --terms so' \
-            + ' --protein' \
-            + ' --gene' \
-            + ' --check_existing' \
-            + ' --host useastdb.ensembl.org' \
-            + ' --user anonymous' \
-            + ' --port 5306 2>/dev/null'
+            + ' --config ' + VEP_conf \
+            + ' 2>/dev/null'
             subprocess.call(cmd, shell=True)
             ################################################################################
             print "Postprocessing VEP output and populating the database..."

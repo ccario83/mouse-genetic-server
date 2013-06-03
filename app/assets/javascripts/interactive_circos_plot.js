@@ -1,16 +1,32 @@
 function unfull()
 {
-	
+	console.log('[ICP] Exit fullscreen called.');
 	// Return if not in full screen mode...
-	if (document.fullscreen) { return; }
-	else if (document.mozFullScreen) { return; }
-	else if (document.webkitIsFullScreen) { return; }
+	if (document.fullscreen) { document.exitFullscreen(); }
+	else if (document.mozFullScreen) { document.mozCancelFullScreen(); }
+	else if (document.webkitIsFullScreen) { document.webkitCancelFullScreen(); }
 	console.log('[ICP] Leaving fullscreen mode.');
 	
 	$('#fs').html($.thumb_html);
 	
 	$.plots.zoom_image_list = [];
 	$.plots.image_found = false;
+	$.isfull = false;
+
+};
+
+// Due to weird behavior of changefullscreen
+function unfull2()
+{
+	console.log('[ICP] Leaving fullscreen mode via escape key');
+	if (document.fullscreen) { return; }
+	else if (document.mozFullScreen) { return;  }
+	else if (document.webkitIsFullScreen) { return;  }
+	$('#fs').html($.thumb_html);
+	
+	$.plots.zoom_image_list = [];
+	$.plots.image_found = false;
+	$.isfull = false;
 
 };
 
@@ -52,7 +68,7 @@ function full(el)
 	//button_toggle("polygon#right", "disable");
 	button_toggle("polygon#left", "disable");
 
-
+	$.isfull = true;
 };
 
 
@@ -373,8 +389,9 @@ $(document).ready(function ()
 	$.plots.loading_images = [];
 	$.plots.simultaneous_request_limit = 3;
 	$.plots.timerID = null;
-	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull);
 	// This threshold is for all timers. 
 	$.timer_attempts_threshold = 50;
 	$.timer_attempts = 0;
+	$.isfull = false;
+	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', unfull2);
 });

@@ -1,0 +1,1 @@
+Chr	Start Pos	Stop Pos	SNPs per bin	MHP score	VEP annotation	Closest Gene

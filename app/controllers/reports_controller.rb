@@ -32,7 +32,7 @@ class ReportsController < ApplicationController
     @job = current_user.jobs.new(:name => @job_name, :runner => 'reports', :state => 'Starting', :parameters => params[:job][:parameters], :datafile => @datafile)
     @job.save!
 
-    BulkWorker.perform_async(@job.id)
+    ReportsWorker.perform_async(@job.id)
 
     redirect_to "/users/#{@user.id}/jobs/#{@job.id}"
     return

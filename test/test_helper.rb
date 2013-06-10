@@ -28,5 +28,23 @@ class ActiveSupport::TestCase
   	@john.delete
   	@jane.delete
   end
+
+  def create_group_context
+    @jackg1 = FactoryGirl.create(:group, name: "Jack - Group1", description: "Jack - Group1", creator_id: @jack)
+    @jackg2 = FactoryGirl.create(:group, name: "Jack - Group2", description: "Jack - Group2", creator_id: @jack)
+    @jackg3 = FactoryGirl.create(:group, name: "Jack - Group3", description: "Jack - Group3", creator_id: @jack)
+    @jackg4 = FactoryGirl.create(:group, name: "Jack - Group4", description: "Jack - Group4", creator_id: @jack)
+    @jackg5 = FactoryGirl.create(:group, name: "Jack - Group5", description: "Jack - Group5", creator_id: @jack)
+    @jackg6 = FactoryGirl.create(:group, name: "Jack - Group6", description: "Jack - Group6", creator_id: @jack)
+  end
+
+  def remove_group_context
+    @jackg1.delete
+    @jackg2.delete
+    @jackg3.delete
+    @jackg4.delete
+    @jackg5.delete
+    @jackg6.delete
+  end
   
 end

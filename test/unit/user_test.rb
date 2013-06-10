@@ -41,5 +41,19 @@ class UserTest < ActiveSupport::TestCase
 			invalid_user = FactoryGirl.build(:user, first_name: "Jack", last_name: "Jensen", email: "jack@example.com", institution: "DEF")
 			deny invalid_user.valid?
 		end
+
+		should "check the total number of microposts received by a user" do
+			post1 = FactoryGirl.build(:micropost, content: "Post from Jack to Jill", creator_id: @jack, recipient_type: "User")
+			post2 = FactoryGirl.build(:micropost, content: "Post from Jill to John", creator_id: @jill, recipient_type: "User")
+			post3 = FactoryGirl.build(:micropost, content: "Post from John to Jane", creator_id: @john, recipient_type: "User")
+			post4 = FactoryGirl.build(:micropost, content: "Post from Jill to Jane", creator_id: @jill, recipient_type: "User")
+			post5 = FactoryGirl.build(:micropost, content: "Post from Jack to Jane", creator_id: @jack, recipient_type: "User")
+			comm1 = FactoryGirl.build(:communication, recipient_id: @jill, recipient_type: "User", micropost_id: post1)
+			comm2 = FactoryGirl.build(:communication, recipient_id: @john, recipient_type: "User", micropost_id: post2)
+			comm3 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post3)
+			comm4 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post4)
+			comm5 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post5)
+			assert_equal @jane.all_received_posts.size, 3
+		end
 	end
 end

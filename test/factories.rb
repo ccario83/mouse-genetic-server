@@ -1,4 +1,36 @@
 FactoryGirl.define do
+	factory :communication do
+		association :recipient, factory: :user
+		recipient_type "Group"
+		association :micropost
+	end
+
+	factory :group do
+		name "Sample Group"
+		description "This a sample group"
+		association :creator, factory: :user
+	end
+
+	factory :membership do
+		association :user
+		association :group
+	end
+
+	factory :micropost do
+		content "This is a sample micropost."
+		association :creator, factory: :user
+		recipient_type "Group"
+	end
+
+	factory :task do
+		description "Random Task"
+		association :creator, factory: :user
+		association :group
+		association :assignee, factory: :user
+		due_date 3.weeks.from_now.to_date
+		completed false
+	end
+
 	factory :user do
 		first_name "Ace"
 		last_name "Adams"
@@ -9,14 +41,4 @@ FactoryGirl.define do
 		institution "University of Pittsburgh"
 	end
 
-	factory :membership do
-		association :user
-		association :group
-	end
-
-	factory :group do
-		name "Sample Group"
-		description "This a sample group"
-		association :creator, factory: :user
-	end
 end

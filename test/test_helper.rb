@@ -22,20 +22,29 @@ class ActiveSupport::TestCase
     @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "ABC")
   end
 
-  def remove_user_context
-  	@jack.delete
-    @jill.delete
-  	@john.delete
-  	@jane.delete
-  end
-
-  def create_group_context
+    def create_group_context
     @jackg1 = FactoryGirl.create(:group, name: "Jack - Group1", description: "Jack - Group1", creator_id: @jack)
     @jackg2 = FactoryGirl.create(:group, name: "Jack - Group2", description: "Jack - Group2", creator_id: @jack)
     @jackg3 = FactoryGirl.create(:group, name: "Jack - Group3", description: "Jack - Group3", creator_id: @jack)
     @jackg4 = FactoryGirl.create(:group, name: "Jack - Group4", description: "Jack - Group4", creator_id: @jack)
     @jackg5 = FactoryGirl.create(:group, name: "Jack - Group5", description: "Jack - Group5", creator_id: @jack)
     @jackg6 = FactoryGirl.create(:group, name: "Jack - Group6", description: "Jack - Group6", creator_id: @jack)
+  end
+
+  def create_membership_context
+    @jackg11 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jack, confirmed: true)
+    @jackg12 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jill, confirmed: true)
+    @jackg13 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @john, confirmed: true)
+    @jackg14 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jane, confirmed: true)
+    @jackg21 = FactoryGirl.create(:membership, group_id: @jackg2, user_id: @jack, confirmed: true)
+    @jackg23 = FactoryGirl.create(:membership, group_id: @jackg2, user_id: @john, confirmed: true)
+  end
+
+def remove_user_context
+  	@jack.delete
+    @jill.delete
+  	@john.delete
+  	@jane.delete
   end
 
   def remove_group_context
@@ -47,4 +56,13 @@ class ActiveSupport::TestCase
     @jackg6.delete
   end
   
+  def remove_membership_context
+    @jackg11.delete
+    @jackg12.delete
+    @jackg13.delete
+    @jackg14.delete
+    @jackg21.delete
+    @jackg23.delete
+  end
+
 end

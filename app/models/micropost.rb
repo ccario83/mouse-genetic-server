@@ -1,4 +1,5 @@
 class Micropost < ActiveRecord::Base
+	# Clint: it seems that :recipient_type is not needed since the information is included in the identically-named field in the Communication model
 	attr_accessible :creator, :content, :group_recipients, :user_recipients, :recipient_type
 	# Some of the views like to know if the micropost was communicated to a user, group, or both for styling reasons. Set this parameter before save
 	before_save :set_recipient_type 
@@ -13,7 +14,7 @@ class Micropost < ActiveRecord::Base
 	#    :through indicates the Model name of the join table
 	#    :source indicates the column in that table that contains the ids (user or group), resolves to recipient_id
 	#    :source_type indicates the connected model (user or group), which is represented as a string in a column recipient_type
-	# A model must be genereated like: rails g model Communication :recipient_id:integer :recipient_type:string micropost_id:integer
+	# A model must be generated like: rails g model Communication :recipient_id:integer :recipient_type:string micropost_id:integer
 	# A table should also be created matching through a migration
 	has_many :group_recipients, :through => :communications, :class_name => 'Group', :source => :recipient, :source_type => 'Group'
 	has_many :user_recipients,  :through => :communications, :class_name => 'User',  :source => :recipient, :source_type => 'User', :validate => false # Don't know why this needs to be false, but it won't work otherwise
@@ -31,8 +32,8 @@ class Micropost < ActiveRecord::Base
 
 		def recipient_presence
 			if self.user_recipients.empty? && self.group_recipients.empty?
-				errors.add(:group_recipient, "Please specifiy at least one group or user recipient")
-				errors.add(:user_recipient, "Please specifiy at least one group or user recipient")
+				errors.add(:group_recipient, "Please specify at least one group or user recipient")
+				errors.add(:user_recipient, "Please specify at least one group or user recipient")
 			end
 		end
 
@@ -43,6 +44,13 @@ class Micropost < ActiveRecord::Base
 				self.recipient_type = 'User'
 			else
 				self.recipient_type = 'Both'
+			end
+		end
+
+		def user_is_in_system
+			user_ids = User.all.map{|u| u.id}
+			unless user_ids.include?(self.creator_id)
+				errors.add(:user, "is not in the system")
 			end
 		end
 end

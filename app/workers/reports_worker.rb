@@ -1,9 +1,9 @@
 require 'erb'
 
-class BulkWorker
+class ReportsWorker
 
     include Sidekiq::Worker
-    sidekiq_options queue: 'BULK'
+    sidekiq_options queue: 'Reports'
     sidekiq_options retry: false
 
     def perform(job_id)

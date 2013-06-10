@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MembershipTest < ActiveSupport::TestCase
+class MicropostTest < ActiveSupport::TestCase
   # matchers
   should belong_to(:creator)
   should have_many(:communications)

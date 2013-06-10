@@ -1,0 +1,17 @@
+/Base.pm/1.5/Mon Sep 24 13:27:13 2012//Tbranch-ensembl-71
+/BlastIndexer.pm/1.2/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/BlatIndexer.pm/1.11/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/ConcatFiles.pm/1.10/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/CopyDNA.pm/1.4/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/CreatePrimaryAssembly.pm/1.2/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/DumpFile.pm/1.20/Mon Mar 25 08:36:34 2013//Tbranch-ensembl-71
+/EmailSummary.pm/1.16/Thu Dec 20 10:51:12 2012//Tbranch-ensembl-71
+/FindDirs.pm/1.3/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+/Indexer.pm/1.3/Tue Jun 12 14:16:32 2012//Tbranch-ensembl-71
+/NcbiBlastIndexer.pm/1.2/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+/NcbiBlastReIndexer.pm/1.2/Tue Mar 19 14:54:16 2013//Tbranch-ensembl-71
+/ReuseSpeciesFactory.pm/1.8/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+/SCPBlast.pm/1.4/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+/SpeciesFactory.pm/1.5/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+/WuBlastIndexer.pm/1.9/Mon Mar 25 08:36:35 2013//Tbranch-ensembl-71
+D

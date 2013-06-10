@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Query>
+<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" >
+            
+    <Dataset name = "mmusculus_snp" interface = "default" >
+        <Filter name = "snp_filter" value = "rs6167295,rs31701671,rs31895570,rs31895572,rs31896744,rs31896753,rs31897612,rs31890636"/>
+        <Attribute name = "refsnp_id" />
+        <Attribute name = "chr_name" />
+        <Attribute name = "chrom_start" />
+        <Attribute name = "chrom_strand" />
+    </Dataset>
+</Query>

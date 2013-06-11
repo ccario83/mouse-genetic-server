@@ -62,13 +62,31 @@ class UserTest < ActiveSupport::TestCase
 		end
 
 		should "check the total number of microposts received by a user from groups" do
-			post1 = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jane])
-			post2 = FactoryGirl.create(:micropost, content: "Post from Jill to Group3", creator: @jill, recipient_type: "Group", user_recipients: [@jane])
-			post3 = FactoryGirl.create(:micropost, content: "Post from Jess to Group6", creator: @jess, recipient_type: "Group", user_recipients: [@jane])
+			post1_jack = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jack])
+			post1_jill = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jill])
+			post1_john = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@john])
+			post1_jane = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jane])
+			post1_jess = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jess])
+			post2_jill = FactoryGirl.create(:micropost, content: "Post from Jill to Group3", creator: @jill, recipient_type: "Group", user_recipients: [@jill])
+			post2_jane = FactoryGirl.create(:micropost, content: "Post from Jill to Group3", creator: @jill, recipient_type: "Group", user_recipients: [@jane])
+			post2_jess = FactoryGirl.create(:micropost, content: "Post from Jill to Group3", creator: @jill, recipient_type: "Group", user_recipients: [@jess])
+			post3_jess = FactoryGirl.create(:micropost, content: "Post from Jess to Group6", creator: @jess, recipient_type: "Group", user_recipients: [@jess])
+			post3_jill = FactoryGirl.create(:micropost, content: "Post from Jess to Group6", creator: @jess, recipient_type: "Group", user_recipients: [@jill])
+			post3_jane = FactoryGirl.create(:micropost, content: "Post from Jess to Group6", creator: @jess, recipient_type: "Group", user_recipients: [@jane])
+			assert_equal 1, @jack.all_received_posts.size
 			assert_equal 3, @jane.all_received_posts.size
-			post1.delete
-			post2.delete
-			post3.delete
+			assert_equal 0, @joel.all_received_posts.size
+			post1_jack.delete
+			post1_jill.delete
+			post1_john.delete
+			post1_jane.delete
+			post1_jess.delete
+			post2_jill.delete
+			post2_jane.delete
+			post2_jess.delete
+			post3_jess.delete
+			post3_jill.delete
+			post3_jane.delete
 		end
 
 		# should "verify the total number of microposts sent is accurate" do

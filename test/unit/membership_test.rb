@@ -15,6 +15,7 @@ class MembershipTest < ActiveSupport::TestCase
       remove_user_context
     end
 
+    
     # The two tests below will produce failures because there is no requirement in the Membership model to have an existing user or group when creating a membership.
     # should "not allow membership for non-existent user" do
     #   ghost = FactoryGirl.build(:user, :first_name => "Ghost")

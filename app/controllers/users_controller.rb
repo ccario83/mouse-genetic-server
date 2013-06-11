@@ -36,6 +36,8 @@ class UsersController < ApplicationController
 
 	# Renders the edit view to alter user information
 	def edit
+		@user = current_user	# may not always want to edit self
+		# @user = User.find(params[:user])
 	end
 
 

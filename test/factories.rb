@@ -5,6 +5,12 @@ FactoryGirl.define do
 		association :micropost
 	end
 
+	factory :datafile do
+		association :owner, factory: :user
+		filename "Samplefile.txt"
+		uwf_runnable true
+	end
+
 	factory :group do
 		name "Sample Group"
 		description "This a sample group"

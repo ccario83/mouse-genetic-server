@@ -9,7 +9,7 @@ module UsersHelper
 		image_tag(gravatar_url, :alt => user.first_name, :class => html_class)
 	end
 	
-	# Returns the Gravatar for the given user.
+	# Returns the Gravatar edit url for the given user.
 	def gravatar_edit_for(user)
 		gravatar_id = Digest::MD5::hexdigest(user.email.downcase)
 		gravatar_url = "https://secure.gravatar.com/#{gravatar_id}"

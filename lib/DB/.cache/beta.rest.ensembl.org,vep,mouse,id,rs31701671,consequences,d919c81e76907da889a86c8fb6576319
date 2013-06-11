@@ -1,0 +1,14 @@
+status: 200
+x-ratelimit-remaining: 11100
+content-location: http://beta.rest.ensembl.org/vep/mouse/id/rs31701671/consequences?
+vary: Content-Type
+content-length: 2345
+connection: keep-alive
+x-ratelimit-limit: 11100
+date: Fri, 07 Jun 2013 19:48:01 GMT
+x-ratelimit-reset: 719
+content-type: application/json
+x-runtime: 0.091045
+-varied-content-type: application/json
+
+{"data":[{"is_somatic":0,"location":{"coord_system":"chromosome","name":"1","strand":1,"end":10677685,"start":10677685},"name":"rs31701671","hgvs":{"G":"1:g.10677685T>G"},"transcripts":[{"translation_stable_id":"ENSMUSP00000035435","intron_number":"1/10","cdna_end":null,"translation_end":null,"exon_number":null,"is_canonical":1,"transcript_id":"ENSMUST00000035577","cdna_start":null,"gene_id":"ENSMUSG00000042501","cds_start":null,"alleles":[{"sift_prediction":null,"polyphen_prediction":null,"polyphen_score":null,"display_codon_allele_string":null,"hgvs_protein":null,"sift_score":null,"consequence_terms":["intron_variant"],"pep_allele_string":null,"allele_string":"T/G","codon_allele_string":null,"hgvs_transcript":"ENSMUST00000035577.6:c.116+41927A>C"}],"translation_start":null,"name":"Cpa6","biotype":"protein_coding","cds_end":null,"cdna_allele_string":"A/C","ccds":"CCDS14819.1","codon_position":null},{"translation_stable_id":"ENSMUSP00000118341","intron_number":"1/9","cdna_end":null,"translation_end":null,"exon_number":null,"is_canonical":0,"transcript_id":"ENSMUST00000153695","cdna_start":null,"gene_id":"ENSMUSG00000042501","cds_start":null,"translation_start":null,"alleles":[{"sift_prediction":null,"polyphen_prediction":null,"polyphen_score":null,"display_codon_allele_string":null,"hgvs_protein":null,"sift_score":null,"consequence_terms":["NMD_transcript_variant","intron_variant"],"pep_allele_string":null,"allele_string":"T/G","codon_allele_string":null,"hgvs_transcript":"ENSMUST00000153695.1:c.116+41927A>C"}],"name":"Cpa6","biotype":"nonsense_mediated_decay","cds_end":null,"cdna_allele_string":"A/C","codon_position":null},{"intron_number":"1/1","cdna_end":null,"translation_end":null,"exon_number":null,"is_canonical":0,"transcript_id":"ENSMUST00000140938","cdna_start":null,"gene_id":"ENSMUSG00000042501","cds_start":null,"translation_start":null,"alleles":[{"sift_prediction":null,"polyphen_prediction":null,"polyphen_score":null,"display_codon_allele_string":null,"hgvs_protein":null,"sift_score":null,"consequence_terms":["nc_transcript_variant","intron_variant"],"pep_allele_string":null,"allele_string":"T/G","codon_allele_string":null,"hgvs_transcript":"ENSMUST00000140938.1:n.294+41927A>C"}],"name":"Cpa6","biotype":"processed_transcript","cds_end":null,"cdna_allele_string":"A/C","codon_position":null}]}]}

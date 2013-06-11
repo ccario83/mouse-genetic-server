@@ -70,8 +70,8 @@ gem 'rinruby'
 #Gems requied by social site
 gem 'bcrypt-ruby', '~> 3.0.0'
 gem 'faker', '1.0.1'
-gem 'will_paginate', '3.0.3'      # For rails pagination, pajinate bootstrap juggernaut is used when GET REQUESTS cannot be used
-gem 'bootstrap-will_paginate', '0.0.6'
+gem 'will_paginate', '3.0.3'            # For rails pagination, pajinate bootstrap juggernaut is used when GET REQUESTS cannot be used
+gem 'bootstrap-will_paginate', '0.0.6'  # Extends will_paginate stylings to match Bootstrap convention 
 
 
 # To use Jbuilder templates for JSON

@@ -27,6 +27,8 @@ import subprocess       # To call the perl VEP script
 import argparse
 import warnings
 import os
+import requests
+import re
 warnings.filterwarnings("ignore", "Unknown table.*")
 
 #SNP_SUBMIT_MAX = 475000
@@ -65,6 +67,41 @@ def uniq(inlist, remove_N=False, case_sensitive=True):
                 uniques.append(item)
     return uniques
 
+
+def biomart_annotate(rsNums):
+    rsNums = ','.join(rsNums)
+    biomart_url = "http://www.biomart.org/biomart/martservice?"
+    query = """
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Query>
+<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" >
+    <Dataset name = "mmusculus_snp" interface = "default" >
+        <Filter name = "snp_filter" value = "%s"/>
+        <Attribute name = "refsnp_id" />
+        <Attribute name = "chr_name" />
+        <Attribute name = "chrom_start" />
+        <Attribute name = "chrom_strand" />
+        <Attribute name = "synonym_name" />
+        <Attribute name = "synonym_source" />
+        <Attribute name = "ensembl_gene_stable_id" />
+        <Attribute name = "consequence_type_tv" />
+        <Attribute name = "consequence_allele_string" />
+        <Attribute name = "ensembl_peptide_allele" />
+        <Attribute name = "sift_prediction" />
+        <Attribute name = "sift_score" />
+    </Dataset>
+</Query>""" % rsNums
+
+    #print query
+    query = re.sub('[\t\n\r]+','',query)
+    query = re.sub(' +',' ',query)
+    query = query + '\n'
+
+    #headers = {'content-type': 'application/xml'}
+    r = requests.post(biomart_url, data="query=%s"%query)
+    text = r.raw.read()
+    return text
+
 # List of specific SO terms from VEP to store in the consequence table
 SO_terms = {'splice_acceptor_variant':          'SO:0001574',
             'splice_donor_variant':             'SO:0001575',
@@ -79,7 +116,7 @@ SO_terms = {'splice_acceptor_variant':          'SO:0001574',
             'splice_region_variant':            'SO:0001630',
             'incomplete_terminal_codon_variant':'SO:0001626',
             'stop_retained_variant':            'SO:0001567',
-            'synonymous_codon':	              'SO:0001588',
+            'synonymous_codon':                 'SO:0001588',
             'coding_sequence_variant':          'SO:0001580',
             'mature_miRNA_variant':             'SO:0001620',
             '5_prime_UTR_variant':              'SO:0001623',
@@ -110,7 +147,7 @@ SO_classification = {   'splice_acceptor_variant':          'Border',
                         'splice_region_variant':            'Border',
                         'incomplete_terminal_codon_variant':'Exonic',
                         'stop_retained_variant':            'cnSNP',
-                        'synonymous_codon':	              'cnSNP',
+                        'synonymous_codon':                 'cnSNP',
                         'coding_sequence_variant':          'Exonic',
                         'mature_miRNA_variant':             'miRNA',
                         '5_prime_UTR_variant':              'Exonic',
@@ -223,7 +260,12 @@ while True:
             for line in VEPinput:
                 SNPresults.writerow(line)
             outfile.close()
-    
+            
+            ### Get chr/pos for each rs number using biomart
+            results = biomart_annotate(SNPs)
+            print results
+            
+            
             ################## VEP #########################################################
             '''
             Options
@@ -271,6 +313,7 @@ while True:
             + ' --config ' + args.VEP_conf \
             + ' 2>/dev/null'
             print cmd
+
             sys.exit(0);
             
             

@@ -20,6 +20,8 @@ FactoryGirl.define do
 		content "This is a sample micropost."
 		association :creator, factory: :user
 		recipient_type "Group"
+		user_recipients Array.new
+		group_recipients Array.new
 	end
 
 	factory :task do

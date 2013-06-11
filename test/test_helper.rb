@@ -16,53 +16,86 @@ class ActiveSupport::TestCase
 
   # Context for users
   def create_user_context
-  	@jack = FactoryGirl.create(:user, first_name: "Jack", last_name: "Jones", email: "jack@example.com", institution: "ABC")
-    @jill = FactoryGirl.create(:user, first_name: "Jill", last_name: "Jones", email: "jill@example.com", institution: "ABC")
-    @john = FactoryGirl.create(:user, first_name: "John", last_name: "Jones", email: "john@example.com", institution: "ABC")
-    @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "ABC")
+  	@jack = FactoryGirl.create(:user, first_name: "Jack", last_name: "Jones", email: "jack@example.com", institution: "ABC Inc.")
+    @jill = FactoryGirl.create(:user, first_name: "Jill", last_name: "Jones", email: "jill@example.com", institution: "DEF Inc.")
+    @john = FactoryGirl.create(:user, first_name: "John", last_name: "Jones", email: "john@example.com", institution: "GHI Inc.")
+    @jane = FactoryGirl.create(:user, first_name: "Jane", last_name: "Jones", email: "jane@example.com", institution: "JKL Inc.")
+    @joel = FactoryGirl.create(:user, first_name: "Joel", last_name: "Jones", email: "joel@example.com", institution: "MNO Inc.")
+    @jess = FactoryGirl.create(:user, first_name: "Jess", last_name: "Jones", email: "jess@example.com", institution: "PQR Inc.")
   end
 
     def create_group_context
-    @jackg1 = FactoryGirl.create(:group, name: "Jack - Group1", description: "Jack - Group1", creator_id: @jack)
-    @jackg2 = FactoryGirl.create(:group, name: "Jack - Group2", description: "Jack - Group2", creator_id: @jack)
-    @jackg3 = FactoryGirl.create(:group, name: "Jack - Group3", description: "Jack - Group3", creator_id: @jack)
-    @jackg4 = FactoryGirl.create(:group, name: "Jack - Group4", description: "Jack - Group4", creator_id: @jack)
-    @jackg5 = FactoryGirl.create(:group, name: "Jack - Group5", description: "Jack - Group5", creator_id: @jack)
-    @jackg6 = FactoryGirl.create(:group, name: "Jack - Group6", description: "Jack - Group6", creator_id: @jack)
+    @group1_jack = FactoryGirl.create(:group, name: "Group1 - Jack", description: "Group1 created by Jack", creator_id: @jack)
+    @group2_jack = FactoryGirl.create(:group, name: "Group2 - Jack", description: "Group2 created by Jack", creator_id: @jack)
+    @group3_jill = FactoryGirl.create(:group, name: "Group3 - Jill", description: "Group3 created by Jill", creator_id: @jill)
+    @group4_john = FactoryGirl.create(:group, name: "Group4 - John", description: "Group4 created by John", creator_id: @john)
+    @group5_jane = FactoryGirl.create(:group, name: "Group5 - Jane", description: "Group5 created by Jane", creator_id: @jane)
+    @group6_jess = FactoryGirl.create(:group, name: "Group6 - Jess", description: "Group5 created by Jess", creator_id: @jess)
   end
 
   def create_membership_context
-    @jackg11 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jack, confirmed: true)
-    @jackg12 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jill, confirmed: true)
-    @jackg13 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @john, confirmed: true)
-    @jackg14 = FactoryGirl.create(:membership, group_id: @jackg1, user_id: @jane, confirmed: true)
-    @jackg21 = FactoryGirl.create(:membership, group_id: @jackg2, user_id: @jack, confirmed: true)
-    @jackg23 = FactoryGirl.create(:membership, group_id: @jackg2, user_id: @john, confirmed: true)
-  end
+    @membership1_group1 = FactoryGirl.create(:membership, group_id: @group1_jack, user_id: @jack, confirmed: true)
+    @membership2_group1 = FactoryGirl.create(:membership, group_id: @group1_jack, user_id: @jill, confirmed: true)
+    @membership3_group1 = FactoryGirl.create(:membership, group_id: @group1_jack, user_id: @john, confirmed: true)
+    @membership4_group1 = FactoryGirl.create(:membership, group_id: @group1_jack, user_id: @jane, confirmed: true)
+    @membership5_group1 = FactoryGirl.create(:membership, group_id: @group1_jack, user_id: @joel, confirmed: true)
+    @membership1_group2 = FactoryGirl.create(:membership, group_id: @group2_jack, user_id: @jack, confirmed: true)
+    @membership2_group2 = FactoryGirl.create(:membership, group_id: @group2_jack, user_id: @john, confirmed: true)
+    @membership3_group2 = FactoryGirl.create(:membership, group_id: @group2_jack, user_id: @joel, confirmed: true)
+    @membership1_group3 = FactoryGirl.create(:membership, group_id: @group3_jill, user_id: @jill, confirmed: true)
+    @membership2_group3 = FactoryGirl.create(:membership, group_id: @group3_jill, user_id: @jane, confirmed: true)
+    @membership3_group3 = FactoryGirl.create(:membership, group_id: @group3_jill, user_id: @jess, confirmed: true)
+    @membership1_group4 = FactoryGirl.create(:membership, group_id: @group4_john, user_id: @john, confirmed: true)
+    @membership2_group4 = FactoryGirl.create(:membership, group_id: @group4_john, user_id: @jane, confirmed: true)
+    @membership3_group4 = FactoryGirl.create(:membership, group_id: @group4_john, user_id: @joel, confirmed: false)
+    @membership4_group4 = FactoryGirl.create(:membership, group_id: @group4_john, user_id: @jess, confirmed: true)
+    @membership1_group5 = FactoryGirl.create(:membership, group_id: @group5_jane, user_id: @jane, confirmed: true)
+    @membership2_group5 = FactoryGirl.create(:membership, group_id: @group5_jane, user_id: @joel, confirmed: true)
+    @membership3_group5 = FactoryGirl.create(:membership, group_id: @group5_jane, user_id: @jess, confirmed: false)
+    @membership1_group6 = FactoryGirl.create(:membership, group_id: @group6_jess, user_id: @jess, confirmed: true)
+    @membership2_group6 = FactoryGirl.create(:membership, group_id: @group6_jess, user_id: @jill, confirmed: true)
+    @membership3_group6 = FactoryGirl.create(:membership, group_id: @group6_jess, user_id: @jane, confirmed: true)
+     end
 
 def remove_user_context
   	@jack.delete
     @jill.delete
   	@john.delete
   	@jane.delete
-  end
+    @joel.delete
+    @jess.delete
+    end
 
   def remove_group_context
-    @jackg1.delete
-    @jackg2.delete
-    @jackg3.delete
-    @jackg4.delete
-    @jackg5.delete
-    @jackg6.delete
+    @group1_jack.delete
+    @group2_jack.delete
+    @group3_jill.delete
+    @group4_john.delete
+    @group5_jane.delete
   end
   
   def remove_membership_context
-    @jackg11.delete
-    @jackg12.delete
-    @jackg13.delete
-    @jackg14.delete
-    @jackg21.delete
-    @jackg23.delete
-  end
+    @membership1_group1.delete
+    @membership2_group1.delete
+    @membership3_group1.delete
+    @membership4_group1.delete
+    @membership5_group1.delete
+    @membership1_group2.delete
+    @membership2_group2.delete
+    @membership3_group2.delete
+    @membership1_group3.delete
+    @membership2_group3.delete
+    @membership3_group3.delete
+    @membership1_group4.delete
+    @membership2_group4.delete
+    @membership3_group4.delete
+    @membership4_group4.delete
+    @membership1_group5.delete
+    @membership2_group5.delete
+    @membership3_group5.delete
+    @membership1_group6.delete
+    @membership2_group6.delete
+    @membership3_group6.delete
+end
 
 end

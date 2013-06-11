@@ -43,17 +43,37 @@ class UserTest < ActiveSupport::TestCase
 		end
 
 		should "check the total number of microposts received by a user" do
-			post1 = FactoryGirl.build(:micropost, content: "Post from Jack to Jill", creator_id: @jack, recipient_type: "User")
-			post2 = FactoryGirl.build(:micropost, content: "Post from Jill to John", creator_id: @jill, recipient_type: "User")
-			post3 = FactoryGirl.build(:micropost, content: "Post from John to Jane", creator_id: @john, recipient_type: "User")
-			post4 = FactoryGirl.build(:micropost, content: "Post from Jill to Jane", creator_id: @jill, recipient_type: "User")
-			post5 = FactoryGirl.build(:micropost, content: "Post from Jack to Jane", creator_id: @jack, recipient_type: "User")
-			comm1 = FactoryGirl.build(:communication, recipient_id: @jill, recipient_type: "User", micropost_id: post1)
-			comm2 = FactoryGirl.build(:communication, recipient_id: @john, recipient_type: "User", micropost_id: post2)
-			comm3 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post3)
-			comm4 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post4)
-			comm5 = FactoryGirl.build(:communication, recipient_id: @jane, recipient_type: "User", micropost_id: post5)
-			assert_equal @jane.all_received_posts.size, 3
+			post1 = FactoryGirl.create(:micropost, content: "Post from Jack to Jill", creator: @jack, recipient_type: "User", user_recipients: [@jill])
+			post2 = FactoryGirl.create(:micropost, content: "Post from Jill to John", creator: @jill, recipient_type: "User", user_recipients: [@john])
+			post3 = FactoryGirl.create(:micropost, content: "Post from John to Joel", creator: @john, recipient_type: "User", user_recipients: [@joel])
+			post4 = FactoryGirl.create(:micropost, content: "Post from Jill to Joel", creator: @jill, recipient_type: "User", user_recipients: [@joel])
+			post5 = FactoryGirl.create(:micropost, content: "Post from Jack to Joel", creator: @jack, recipient_type: "User", user_recipients: [@joel])
+			# comm1 = FactoryGirl.create(:communication, recipient: @jill, recipient_type: "User", micropost: post1)
+			# comm2 = FactoryGirl.create(:communication, recipient: @john, recipient_type: "User", micropost: post2)
+			# comm3 = FactoryGirl.create(:communication, recipient: @joel, recipient_type: "User", micropost: post3)
+			# comm4 = FactoryGirl.create(:communication, recipient: @joel, recipient_type: "User", micropost: post4)
+			# comm5 = FactoryGirl.create(:communication, recipient: @joel, recipient_type: "User", micropost: post5)
+			assert_equal 3, @joel.all_received_posts.size
+			post1.delete
+			post2.delete
+			post3.delete
+			post4.delete
+			post5.delete
 		end
+
+		should "check the total number of microposts received by a user from groups" do
+			post1 = FactoryGirl.create(:micropost, content: "Post from Jack to Group1", creator: @jack, recipient_type: "Group", user_recipients: [@jane])
+			post2 = FactoryGirl.create(:micropost, content: "Post from Jill to Group3", creator: @jill, recipient_type: "Group", user_recipients: [@jane])
+			post3 = FactoryGirl.create(:micropost, content: "Post from Jess to Group6", creator: @jess, recipient_type: "Group", user_recipients: [@jane])
+			assert_equal 3, @jane.all_received_posts.size
+			post1.delete
+			post2.delete
+			post3.delete
+		end
+
+		# should "verify the total number of microposts sent is accurate" do
+		# 	assert_equal 9, @jane.all_received_posts.size
+		# end
+
 	end
 end

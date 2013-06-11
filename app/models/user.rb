@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
 				Dir.mkdir(File.join(directory,'data')) unless File.directory?(File.join(directory,'data'))
 				Dir.mkdir(File.join(directory,'jobs')) unless File.directory?(File.join(directory,'jobs'))
 			rescue
-				errors.add_to_base('There was an issue creating this user account. Please contact the web administrator.')
+				errors.add(:base,'There was an issue creating this user account. Please contact the web administrator.')
 			end
 			self.directory = directory
 		end

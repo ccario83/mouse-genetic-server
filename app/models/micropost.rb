@@ -1,5 +1,4 @@
 class Micropost < ActiveRecord::Base
-	# Clint: it seems that :recipient_type is not needed since the information is included in the identically-named field in the Communication model
 	attr_accessible :creator, :content, :group_recipients, :user_recipients, :recipient_type
 	# Some of the views like to know if the micropost was communicated to a user, group, or both for styling reasons. Set this parameter before save
 	before_save :set_recipient_type 
@@ -22,6 +21,7 @@ class Micropost < ActiveRecord::Base
 	validates :creator_id, :presence => true
 	validates :content, :presence => true, :length => { :minimum => 1, :maximum => 255 }
 	validate :recipient_presence
+	validate :creator_is_in_system, :on => :create
 
 	default_scope :order => 'microposts.created_at DESC'
 
@@ -47,9 +47,9 @@ class Micropost < ActiveRecord::Base
 			end
 		end
 
-		def user_is_in_system
-			user_ids = User.all.map{|u| u.id}
-			unless user_ids.include?(self.creator_id)
+		def creator_is_in_system
+			creator_ids = User.all.map{|u| u.id}
+			unless creator_ids.include?(self.creator_id)
 				errors.add(:user, "is not in the system")
 			end
 		end

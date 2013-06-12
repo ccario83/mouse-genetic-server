@@ -12,7 +12,9 @@
 	</div>		
 
 	<div style="position: absolute; top: 0px; left: 100px" >
-		<span id="user-name"><%= user.name %></span>
+		<span id="user-name"><%= user.name %>
+			<% if user.admin %>*<% end %>
+		</span>
 		<span id="user-institution"><%= user.institution %></span>
 		<span id="user-email"><%= user.email %></span>
 	</div>

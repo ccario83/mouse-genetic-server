@@ -34,7 +34,7 @@ module SessionsHelper
 
 	# Returns true of false if the user is an administrator
 	def is_admin?
-		current_user.admin?
+		current_user && current_user.admin?
 	end
 
 	# Forces the user to sign in if required

@@ -4,18 +4,17 @@ RorWebsite::Application.routes.draw do
   # Route to the sidekiq manager
   mount Sidekiq::Web => '/sidekiq'
   
-  # Redirect the root url to the uwf page
+  # Redirect the root url to the uwf page (www.berndtlab.pitt.edu)
   root :to => 'static_pages#home'
   
-  # Aliases 
+  # Aliases to specific actions.
   match '/signup',  :to => 'users#new'
   match '/signin',  :to => 'sessions#new'
   match '/signout', :to => 'sessions#destroy', :via => :delete
   match '/phenotypes', :to => 'phenotypes#index'
   
-  # FOR ALL AJAX CALLS
-  #post '/:type/:id/:controller/:action'
-  
+  # Most reload ajax calls below follow this template
+  #post '/:type/:id/:controller/:action
   
   # User routes
   resources :users
@@ -28,37 +27,40 @@ RorWebsite::Application.routes.draw do
   
   # Group routes
   resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
-  # Group AJAX calls
+  # To reload the group_panel div via AJAX
   post '/:type/:id/groups/reload' => 'groups#reload'
   
-  # Micropost routes
+  # Micropost routes, using nested resources
   resources :users do
     resources :microposts, :only => [:create, :destroy,]
   end
-  # Micropost AJAX calls
+  # To reload the micropost_panel div via AJAX
   post '/:type/:id/microposts/reload' => 'microposts#reload'
   
-  # Job routes
+  # Job routes, using nested resources
   resources :users do
     resources :jobs
   end
-  # Job AJAX calls
+  # To report back all job percentages for the group or user
   post '/jobs/percentages'
+  # To reload the job_panel div via AJAX
   post '/:type/:id/jobs/reload' => 'jobs#reload'
   
   # Datafile routes
   resources :users do
     resources :datafiles
   end
-  # Datafile AJAX calls
+  # To reload the datafile_panel div via AJAX
   post '/:type/:id/datafiles/reload' => 'datafiles#reload'
   
 
-  # Task AJAX calls
+  # Task routes, using nested resources
   resources :groups do
     resources :tasks, :only => [:create, :destroy,]
   end
+  # To report back the status of all tasks for the group
   post '/tasks/check'
+  # To reload the task_panel div via AJAX
   post '/:type/:id/tasks/reload' => 'tasks#reload'
 
 

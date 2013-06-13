@@ -34,6 +34,23 @@ class UsersController < ApplicationController
 		end
 	end
 
+	# Renders the edit view to alter user information
+	def edit
+	end
+
+
+	# Accepts user updates from the edit view or redirects back to display form errors
+	def update
+		if @user.update_attributes(params[:user])
+			sign_in @user
+			flash[:success] = "Profile successfully updated."
+			redirect_to @user
+		else
+			flash[:error] = "Please correct form errors."
+			render 'edit'
+		end
+	end
+
 
 	## Signed in user actions
 	## ==================================================
@@ -69,24 +86,6 @@ class UsersController < ApplicationController
 		# To allow the user to sent a micropost to groups or users in this view
 		@show_filters = true 
 		# Partial defaults are used for other variables
-	end
-
-
-	# Renders the edit view to alter user information
-	def edit
-	end
-
-
-	# Accepts user updates from the edit view or redirects back to display form errors
-	def update
-		if @user.update_attributes(params[:user])
-			sign_in @user
-			flash[:success] = "Profile successfully updated."
-			redirect_to @user
-		else
-			flash[:error] = "Please correct form errors."
-			render 'edit'
-		end
 	end
 
 

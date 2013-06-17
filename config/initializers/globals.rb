@@ -2,7 +2,7 @@
 # Each user's disk quota in Gb
 USER_DISK_QUOTA = 5.0
 
-
+# Paths where tool and data directories can be found
 USER_DATA_PATH = File.join(Rails.root, '../data/')
 GENO_DATA_PATH = File.join(Rails.root, '../../Genotype Data/')
 EMMA_PATH      = File.join(Rails.root, 'lib/EMMA/')

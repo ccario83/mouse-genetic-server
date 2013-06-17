@@ -64,7 +64,6 @@ gem 'simple_form'
 gem 'sidekiq'
 gem 'sinatra', '1.3.0', :require => nil
 gem 'slim'
-gem 'gmaps4rails'
 gem 'rinruby'
 
 #Gems requied by social site

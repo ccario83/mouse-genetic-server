@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
 	validates :institution,	:presence => true, :length => { :maximum => 50 }
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 	validates :email, :presence => true, :format => { :with => VALID_EMAIL_REGEX }, :uniqueness => { :case_sensitive => false}, :uniqueness => true
-	validates :password, :presence => {:on => :create}, :confirmation => true, :length => { :minimum => 5}
+	validates :password, :presence => {:on => :create}, :confirmation => true, :length => { :minimum => 5, :on => :create}
 
 	def name
 		"#{self.first_name} #{self.last_name}"

@@ -15,11 +15,11 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<% if is_admin? %>
+					<!-- <%# if is_admin? %>
 					<li><a href="<%= users_path %>">View Users <i class="icon-key"></i> </a></li>
 					<li><a href="<%= groups_path %>">View Groups <i class="icon-key"></i> </a></li>
-					<% end %>
-					<!--<li><%= link_to "Home", current_user %></li>-->
+					<%# end %>
+					<li><%= link_to "Home", current_user %></li> -->
 					<li><%= link_to "Edit", edit_user_path(current_user) %></li>
 					<li class="divider"></li>
 					<li>

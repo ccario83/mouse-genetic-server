@@ -19,7 +19,7 @@
 				<%= image_tag(q.split('..')[1], :id => 'circos_thumb', :width => '100%')%>
 			<br>
 			<br>
-				<a href="<%= job.directory.split('..')[1] + '/' + q.split('/')[-1] .split('.')[0] %>.csv.txt" class="btn">Link to</a>
+				<a href="<%= job.directory.split('..')[1] + '/' + q.split('/')[-1] .split('.')[0] %>.csv.txt" class="btn">Download Top 200 SNPs</a>
 			<hr>
 	<% end %>
 	</div>
@@ -27,18 +27,35 @@
 <!-- Job State is Progressing -->
 
 <% elsif job.state == 'Progressing' || job.state == 'Starting'%>
-	<% content_for :page_js do %>
-			<%= javascript_include_tag('uwf_show') %>
-	<% end %>
-	
 	<div class="row-fluid" style = "">
 		<h3 style="padding-left: 20px;"><i class="icon-spinner icon-spin"></i> Job State:</h3>
-		<!--<script type="text/javascript"> window.job_id = '<%= job.id %>';</script>-->
 		<div id="job-progress" style="padding-left: 20px">
 			<ul>
-				<li id="starting" class="incomplete">Running</li>
+				GWAS Progress
+				<div class="progress progress-striped active">
+  					<div class="bar" style="width: 0%;" id="gwas_completed"></div>
+  					<div class="bar bar-warning" style="width: 0%;" id="gwas_started"></div>
+				</div>
+				Manhattan Plot Generation Progress
+				<div class="progress progress-striped active">
+  					<div class="bar" style="width: 0%;"  id="manhattan_complete"></div>
+  					<div class="bar bar-warning" style="width: 0%;" id="manhattan_started"></div>
+				</div>
+			</ul>
 		</div>
 	</div>
+	<script type="text/javascript">
+	function doPoll(){
+		$.getJSON("/bulk/progress/<%= @job.id %>",function(result){
+			$.each(result, function(i, field){
+				$("#" + i).width(field);
+				if (i == 'completed' && field == 'true') { location.reload(); }
+			});
+			setTimeout(doPoll,5500);
+	    });
+	}
+	doPoll()
+	</script>
 <% end %>
 
 <br/>

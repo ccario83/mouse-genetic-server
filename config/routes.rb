@@ -69,6 +69,7 @@ RorWebsite::Application.routes.draw do
 
   # Bulk routes
   resources :bulk
+  get '/bulk/progress/:id' => 'bulk#progress' 
 
   # Reports routes
   resources :reports

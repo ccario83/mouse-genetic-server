@@ -45,9 +45,13 @@ class BulkController < ApplicationController
   
   def progress
     job = Job.find(params['id'])
-    log = $redis.smembers("#{current_user.redis_key}:#{job.redis_key}:progress:log")
-    errors = $redis.smembers("#{current_user.redis_key}:#{job.redis_key}:error:log")
-    render :json => {log: log, errors: errors}.to_json
+    gwas_started = $redis.get("#{current_user.redis_key}:#{job.redis_key}:progress:gwas_started")
+    gwas_completed = $redis.get("#{current_user.redis_key}:#{job.redis_key}:progress:gwas_completed")
+    manhattan_started = $redis.get("#{current_user.redis_key}:#{job.redis_key}:progress:manhattan_started")
+    manhattan_completed = $redis.get("#{current_user.redis_key}:#{job.redis_key}:progress:manhattan_completed")
+
+    completed = $redis.get("#{current_user.redis_key}:#{job.redis_key}:completed")
+    render :json => { gwas_started:  gwas_started,  gwas_completed:  gwas_completed, manhattan_started: manhattan_started, manhattan_completed: manhattan_completed, completed: completed}.to_json
   end
   
   

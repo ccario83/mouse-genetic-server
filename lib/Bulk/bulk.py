@@ -260,6 +260,7 @@ def mahattan_runner(inputfile):
 for idx, file_name in enumerate(phenotypes):
 	cwd = args.path + '/' + file_name.split('.')[0] + '/'
 	redis_update['manhattan_started'] += redis_update['idx']
+	redis()
 
 	if args.algorithm.lower() == "emma":
 		results = 'emma_results.txt'

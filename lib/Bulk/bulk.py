@@ -253,6 +253,9 @@ while threading.activeCount() > 1:
 def mahattan_runner(inputfile):
 	subprocess.call(["Rscript", inputfile], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
 	print "Finishing the %s job. There all still jobs running" % (inputfile)
+	redis_update['manhattan_started'] -= redis_update['idx']
+	redis_update['manhattan_completed'] += redis_update['idx']
+	redis()
 
 for idx, file_name in enumerate(phenotypes):
 	cwd = args.path + '/' + file_name.split('.')[0] + '/'
@@ -285,9 +288,6 @@ for idx, file_name in enumerate(phenotypes):
 	t.start()
 	
 	percent_complete = float(idx) / len(phenotypes)
-	redis_update['manhattan_started'] -= redis_update['idx']
-	redis_update['manhattan_completed'] += redis_update['idx']
-	redis()
 
 	while threading.activeCount() > max_threads + 1:
 		None

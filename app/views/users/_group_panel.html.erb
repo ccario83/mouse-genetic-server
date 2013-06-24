@@ -11,7 +11,7 @@
 		<span class="title"> Groups </span>
 	</div>
 	<div class="icon-panel">
-		<i class="icon-number"> <%= confirmed_groups.count %> </i>
+		<i class="icon-number"> <%= user.confirmed_groups.count %> </i>
 		
 		<i class="icon-plus" data-toggle="modal" data-target="#new-group"></i>
 		<i class="icon-list<% if confirmed_groups.length != all_groups_length %> pulsate <% end %><% if all_groups_length == 0  %> disabled<% end %>" data-toggle="modal" data-target="#edit-groups"></i>

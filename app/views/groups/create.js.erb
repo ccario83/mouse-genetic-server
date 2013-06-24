@@ -21,6 +21,9 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 <% else %>
 	$("#new-group").modal('hide');
 	update_div('#group-panel');
+	update_div('#datafile-panel');
+	update_div('#job-panel');
+	update_div('#micropost-panel');
 	// This should be removed once the #group-managament div is light enough to be done via AJAX
 	//location.reload();
 <% end %>

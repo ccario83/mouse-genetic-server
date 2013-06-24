@@ -37,36 +37,36 @@ class UsersController < ApplicationController
 	# Renders the edit view to alter user information
 	def edit
 		if current_user.admin     # an administrator may edit any user
-		  @user = User.find(params[:id])
+			@user = User.find(params[:id])
 		else                      # edit self only
-		  @user = current_user
-	  end
+			@user = current_user
+		end
 	end
 
 
 	# Accepts user updates from the edit view or redirects back to display form errors
 	def update
-	  if current_user.admin     # updates for any user by administrator are permitted
-	    @user = User.find(params[:id])
-		  if @user.update_attributes(params[:user])
-		  	flash[:success] = "#{@user.name}'s profile was successfully updated."
-		  	redirect_to users_path
-		  else
-		  	flash[:error] = "Please correct form errors."
-		  	render 'edit'
-		  end
-
-    else                      # update self only
-      @user = current_user
-		  if @user.update_attributes(params[:user])
-		  	sign_in @user
-		  	flash[:success] = "Your profile was successfully updated."
-		  	redirect_to @user
-		  else
-		  	flash[:error] = "Please correct form errors."
-		  	render 'edit'
-		  end
-		end  
+		@user = User.find(params[:id])
+		if current_user.admin     # updates for any user by administrator are permitted
+			if @user.update_attributes(params[:user])
+				flash[:success] = "#{@user.name}'s profile was successfully updated."
+				redirect_to users_path
+			else
+				flash[:error] = "Please correct form errors."
+				render 'edit'
+			end
+		else                      # update self only
+			if @user == current_user
+				if @user.update_attributes(params[:user])
+					sign_in @user
+					flash[:success] = "Your profile was successfully updated."
+					redirect_to @user
+				else
+					flash[:error] = "Please correct form errors."
+					render 'edit'
+				end
+			end
+		end
 	end
 
 
@@ -225,6 +225,6 @@ class UsersController < ApplicationController
 	# Validates the current_user is an administrator
 	private
 		def admin_user
-			redirect_to root_path unless current_user.admin?
+			redirect_to root_path unless is_admin?
 		end
 end

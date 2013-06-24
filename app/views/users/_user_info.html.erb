@@ -1,11 +1,10 @@
-
 <% user ||= @user %>
 <div class="user-info-large" style="position: relative;" >
 	<%= gravatar_for user, :size =>65 %>
 
 	<div class="icon-panel">
+		<%= link_to raw("<i class='icon-pencil'></i>"), edit_user_path(user) %>
 		<% if current_user.admin? && !current_user?(user) %>
-			<%= link_to raw("<i class='icon-pencil'></i>"), edit_user_path(user) %>			
 			<a href="/users/<%=user.id%>" data-confirm="Are you sure?" data-method="delete" rel="nofollow", class="delete"><i class="icon-remove"></i></a>
 		<% end %>
 					

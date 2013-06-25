@@ -4,7 +4,7 @@ require 'find'
 class User < ActiveRecord::Base
 	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation, :directory
 	before_save { |user| user.email = user.email.downcase }
-	before_save :create_remember_token
+	before_create :create_remember_token
 	has_secure_password
 	before_create :create_user_directory
 

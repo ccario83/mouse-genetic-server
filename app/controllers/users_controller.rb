@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
-	# signed_in_user is defined in apps/helpers/session_helper and ensures a suer is signed in
+  # include SessionsHandler
+	# signed_in_user is defined in apps/helpers/session_helper and ensures a user is signed in
 	# before accessing the listed actions
 	before_filter :signed_in_user,	:only => [:show, :edit, :update, :reload, :accept_group, :decline_group, :leave_group, :delete_group]
 	# admin_user is defined in the private def below. This filter ensures that only admins can 
 	# delete users
-	before_filter :admin_user,		:only => [:index, :destroy]
+  before_filter :admin_user,    :only => [:index, :destroy]
 
 
 
@@ -30,15 +31,15 @@ class UsersController < ApplicationController
 			redirect_to @user # Same as render 'show' with user_id (POST /users/show/id)
 		else
 			flash[:error] = "Please correct form errors."
-			render 'new' # simple_form_for will handle display of errors in the @user.erros hash
+			render 'new' # simple_form_for will handle display of errors in the @user.errors hash
 		end
 	end
 
 	# Renders the edit view to alter user information
 	def edit
-		if current_user.admin     # an administrator may edit any user
+		if current_user.admin				# an administrator may edit any user
 			@user = User.find(params[:id])
-		else                      # edit self only
+		else								# non-administrator may edit self only
 			@user = current_user
 		end
 	end
@@ -48,9 +49,16 @@ class UsersController < ApplicationController
 	def update
 		@user = User.find(params[:id])
 		if current_user.admin     # updates for any user by administrator are permitted
+			params[:user].merge(:admin => true) if @user.admin? 
 			if @user.update_attributes(params[:user])
+				puts "Yeah!! #{@user.name}'s profile updated"
 				flash[:success] = "#{@user.name}'s profile was successfully updated."
-				redirect_to users_path
+debugger
+				# if current_user == @user
+				# 	redirect_to current_user
+				# else
+					redirect_to users_path
+				# end
 			else
 				flash[:error] = "Please correct form errors."
 				render 'edit'

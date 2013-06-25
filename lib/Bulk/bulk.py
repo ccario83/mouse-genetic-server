@@ -21,7 +21,7 @@ Created on Tue Dec 20 19:22:15 2011
 ###############################################################################
 
 import sys
-sys.path.append("/raid/WWW/website/EMMA")
+sys.path.append("/raid/WWW/ror_website/lib/EMMA")
 
 import argparse
 from BerndtEmma import *
@@ -29,6 +29,7 @@ import binascii
 import csv
 import os
 import random
+import redis
 import shutil
 import subprocess
 import thread
@@ -85,6 +86,7 @@ parser.add_argument('-t', '--threads',                   action='store',     des
 parser.add_argument('-a', '--algorithm',                 action='store',     dest='algorithm',     default='EMMAX',         type=str,      help='algorithm to use: EMMA, GEMMA, EMMAX' )
 parser.add_argument('-s', '--snp_set',   '--snp',        action='store',     dest='snp',           default='4M',            type=str,      help='snp_set to use, 4M etc'               )
 parser.add_argument('-p', '--path',                      action='store',     dest='path',          default=None,            type=str,      help='path to use, default is cwd'          )
+parser.add_argument('-r', '--redis',                action='store',         default=None,                   dest='redis',             help='Redis key to store percent complete')
 
 args = parser.parse_args()
 
@@ -112,6 +114,22 @@ def uniq(inlist):
 			if item not in uniques:
 				uniques.append(item)
 	return uniques
+
+###############################################################################
+##   Sets up a redis connection in -r flag is set on the commandline
+##   and reports the percent completion to redis to be passed to the
+##   web level
+###############################################################################
+
+if args.redis is not None:
+	r = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+def redis():
+	if args.redis is not None:
+		for redis_key in redis_update.keys():
+			key = args.redis + ":progress:" + redis_key
+			redis_value = str(redis_update[redis_key])  + '%'
+			r.set(key, redis_value)
 
 ###############################################################################
 ##   Splits the files via the columns that are not 'Chr', 'Pos', and 'Animal_Id'
@@ -173,6 +191,7 @@ def GWASRunner(file_name):
 	#runner_idx = len(obj)
 	cwd = root_dir + file_name.split(".")[0] + '/'
 	print cwd
+	#Updates Redis on Progress
 	#   Creates Emmarunner Object in obj list
 	obj = EmmaRunner()
 	obj.set_log_file(cwd + 'log.txt')
@@ -185,9 +204,14 @@ def GWASRunner(file_name):
 	print 'Running Thread ' + file_name
 	obj.run(snp_set="4M", emma_type=_emma_algorithm, phenos_indir=cwd, outdir=cwd)
 	print 'ending thread ' + file_name
+	redis_update['gwas_started'] -= redis_update['idx']
+	redis_update['gwas_completed'] += redis_update['idx']
+	redis()
 
 phenotypes = file_split(args.input)
 max_threads = args.threads
+redis_update = {'idx': float(0), 'gwas_started': float(0), 'gwas_completed': float(0), 'manhattan_started': float(0), 'manhattan_completed': float(0)}
+redis_update['idx'] = ( float(1) / float(len(phenotypes)) ) * 100
 
 if max_threads >= len(phenotypes):
 	print 'Changing Max Threads to' + str(len(phenotypes) - 1)
@@ -198,7 +222,12 @@ threads = []
 for idx, file_name in enumerate(phenotypes):
 	while threading.activeCount() > max_threads + 1:
 		None
-	print 'Starting Thread'
+
+	percent_complete = float(idx) / len(phenotypes)
+	print 'Starting Thread, %s' % percent_complete
+	redis_update['gwas_started'] += redis_update['idx']
+	redis()
+
 	threads.append( threading.Thread(target=GWASRunner, args=(file_name,)) )
 	threads[idx].start()
 	print threading.enumerate()
@@ -224,10 +253,15 @@ while threading.activeCount() > 1:
 def mahattan_runner(inputfile):
 	subprocess.call(["Rscript", inputfile], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
 	print "Finishing the %s job. There all still jobs running" % (inputfile)
+	redis_update['manhattan_started'] -= redis_update['idx']
+	redis_update['manhattan_completed'] += redis_update['idx']
+	redis()
 
-for file_name in phenotypes:
+for idx, file_name in enumerate(phenotypes):
 	cwd = args.path + '/' + file_name.split('.')[0] + '/'
-	
+	redis_update['manhattan_started'] += redis_update['idx']
+	redis()
+
 	if args.algorithm.lower() == "emma":
 		results = 'emma_results.txt'
 	elif args.algorithm.lower() == "emmax":
@@ -254,6 +288,8 @@ for file_name in phenotypes:
 	t = threading.Thread( target=mahattan_runner, args=( mahattan_args,) )
 	t.start()
 	
+	percent_complete = float(idx) / len(phenotypes)
+
 	while threading.activeCount() > max_threads + 1:
 		None
 

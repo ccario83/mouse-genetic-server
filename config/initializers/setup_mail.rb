@@ -1,4 +1,4 @@
-# Uses a gmail accound setup for berndtlab.pitt.edu
+# Uses a gmail accound setup for berndtlab.pitt.edu to send contact/comment forms to the web admin
 ActionMailer::Base.smtp_settings = {
 	:address              => "smtp.gmail.com",
 	:port                 => 587,

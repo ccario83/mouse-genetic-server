@@ -6,6 +6,7 @@
 Mime::Type.register "image/svg+xml", :svg
 Mime::Type.register "text/plain", :txt
 
+# Registers the svg xml format and plain text extensions
 Rack::Mime::MIME_TYPES.merge!({
   ".ogg"     => "application/ogg",
   ".ogx"     => "application/ogg",

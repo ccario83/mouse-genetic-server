@@ -1,7 +1,7 @@
 // Flash any messages
 $(window).load(function(){
 	$("#flash").show();
-	// $("#flash").delay(5000).fadeOut(1000);
+	$("#flash").delay(5000).fadeOut(1000);
 
 	$('#submit-right').mouseover(function() { $(this).css('opacity',1); $('#submit-right-tooltip').tooltip('show'); });
 	$('#submit-right').mouseleave(function() { $(this).css('opacity',0.25); $('#submit-right-tooltip').tooltip('hide'); });
@@ -33,11 +33,11 @@ function submitCommentForm()
 
 function flash_notice(notice, alert_type)
 {
-	// alert_type = typeof alert_type !== 'undefined' ? alert_type : 'notice';
-	// if($('#flash').length != 0)
-	// 	$('#flash').remove()
-	// $('body').append('<div id="flash" class="alert alert-' + alert_type + '">' + notice + '</div>');
-	// $('#flash').show(); 
-	// $('#flash').delay(5000).fadeOut(1000);
-	// return false;
+	alert_type = typeof alert_type !== 'undefined' ? alert_type : 'notice';
+	if($('#flash').length != 0)
+		$('#flash').remove()
+	$('body').append('<div id="flash" class="alert alert-' + alert_type + '">' + notice + '</div>');
+	$('#flash').show(); 
+	$('#flash').delay(5000).fadeOut(1000);
+	return false;
 }

@@ -4,7 +4,7 @@ html { height: 100%; }
 /* For flash messages */
 #flash
 {
-	z-index: 10000000000000000;
+	z-index: 10000;
 	max-width: 75%;
 	margin: 1px;
 	position: absolute; 

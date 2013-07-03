@@ -38,6 +38,7 @@ class DatafilesController < ApplicationController
 		end
 	end
 
+	# DELETE /user/:user_id/jobs/:id
 	def destroy
 		if @datafile.destroy
 			flash[:success] = "The datafile was successfully deleted."

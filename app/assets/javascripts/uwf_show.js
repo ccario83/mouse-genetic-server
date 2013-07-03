@@ -1,3 +1,6 @@
+// Clinton Cario
+// 7/3/2013
+
 var uwf_timer_id;
 
 function check_progress()

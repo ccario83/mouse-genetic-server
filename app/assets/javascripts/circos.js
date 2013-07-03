@@ -1,3 +1,5 @@
+// Clinton Cario
+// 7/3/2013
 
 /* =============================================================================== */ 
 /* =     Code to help full screen SVG                                            = */
@@ -23,6 +25,7 @@ function getSubDocument(embedding_element)
 	}
 }
 
+// returns SVG elements
 function findSVGElements()
 {
 	var elm = document.querySelectorAll("#circos_img");
@@ -34,6 +37,7 @@ function findSVGElements()
 	}
 }
 
+// returns SVG images
 function findSVGimage()
 {
 	var embedded_svg = document.querySelector("#circos_img");

@@ -45,17 +45,17 @@ class JobsController < ApplicationController
 
 	# DELETE /user/:user_id/jobs/:id
 	def destroy
+		@id = @job.id
 		if @job.destroy
 			flash[:success] = "The job was successfully deleted."
 		else
 			flash[:error] = "The job deletion failed!"
 		end
 		
-		redirect_to user_path(current_user)
-		#respond_to do |format|
-		#	format.js { }
-		#	format.html {  }
-		#end
+		respond_to do |format|
+			format.js { }
+			format.html {  }
+		end
 	end
 
 	def reload

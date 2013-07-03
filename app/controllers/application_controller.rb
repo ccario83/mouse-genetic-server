@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
 	protect_from_forgery
 	include SessionsHelper
 	
-	## REALLY UGLY CODE REQUIRED TO CLEAN UP IDS FROM FROMS WITH MULTISELECT
+	## REALLY UGLY CODE REQUIRED TO CLEAN UP IDS FROM FORMS WITH MULTISELECT
 	def cleanup_ids(id_list)
 		# The list is empty
 		if (id_list=="[]" or id_list=="" or id_list==[""])

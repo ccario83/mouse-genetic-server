@@ -1,3 +1,6 @@
+// Clinton Cario
+// 7/3/2013
+
 // requires ajax_and_pizzaz.js
 var user_jobs_timer_id;
 

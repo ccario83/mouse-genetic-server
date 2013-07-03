@@ -1,3 +1,6 @@
+// Clinton Cario
+// 7/3/2013
+
 var stats_timerID = 0;
 var poll_counter = 0;
 

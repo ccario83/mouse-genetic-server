@@ -75,10 +75,14 @@ class UsersController < ApplicationController
 		# --------------------------------------------------
 		@jobs = @user.jobs.sort_by(&:created_at).reverse.paginate(:page => params[:jobs_paginate], :per_page => 4)
 		
-		# For the center panel if a user clicks on a job
+		# For the center panel if a user clicks on a job that (still) exists
 		# --------------------------------------------------
-		@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
-			
+		begin
+			@job = Job.find(params[:job_id]) if params.has_key?(:job_id)
+		rescue ActiveRecord::RecordNotFound
+			@job = nil
+		end
+		
 		# Variables used by #micropost-panel
 		# --------------------------------------------------
 		# The paginated list of microposts

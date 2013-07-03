@@ -1,3 +1,6 @@
+// Clinton Cario
+// 7/3/2013
+
 //Debug temp;
 var data;
 var load;

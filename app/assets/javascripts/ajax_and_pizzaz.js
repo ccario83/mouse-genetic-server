@@ -1,3 +1,6 @@
+// Clinton Cario
+// 7/3/2013
+
 $(window).bind("load", function()
 {
 
@@ -10,7 +13,7 @@ $(window).bind("load", function()
 });
 
 
-// This will take an arrow element (collapse-*) and the corresponding div to collapse
+// This will take an arrow element (#collapse-*), the corresponding div to collapse, and will toggle the collapse state with jQuery's slideDown/Up
 function collapse_listing(arrow, div)
 {
 	if (getRotationDegrees($(arrow))==-90) { rotate(arrow, -90, 5, 0); } else { rotate(arrow, 0, -5, -90); }
@@ -23,7 +26,7 @@ function collapse_listing(arrow, div)
 	}
 }
 
-// Function to rotate the arrow div from cur_deg to final_deg by step degrees
+// Function to rotate the arrow div from cur_deg to final_deg by step degrees (animates collapse arrow element directionality)
 function rotate(element, cur_deg, step, final_deg)
 {
 	cur_deg = cur_deg + step;
@@ -39,7 +42,7 @@ function rotate(element, cur_deg, step, final_deg)
 	} else {return;}
 }
 
-// Needed to find the degrees rotated so the rotate direction can be figured out
+// Needed to find the degrees of a rotated object so the rotate direction can be computed
 function getRotationDegrees(obj)
 {
 	var matrix = obj.css("-webkit-transform") ||
@@ -57,7 +60,7 @@ function getRotationDegrees(obj)
 	return angle;
 }
 
-// A function to parse url encoded parameters into POST data. Returns 'params' as an associative array mapping variable to value 
+// A function to parse URL encoded parameters into POST data. Returns 'params' as an associative array mapping variable to value 
 function decode_url(url)
 {
 	// The disabled pagination 'previous' and 'next' still have active links ending with #. Ignore them
@@ -82,7 +85,7 @@ function decode_url(url)
 
 // update_div is the javascript hook that reloads the user/group panels 
 // It takes the target_div (usually *-panel), the paginate link, the responding controller, whether to expand the div on return,
-//  and if the call should be asyncronous. The target div is the only required parameter. The others can be determined based on context
+//  and whether call should be asynchronous or not. target_div is the only required parameter; the others can be determined based on context. 
 function update_div(target_div, original_link, controller, expand, async)
 {
 	// Find defaults if needed
@@ -142,20 +145,20 @@ function update_div(target_div, original_link, controller, expand, async)
 	});
 	return;
 }
-// A function to call after the ajax call
+// A function to call after a successful AJAX response
 function after_update_div()
 {}
 
 // Function to apply an effect to the newly loaded div. 'new_html' is depreciated
 function reload_effect(div, new_html)
 {
-	//div.html(new_html); DEPRECIATED, ajax is call type is now 'script' instead of html, rendering the actions .js.erb file which handles html replacement
+	//div.html(new_html); DEPRECIATED, AJAX is call type is now 'script' instead of html, rendering the actions .js.erb file which handles html replacement
 	div.find('ol').effect("highlight", {color: '#FCF8E3'}, 1000);
 	div.find('ul').effect("highlight", {color: '#FCF8E3'}, 1000);
 	return;
 }
 
-// An ajax call to update the job progress bars
+// An AJAX call to update job progress bars in the jobs-panel
 function check_jobs_progress()
 {
 	// Get the job ids
@@ -190,50 +193,8 @@ function update_job_bars(percentages)
 }
 
 
-/*
-// Used by the datafile form to submit the form via AJAX
-// Takes the form container and submit url and submits via AJAX instead of GET/POST
-// NOTE: This function and the success function 'form_submit_response' may be replacable with the more generic attach_submit() function
-function ajax_form_submit(form_container, form_url)
-{
-	// Get the url from the form action if not defined
-	form_url = typeof form_url !== 'undefined' ? form_url : $(form_container).find('form').attr('action');
-	// Get the form data
-	var formData = new FormData($(form_container).find('form')[0]);
-	
-	// Submit to the form url 
-	$.ajax(
-	{
-		type:'post',
-		url: form_url,
-		headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-		data: formData,
-		dataType: 'html',
-		cache: false,
-		contentType: false,
-		processData: false,
-		success: function(response) { form_submit_response($(form_container), response); after_form_submit(); },
-		error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
-	});
-	
-	return false;
-}
-// Responds to a successful ajax form submit
-function form_submit_response(form_div, new_html, div_to_update)
-{
-	// The div_to_update will default to the form_div id stripped of 'new-*' with '-panel' postpented eg. "new-datatfile" => "#datafile-panel" 
-	div_to_update = typeof div_to_update !== 'undefined' ? div_to_update : '#' + $(form_div)[0].id.split('-')[1] + '-panel'
-	// Update the panel with the new html
-	form_div.html(new_html);
-	
-	// Hide the modal
-	$(form_div).modal('hide');
-	update_div(div_to_update);
-}
-function after_form_submit() {};
-*/
-
-// Attach the submit button to an AJAX submit, overriding the default POST/GET action
+// Attach the submit button to an AJAX submit, overriding the default POST/GET action provided by simple_form_for
+// The simple_form_for :remote => true can be used for AJAX submits, but this was interfering with bootstrap modal layouts 
 function attach_submit(div)
 {
 	// Add the jQuery id '#' to the tag if necessary
@@ -243,7 +204,7 @@ function attach_submit(div)
 		var formData = new FormData($(div+' form')[0]);
 		$.ajax({
 			type: 'post',
-			url: $(div+' form').attr('action'), //sumbits it to the given url of the form
+			url: $(div+' form').attr('action'), //submits it to the given url of the form
 			data: formData,
 			dataType: 'script', // The corresponding view js script will update anything necessary
 			cache: false,

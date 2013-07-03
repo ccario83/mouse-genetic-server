@@ -5,6 +5,7 @@
 using namespace std;
 
 /* 
+Usage: circos_SNP_track usage: binsize(int) chromosome[use -1 for all] start_pos[use -1 for none] stop_pos[use -1 for none] infile outfile
 
 This program will report the number of SNPs in each bin of size bin_size by chromosome for a SNP set
 Output will be in a format that circos can use to generate a SNP density track

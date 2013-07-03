@@ -41,12 +41,7 @@ class UwfWorker
         # pheno_file     = defined above
         # emma_type      = defined above
         # redis_key      = defined above
-        
-        location    = File.join(job_location, 'Plots')
-        config_template = File.join(Rails.root,'app/views/uwf/CG_conf_template.erb')
-        config_file     = File.join(location, 'CG.conf')
-        
-        
+
         # Determine paths for the BerndtEmma configuration file template ('BE.conf') and its destination
         config_template = File.join(Rails.root,'app/views/uwf/BE_conf_template.erb')
         config_file     = File.join(job_location, 'BE.conf')
@@ -79,7 +74,6 @@ class UwfWorker
         datafile = job.creator.datafiles.new({:filename => result_filename, :directory => result_directory, :description => "Result for #{job.redis_key}" })
         datafile.save!
         
-        
         ## ----------- Run Circos to make the full plot -----------
         # Signal to redis that circos plot configuration has begun for this job
         $redis.sadd "#{redis_key}:progress:log",'configuring-circos'
@@ -87,10 +81,11 @@ class UwfWorker
         # Declare other variables in the config file
         # redis_key      = defined above
         emma_result_file = job.resultfile
-        # start_position = defined above
-        # stop_position  = defined above
-        # bin_size       = defined above
-        # snp_set        = defined above
+        # chromosome     = defined during method call
+        # start_position = defined during method call
+        # stop_position  = defined during method call
+        # bin_size       = defined during method call
+        # snp_set        = defined during method call
         
         # Get the path where plots should be saved, and create it
         location    = File.join(job_location, 'Plots')

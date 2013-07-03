@@ -1,9 +1,20 @@
+// Clinton Cario
+// 7/3/2013
+
+
+// This function is a hack to override the default node click behavior of dynatree:
+// 1) Select root and all children
+// 2) Select just root
+// 3) Select just children
+// 4) Select none
+// 5) Goto 1
 function custom_select(select, node) 
 {
+	// Define the parent and current node li elements
 	var parent_li = $($(node.parent.li).find('span')[0]);
 	var node_li = $(node.li);
 	var node_li_span = $(node_li.find('span')[0]);
-	// Fix to prevent parent node from becomming selected if singleton child
+	// Fix to prevent parent node from becoming selected if singleton child
 	if (node.parent.childList.length==1)
 	{
 		node.parent.bSelected=false;
@@ -86,6 +97,8 @@ function custom_select(select, node)
 	});
 }
 
+
+// Attach dynatree objects to the two trees (see dynatree documentation)
 $(function()
 {
 	$("#mpath_tree").dynatree({
@@ -163,10 +176,13 @@ $(function()
 	});
 });
 
+
+
 $(document).ready(function()
 {
 	var loadTimer = setInterval(function(){check_trees()}, 200);
 
+	// Wait for the trees to fully load before generating the term search box's auto complete list
 	function check_trees()
 	{
 		var mpath_isLoading = $("#mpath_tree").dynatree("getRoot").isLoading();
@@ -175,7 +191,7 @@ $(document).ready(function()
 		if (!mpath_isLoading && !anat_isLoading) 
 		{
 			clearInterval(loadTimer);
-			// Expand the first nodes	
+			// Expand the first nodes
 			$("#mpath_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
 			$("#anat_tree").dynatree("getRoot").visit(function(node){node.expand(true); return false;});
 			
@@ -186,7 +202,7 @@ $(document).ready(function()
 			make_autocomplete_list(mpath_first_node, mpath_term_list);
 			make_autocomplete_list(anat_first_node, anat_term_list);
 
-			
+			// Make the auto complete lists
 			$('#mpath_search').autocomplete(
 			{ 
 				source: mpath_term_list, 
@@ -212,7 +228,8 @@ $(document).ready(function()
 			});
 		}
 	};
-
+	
+	// Have the trees' search boxes respond to the 'Enter' key by searching their trees
 	$('#mpath_search').keypress(function (e)
 	{
 		if (e.which == 13)
@@ -230,7 +247,8 @@ $(document).ready(function()
 			return false;	//Prevent page refresh by returning false
 		}
 	});
-// Fix for height issue
+
+// Fix for height issue so trees fill most of the page (thanks Matt!)
 $('.dynatree-container').height($(window).height() - $('.dynatree-container').position().top - 75 );
 });
 
@@ -238,6 +256,8 @@ $('.dynatree-container').height($(window).height() - $('.dynatree-container').po
 $(window).resize(function() { $('.dynatree-container').height( $(window).height() - $('.dynatree-container').position().top - 75 ) });
 $('.dynatree-container').resize(function() { $('.dynatree-container').height( $(window).height() - $('.dynatree-container').position().top - 75 ) });
 
+
+// Generate an auto complete list of terms for the trees' search boxes based on nodes' terms
 function make_autocomplete_list(node, list)
 {
 	if (node.childList)
@@ -249,6 +269,7 @@ function make_autocomplete_list(node, list)
 	list.push({ 'label': term, 'value': node.data.key});
 }
 
+// Look for a term in the node list
 function search_tree(node, term)
 {
 	if (node.data.key == term || node.data.title == term)
@@ -260,6 +281,7 @@ function search_tree(node, term)
 			search_tree(node.childList[i], term);
 }
 
+// Send the selected terms to the server
 function lookup()
 {
 	var mpath_ids = [];
@@ -284,7 +306,7 @@ function lookup()
 
 
 /* =============================================================================== */ 
-/* =     Function to post data for stat processing  (thanks stackoverflow!)      = */
+/* =     Function to post data for processing  (thanks stackoverflow!)           = */
 /* =============================================================================== */
 function post_to_url(path, params, method)
 {

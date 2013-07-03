@@ -7,9 +7,13 @@ using namespace std;
 
 /* 
 
-Bins the emmax parsed file by the number of nucleotides (specified as first command line argument) to create an input file for a Circos MHP track 
+Usage: circos_MHP_track binsize(int) chromosome[use -1 for all] start_pos[use -1 for none] stop_pos[use -1 for none] input_file output_file
+
+Bins the emma, emmax, or gemma association algorithm resutls file by the number of nucleotides (specified as first command line argument) to create an input file for a Circos MHP track. 
+Will also subset by chromosome, start_pos, and stop_pos (additional commnad line arguments before files; use -1 for any of these to ignore them)
 
 */
+
 // The bin structure contains a chromosome, bin position, and number of SNPs
 struct bin_rep
 {

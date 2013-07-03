@@ -18,6 +18,7 @@ class CircosWorker
         # Declare other variables in the config file
         #redis_key = "#{owner_key}:#{job_key}" # NOT NEEDED FOR SUB IMAGES
         emma_result_file = job.resultfile
+        # chromosome     = defined during method call
         # start_position = defined during method call
         # stop_position  = defined during method call
         # bin_size       = defined during method call

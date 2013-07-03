@@ -2,5 +2,16 @@
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
+
 update_div('#job-panel');
+update_div('#datafile-panel');
+
+// In case the job is currently being shown in the center panel
+if($('#job_id').html() == "<%= @id %>")
+{
+	$('#center-panel').html('This job was deleted. Please choose another job or start a new job with the add job button.')
+}
+
+
+
 

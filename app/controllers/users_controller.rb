@@ -55,7 +55,7 @@ class UsersController < ApplicationController
 				flash[:error] = "Please correct form errors."
 				render 'edit'
 			end
-		else                      # update self only
+		else                      # update self only for non-administrator
 			if @user == current_user
 				if @user.update_attributes(params[:user])
 					sign_in @user

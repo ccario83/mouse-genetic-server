@@ -1,4 +1,3 @@
-
 <% job ||= @job %>
 <span id="job_id" style="display:none;"><%= job.id %></span>
 <span id="job_root_path" style="display:none;"><%= job.get_parameter('circos_root_url') %></span>
@@ -19,7 +18,9 @@
 				<%= image_tag(q.split('..')[1], :id => 'circos_thumb', :width => '100%')%>
 			<br>
 			<br>
-				<a href="<%= job.directory.split('..')[1] + '/' + q.split('/')[-1] .split('.')[0] %>.csv.txt" class="btn">Download Top 200 SNPs</a>
+				<a href="<%= job.directory.split('..')[1] + '/' + q.split('/')[-1] .split('.')[0] %>.csv.txt" class="btn btn-primary">
+				<i class="icon-download-alt icon-large"></i>
+				Download Top 200 SNPs</a>
 			<hr>
 	<% end %>
 	</div>

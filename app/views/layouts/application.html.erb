@@ -35,12 +35,16 @@
 		<%= yield :page_js %>
 	</head>
 
-	<body>
-		<div id="flash_notice" class="container-fluid">
-			<%= render 'layouts/flash' %>
-		</div>
-		
+	<body>		
 		<%= render 'layouts/navbar' %>
+		
+		<div id="flash_notice">
+			<% unless flash.nil? %>
+				<% flash.each do |key, value| %>
+					<%= content_tag(:div, value, :id => "flash", :class => "alert alert-#{key}") %>
+				<% end %>
+			<% end %>
+		</div>
 		
 		<div class="container-fluid" style="padding:0px;">
 			<div class="row-fluid">

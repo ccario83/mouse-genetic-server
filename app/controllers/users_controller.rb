@@ -37,9 +37,9 @@ class UsersController < ApplicationController
 
 	# Renders the edit view to alter user information
 	def edit
-		if current_user.admin				# an administrator may edit any user
+		if current_user.admin       # an administrator may edit any user
 			@user = User.find(params[:id])
-		else								# non-administrator may edit self only
+		else                        # non-administrator may edit self only
 			@user = current_user
 		end
 	end
@@ -48,22 +48,16 @@ class UsersController < ApplicationController
 	# Accepts user updates from the edit view or redirects back to display form errors
 	def update
 		@user = User.find(params[:id])
-		if current_user.admin     # updates for any user by administrator are permitted
+		if current_user.admin     # an administrator may update any user
 			params[:user].merge(:admin => true) if @user.admin? 
 			if @user.update_attributes(params[:user])
-				puts "Yeah!! #{@user.name}'s profile updated"
 				flash[:success] = "#{@user.name}'s profile was successfully updated."
-debugger
-				# if current_user == @user
-				# 	redirect_to current_user
-				# else
-					redirect_to users_path
-				# end
+				redirect_to users_path
 			else
 				flash[:error] = "Please correct form errors."
 				render 'edit'
 			end
-		else                      # update self only for non-administrator
+		else                      # non-administrator may update self only
 			if @user == current_user
 				if @user.update_attributes(params[:user])
 					sign_in @user

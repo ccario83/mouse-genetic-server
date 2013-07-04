@@ -14,11 +14,13 @@ class JobsController < ApplicationController
 			redirect_to :back
 		end
 		
+		# If the job is a UWF job and finished, save the circos root URL path (which is /data/user_key/jobs/job_key/Plots)
 		if @job.runner == 'UWF' and @job.state == 'Completed'
 			@job.store_parameter(:circos_root => File.join('/data', @job.creator.redis_key, 'jobs', @job.redis_key, '/Plots/'))
 			@job.save!
 		end
 		
+		# And redirect to the user show controller/action telling it to render the job in the center panel (b/c job_id is specified)
 		redirect_to :controller => :users, :action => :show, :id => @user.id, :job_id => @job.id
 		return
 	end
@@ -59,6 +61,7 @@ class JobsController < ApplicationController
 	end
 
 	def reload
+		# See datafiles_controller's reload action for descriptions on what these do
 		id = params[:id]
 		type = params[:type]
 		page = params[:jobs_paginate]
@@ -86,6 +89,7 @@ class JobsController < ApplicationController
 
 	end
 
+	# Return as a JSON string a hash of job_id: % complete stati 
 	def percentages
 		job_ids = JSON.parse(params[:ids])
 		percentages = Hash[job_ids.sort.zip(Job.find(job_ids).map(&:progress))]
@@ -95,6 +99,7 @@ class JobsController < ApplicationController
 	end
 	
 	private
+		# See if the user owns the requested job
 		def correct_user
 			#current_user = params[:user_id] # DONT TRUST
 			@job = current_user.jobs.find_by_id(params[:id])

@@ -1,8 +1,8 @@
-
-
+// Flash any notices
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
+// Hide the edit modal and update the job panel
 $("#edit-job-<%= @job.id %>").modal('hide');
 update_div('#job-panel');

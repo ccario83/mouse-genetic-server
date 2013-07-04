@@ -19,38 +19,48 @@ class Job < ActiveRecord::Base
 	# Set the default number of posts per page for will_paginate
 	self.per_page = 4
 	
+	# The job's redis key is the final 'job.[hex_key]' subdirectory
 	def redis_key
-			return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
+		return self.directory.split(/^.*\/([\.a-zA-Z0-9]+)$/)[1]
 	end
 	
+	# Returns the value of a key 'parameter' in the job parameter list (is stored as JSON string in database)
 	def get_parameter(parameter)
 		return JSON.parse(self.parameters)[parameter]
 	end
 	
+	# Return all parameters as a hash (key: value pairs)
 	def get_parameters()
 		return JSON.parse(self.parameters)
 	end
 	
+	# Stores a parameter. 'parameter' is a key:value hash like {animal: 'dog'}
 	def store_parameter(parameter)
 		store_parameters(parameter)
 	end
 	
+	# Stores the key:value pairs of a list of parameters (sent as a hash like {animal: 'dog' age: 4, color: 'brown'}) in the job parameter list (a JSON string in the database)
 	def store_parameters(parameters)
+		# Decode JSON string, add each key:value pair, reencode/save JSON string
 		self.parameters = JSON.parse(self.parameters)
 		parameters.each {|key,value| self.parameters[key] = value }
 		self.parameters = self.parameters.to_json
 	end
 	
+	# Remove a parameter from the job parameter list
 	def delete_parameter(parameter_key)
+		# Decode JSON string, remove key, reencode/save JSON string
 		self.parameters = JSON.parse(self.parameters)
 		parameters.delete(parameter_key)
 		self.parameters = self.parameters.to_json
 	end
 	
+	# Generates a URL that rails recognizes and will serve user job content with (NOT REALLY USED)
 	def download_link
 		return File.join('/data', self.directory.split(USER_DATA_PATH)[1])
 	end
 	
+	# Report the progress of the job as a rough percentage. Returns a flow between 0.0 and 100.00 or nil
 	def progress
 		if self.state  == 'Completed'
 			return 100.0
@@ -66,6 +76,7 @@ class Job < ActiveRecord::Base
 		end
 	end
 	
+	# Returns a list of errors reported through redis by any of the job's sub-scripts
 	def runtime_errors
 		error_log = []
 		begin
@@ -79,6 +90,7 @@ class Job < ActiveRecord::Base
 	end
 	
 	private
+		# Creates a job directory
 		def create_job_directory
 			# Create a subdirectory that is a combination of the user name alpha characters and a small hex key
 			subdir = self.runner.downcase + '.' + SecureRandom.hex(3)
@@ -92,10 +104,12 @@ class Job < ActiveRecord::Base
 			self.directory = directory
 		end
 		
+		# A job when created is has a starting state by default
 		def default_values
 			self.state ||= 'Starting'
 		end
 		
+		# A simple check to make sure the parameter list is JSON parse-able 
 		def ensure_paramaters_are_JSON()
 			begin
 				JSON.parse(self.parameters)
@@ -105,6 +119,7 @@ class Job < ActiveRecord::Base
 			end
 		end
 		
+		# Use fileutils to remove all job associated files
 		def remove_files
 			require 'fileutils'
 			# Delete all files in this job directory

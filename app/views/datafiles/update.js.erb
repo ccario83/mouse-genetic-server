@@ -1,9 +1,9 @@
-
-
+// Flash any notices
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
+// Hide the update panel and update both the datafile and jobs panels
 $("#edit-datafile-<%= @datafile.id %>").modal('hide');
 update_div('#datafile-panel');
 update_div('#job-panel');

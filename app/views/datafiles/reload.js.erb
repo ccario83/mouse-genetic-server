@@ -1,16 +1,19 @@
-
+// Flash any notices
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
+// Replace the datfile panel html with updated html
 $("#datafile-panel").html("<%= escape_javascript(render :partial => 'shared/datafile_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load }) %>");
+// Reattach the chosen fields to each edit datafile group share box
 $('.edit_datafile_groups').each(function() { $(this).chosen({ min_search_term_length: 2 }); })
 
+// Rotate the arrow to the closed position if necessary
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-datafiles'), 0, -5, -90);
 <% end %>
 
-// Attach some file upload functionality
+// Reattach some file upload functionality
 $('#new-datafile :file').change(function()
 {
 	var file = this.files[0];

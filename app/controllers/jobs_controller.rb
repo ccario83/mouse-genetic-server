@@ -61,7 +61,7 @@ class JobsController < ApplicationController
 	end
 
 	def reload
-		# See datafiles_controller's reload action for descriptions on what these do
+		# See datafiles_controller's reload action for descriptions on what these do, as they are the same
 		id = params[:id]
 		type = params[:type]
 		page = params[:jobs_paginate]

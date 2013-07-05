@@ -28,7 +28,7 @@ class Micropost < ActiveRecord::Base
 	self.per_page = 4
 
 	private
-
+		# Make sure there is at least one recipient 
 		def recipient_presence
 			if self.user_recipients.empty? && self.group_recipients.empty?
 				errors.add(:group_recipient, "Please specifiy at least one group or user recipient")
@@ -36,6 +36,7 @@ class Micropost < ActiveRecord::Base
 			end
 		end
 
+		# Set the recipient type (User,group, or both)
 		def set_recipient_type
 			if self.user_recipients.empty?
 				self.recipient_type = 'Group'

@@ -1,21 +1,16 @@
 
-<% users ||= @users %> 
+<% users ||= User.all %> 
 <% group ||=  @group %>
-<% type ||=  'users' %>
-<% preselected_ids ||= @preselected_ids %>
 
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h3>Select Group Members</h3>
 </div>
-<div class="modal-body">
-<%= simple_form_for(:modified, :url => 'modify_members', :html => { :class => 'form-horizontal', :style => 'margin:0px; width: 100%;' } ) do |f| %>
-	<%= render 'shared/multi_select', items: users, type: type, preselected_ids: preselected_ids, show_current_user: false %>
-	<%= f.input :users, :as => :hidden %>
-	<% group_id = group.id %>
-	<%= f.input :group_id, :as => :hidden, :input_html => { :value => group.id }%>
+<div class="modal-body" style="overflow-y: hidden;">
+<%= simple_form_for group, :url => edit_group_path, :remote => true, :method => :post do |f| %>
+	<%= f.association :users, :collection => users, :selected => group.members.map(&:id), :label => 'Group members:', :input_html => { 'data-placeholder'=> 'No members selected (private)', :style => "width:514px;", :id => 'edit-group-members', } %>
+<% end %>
+</div>
 <div class="modal-footer">
 	<input type="submit" class="btn btn-primary" value="Modify">
-</div>
-<% end %>
 </div>

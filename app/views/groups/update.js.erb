@@ -1,0 +1,11 @@
+// Flash any notices
+<% flash.each do |alert_type, notice| %>
+flash_notice("<%= notice %>", "<%= alert_type %>");
+<% end %>
+
+// Hide the update panel and update both the datafile and jobs panels
+$("#edit-members").modal('hide');
+update_div('#datafile-panel');
+update_div('#job-panel');
+update_div('#task-panel');
+update_div('#micropost-panel')

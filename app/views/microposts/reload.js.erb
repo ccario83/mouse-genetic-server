@@ -1,12 +1,12 @@
-
-
+// Flash any notices
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
+// Generate new micropost panel information 
 $("#micropost-panel").html("<%= escape_javascript(render :partial => 'shared/micropost_panel', :locals => { viewer: @viewer, show_listing_on_load: @show_listing_on_load, show_filters: true }) %>");
 
-// Chosen listeners
+// Reattach chosen listeners
 <% if @viewer_type == 'User' %>
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
 $('#micropost_group_recipient_ids').chosen({ min_search_term_length: 2 });

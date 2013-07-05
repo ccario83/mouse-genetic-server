@@ -1,3 +1,4 @@
+# See Michael Hartl's rails tutorial for documentation on these functions
 class SessionsController < ApplicationController
 	def new
 	end

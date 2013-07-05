@@ -36,30 +36,36 @@ class Group < ActiveRecord::Base
 		self.users
 	end
 	
+	# Whether a user has been requested as a group member or has accepted it
 	def is_member?(user)
 		self.users.include?(user)
 	end
 	
+	# Whether a user has accepted membership
 	def confirmed_member?(user)
 		@confirmation = self.memberships.select(:confirmed).where(:user_id => user.id)[0]
 		return (defined?(@confirmation.confirmed).nil?)? false : @confirmation.confirmed
 	end
 	
+	# A list of member whom have confirmed membership
 	def confirmed_members
 		return User.find(self.memberships.where(:confirmed => true).map(&:user_id))
 	end
 	
+	# All group microposts, maybe friendlier than all_recieved posts
 	def microposts
 		return self.received_posts
 	end
 	
+	# Same as microposts but also sorted chronologically 
 	def all_received_posts
 		return self.received_posts.sort_by(&:created_at)
 	end
 	
+	# A simple membership size filter
 	private
-	def membership_size
-		errors.add(:users, "You cannot create a group with no non-creator members.") unless self.users.length > 2
-	end
+		def membership_size
+			errors.add(:users, "You cannot create a group with no non-creator members.") unless self.users.length > 2
+		end
 end
 

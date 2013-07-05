@@ -15,6 +15,14 @@ $(window).bind("load", function()
 	});
 	
 	
+	//----------- #member-panel listeners ---------------------------------------------------------------
+	// Initialize chosen boxes for shared groups selection in the edit job modals
+	$('#edit-group-members').chosen({ min_search_term_length: 2 });
+	// Attach submit buttons to the edit group modals
+	attach_submit('#edit-members');
+	//------------------------------------------------------------------------------------------------
+
+
 	//----------- #datafile-panel listeners ----------------------------------------------------------
 	$(".edit_datafile_groups:input:not([type='hidden'])").each(function() { $(this).chosen({ min_search_term_length: 2 }); });
 	// A quick filter on a new datafile selection to make sure the file is valid and less than 1Mb. Only attaches the form submit button if the file looks OK

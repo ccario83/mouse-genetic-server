@@ -26,7 +26,9 @@ RorWebsite::Application.routes.draw do
   post '/:type/:id/members/reload' => 'users#reload'
   
   # Group routes
-  resources :groups, :only => [:new, :create, :show, :destroy, :modify_members]
+  resources :groups, :only => [:new, :create, :show, :destroy]
+  # To update group members
+  post '/groups/:id/edit' => 'groups#modify_members'
   # To reload the group_panel div via AJAX
   post '/:type/:id/groups/reload' => 'groups#reload'
   

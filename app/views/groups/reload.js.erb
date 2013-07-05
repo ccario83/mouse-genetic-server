@@ -1,21 +1,23 @@
-
-
+// Flash any notices
 <% flash.each do |alert_type, notice| %>
 flash_notice("<%= notice %>", "<%= alert_type %>");
 <% end %>
 
+// Replace the group panel with the updated information 
 $("#group-panel").html("<%= escape_javascript(render :partial => 'users/group_panel', :locals => { is_reloading: true, show_listing_on_load: @show_listing_on_load }) %>");
+// Reattach the chosen box to the new group membership selection list
 $('#group_user_ids').chosen({ min_search_term_length: 2 });
 
+// Rotate the arrow if the group panel is collapsed
 <% if @show_listing_on_load == false %>
 rotate($('#collapse-groups'), 0, -5, -90);
 <% end %>
 
 
-// Reinitialize the group management modal so button clicks work. 
+// Reattach the new-group submit button 
 attach_submit('#new-group');
 
-
+// If the edit groups modal is displayed, show it
 var display_modal = ($('#edit-groups').css('display') == 'block');
 if (display_modal)
 {

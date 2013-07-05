@@ -4,19 +4,23 @@ class MicropostsController < ApplicationController
 
 	def create
 		# @user = User.find(params[:user_id]) # Less safe... can be faked. 
+		# Get the user and determine the view type (is a group or user viewing these microposts?)
 		@user = current_user
 		@viewer_type = params[:micropost][:viewer_type]
 		@show_filters = @viewer_type == 'User'
 
+		# Fill in a new micropost with some data from the new micropost form
 		@micropost = @user.authored_posts.new()
 		@micropost.recipient_type = params[:micropost][:recipient_type]
 		@micropost.content = params[:micropost][:content]
 		
+		# Get the user or group ids that are the intended recipients of the micropost
 		group_ids = cleanup_ids(params[:micropost][:group_recipient_ids])
 		user_ids = cleanup_ids(params[:micropost][:user_recipient_ids])
 		
 		# Convert the ids to a recipient list for the requested type (group or user post), and check that the current_user has permissions to post to these
 		recipients = []
+		# Do a quick validation to make sure the recipient list wasn't tampered with
 		if @micropost.recipient_type.nil? || @micropost.recipient_type == 'group'
 			recipients = Group.find(group_ids)
 			allowed_recipients = current_user.groups
@@ -67,6 +71,7 @@ class MicropostsController < ApplicationController
 	end
 	
 	def reload
+		# Get the id and type (group/user) of viewer. Set the pagination default to 1 if not specified. 
 		id = params[:id]
 		# params[:type] as parsed by the routes uses a url type, whereas @viewer_type is based on a Model name, so convert here
 		@viewer_type = params[:type] == 'users'? 'User' : 'Group'
@@ -74,6 +79,7 @@ class MicropostsController < ApplicationController
 		page = 1 if @page==""
 		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
+		# Load microposts for the viewer (group/user)
 		@user = nil
 		@viewer = nil
 		@micropost = nil

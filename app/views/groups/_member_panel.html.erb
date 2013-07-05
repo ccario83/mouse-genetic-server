@@ -15,15 +15,14 @@
 		
 		<i class="disabled icon-plus" data-toggle="modal" data-target="#new-group"></i>
 		<% if (group.creator == user) %>
-		<i class="icon-edit"  data-toggle="modal" data-target="#edit-members"></i>
+		<i class="icon-list"  data-toggle="modal" data-target="#edit-members"></i>
 		<% else %>
-		<i class="disabled icon-edit"></i>
+		<i class="disabled icon-list"></i>
 		<% end %>
 	</div>
 </div>
-
-<div id="edit-members" class="modal hide">
-
+<div id="edit-members" class="modal hide fade">
+	<%= render 'groups/member_management_form', members: members %>
 </div>
 
 <div id="member-listing" <% if not show_listing_on_load %> style="display:none;" <% end %>>

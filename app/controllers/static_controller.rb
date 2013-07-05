@@ -8,7 +8,7 @@ class StaticController < ApplicationController
     request.format = 'txt' unless params[:format]
   end
 
-
+  # Used to serve some static images and text files (for download)
   def show
     begin
         file = File.open(File.join(USER_DATA_PATH, params[:path]+'.'+params[:format]))
@@ -24,6 +24,7 @@ class StaticController < ApplicationController
     
   end
 
+  # Returns if a file exists in the user's directory or not
   def exists
     filename = File.join(USER_DATA_PATH, params[:path]+'.'+params[:format])
     if (FileTest.exists?(filename))

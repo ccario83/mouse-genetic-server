@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
-	# signed_in_user is defined in apps/helpers/session_helper and ensures a suer is signed in
+  # include SessionsHandler
+	# signed_in_user is defined in apps/helpers/session_helper and ensures a user is signed in
 	# before accessing the listed actions
 	before_filter :signed_in_user,	:only => [:show, :edit, :update, :reload, :accept_group, :decline_group, :leave_group, :delete_group]
 	# admin_user is defined in the private def below. This filter ensures that only admins can 
 	# delete users
-	before_filter :admin_user,		:only => [:index, :destroy]
+  before_filter :admin_user,    :only => [:index, :destroy]
 
 
 
@@ -30,24 +31,43 @@ class UsersController < ApplicationController
 			redirect_to @user # Same as render 'show' with user_id (POST /users/show/id)
 		else
 			flash[:error] = "Please correct form errors."
-			render 'new' # simple_form_for will handle display of errors in the @user.erros hash
+			render 'new' # simple_form_for will handle display of errors in the @user.errors hash
 		end
 	end
 
 	# Renders the edit view to alter user information
 	def edit
+		if current_user.admin       # an administrator may edit any user
+			@user = User.find(params[:id])
+		else                        # non-administrator may edit self only
+			@user = current_user
+		end
 	end
 
 
 	# Accepts user updates from the edit view or redirects back to display form errors
 	def update
-		if @user.update_attributes(params[:user])
-			sign_in @user
-			flash[:success] = "Profile successfully updated."
-			redirect_to @user
-		else
-			flash[:error] = "Please correct form errors."
-			render 'edit'
+		@user = User.find(params[:id])
+		if current_user.admin     # an administrator may update any user
+			params[:user].merge(:admin => true) if @user.admin? 
+			if @user.update_attributes(params[:user])
+				flash[:success] = "#{@user.name}'s profile was successfully updated."
+				redirect_to users_path
+			else
+				flash[:error] = "Please correct form errors."
+				render 'edit'
+			end
+		else                      # non-administrator may update self only
+			if @user == current_user
+				if @user.update_attributes(params[:user])
+					sign_in @user
+					flash[:success] = "Your profile was successfully updated."
+					redirect_to @user
+				else
+					flash[:error] = "Please correct form errors."
+					render 'edit'
+				end
+			end
 		end
 	end
 
@@ -211,6 +231,6 @@ class UsersController < ApplicationController
 	# Validates the current_user is an administrator
 	private
 		def admin_user
-			redirect_to root_path unless current_user.admin?
+			redirect_to root_path unless is_admin?
 		end
 end

@@ -15,11 +15,7 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<% if is_admin? %>
-					<!--<li><a href="<%= users_path %>">View Users <i class="icon-key"></i> </a></li>-->
-					<!--<li><a href="<%= groups_path %>">View Groups <i class="icon-key"></i> </a></li>-->
-					<% end %>
-					<!--<li><%= link_to "Home", current_user %></li>-->
+					<li><%= link_to "Home", current_user %></li>
 					<li><%= link_to "Edit", edit_user_path(current_user) %></li>
 					<li class="divider"></li>
 					<li>
@@ -38,17 +34,21 @@
 			<div class="nav-collapse">
 				<ul class="nav">
 					<% if signed_in? %>
-					<li><a href="/users/<%= current_user.id %>"><i class="icon-home"></i></i>Home</a>
+					<li><a href="/users/<%= current_user.id %>"><i class="icon-home"></i> Home</a>
 					<% end %>
 					<li class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-info-sign"></i>About<b class="caret"></b></a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-info-sign"></i> About<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><%= link_to('Publications', '/publications') %></li>
 								<li><%= link_to('Screencasts', '/screencasts') %></li>
 								<li><%= link_to('Tool Description', '/tool_descriptions') %></li>
 							</ul>
 					</li>
-					<li><a href="#" onclick="$('#contact').modal('show'); return false;"><i class="icon-comment"></i>Contact</a></li>
+					<li><a href="#" onclick="$('#contact').modal('show'); return false;"><i class="icon-comment"></i> Contact</a></li>
+					<% if is_admin? %>
+					<li><a href="<%= users_path %>"><i class="icon-user"></i>Users</a></li>
+					<li><a href="<%= groups_path %>"><i class="icon-key"></i> Groups</a></li>
+					<% end %>
 				</ul>
 			</div>
 		</div>

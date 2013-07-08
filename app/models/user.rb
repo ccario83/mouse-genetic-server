@@ -4,7 +4,7 @@ require 'find'
 class User < ActiveRecord::Base
 	attr_accessible :first_name, :last_name, :institution, :email, :password, :password_confirmation, :directory
 	before_save { |user| user.email = user.email.downcase }
-	before_save :create_remember_token
+	before_create :create_remember_token
 	has_secure_password
 	before_create :create_user_directory
 
@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
 	validates :institution,	:presence => true, :length => { :maximum => 50 }
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 	validates :email, :presence => true, :format => { :with => VALID_EMAIL_REGEX }, :uniqueness => { :case_sensitive => false}, :uniqueness => true
-	validates :password, :presence => {:on => :create}, :confirmation => true, :length => { :minimum => 5}
+	validates :password, :presence => {:on => :create}, :confirmation => true, :length => { :minimum => 5, :on => :create}
 
 	def name
 		"#{self.first_name} #{self.last_name}"
@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
 				Dir.mkdir(File.join(directory,'data')) unless File.directory?(File.join(directory,'data'))
 				Dir.mkdir(File.join(directory,'jobs')) unless File.directory?(File.join(directory,'jobs'))
 			rescue
-				errors.add_to_base('There was an issue creating this user account. Please contact the web administrator.')
+				errors.add(:base,'There was an issue creating this user account. Please contact the web administrator.')
 			end
 			self.directory = directory
 		end

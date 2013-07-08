@@ -19,7 +19,7 @@ class GroupTest < ActiveSupport::TestCase
 			remove_user_context
 		end
 
-		should "verify that memberships are destroyed when its group is destroyed" do
+		should "verify that memberships are destroyed when their group is destroyed" do
     		new_group = FactoryGirl.build(:group, name: "New Group", description: "New Group", creator_id: @jack)
     		new_group_id = new_group.id
     		membership1 = FactoryGirl.build(:membership, group_id: new_group, user_id: @jill)

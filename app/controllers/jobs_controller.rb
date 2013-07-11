@@ -30,21 +30,26 @@ class JobsController < ApplicationController
 		#@job = Job.find(params[:id])
 	end
 
+	# Handles the record update from the data that the user sends from the edit form
 	def update
+		# Get the new description and a list of group ids which this job is now shared with
 		@job.description = params['job']['description']
 		@job.groups = Group.find(cleanup_ids(params['job']['group_ids']))
 		
+		# Set the flash message
 		if @job.save
 			flash[:success] = "Job successfully updated."
 		else
 			flash[:error] = "Please correct form errors."
 		end
 		
+		# Respond as a javascript script
 		respond_to do |format|
 			format.js { render :controller => "jobs", :action => "update" }
 		end
 	end
 
+	# This is a simple AJAX delete action
 	# DELETE /user/:user_id/jobs/:id
 	def destroy
 		@id = @job.id
@@ -61,7 +66,7 @@ class JobsController < ApplicationController
 	end
 
 	def reload
-		# See datafiles_controller's reload action for descriptions on what these do, as they are the same
+		# See datafiles_controller's reload action for descriptions on what these do as they are the same here
 		id = params[:id]
 		type = params[:type]
 		page = params[:jobs_paginate]
@@ -89,7 +94,7 @@ class JobsController < ApplicationController
 
 	end
 
-	# Return as a JSON string a hash of job_id: % complete stati 
+	# Returns a JSON string that is a hash of {job_id: "% complete" } to update job percentages
 	def percentages
 		job_ids = JSON.parse(params[:ids])
 		percentages = Hash[job_ids.sort.zip(Job.find(job_ids).map(&:progress))]

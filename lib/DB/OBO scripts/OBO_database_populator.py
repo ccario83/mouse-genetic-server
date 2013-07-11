@@ -4,11 +4,16 @@
 # Purpose:      This script will populate a database (phenotype) with mpath/anat heirarchy tables using a given OBO file
 #
 # Input:	1) See command line arguments below
-# Output:	1) Populated entries in the several tables
+# Output:	1) Populated entries in several tables prefixes with a prefix argument
+#
+# Example Usage: python OBO_populator.py -H www.berndtlab.pitt.edu -t mpath_ -d phenotypes -u ror -p **** -i mpath.obo -r
+#                python OBO_populator.py -H www.berndtlab.pitt.edu -t anat_ -d phenotypes -u ror -p **** -i adult_mouse_anatomy.obo -r
 #
 # Modification History
 # 2012 09 29  --  Initial file creation
 # 2012 12 03  --  Modified table structure a bit to play nicely with RoR
+# 2013 01 10  --  Fixed bug with is_obsolete type
+# 2013 07 09  --  Pulled code into ror_website
 #===============================================================================
 
 import MySQLdb          # 
@@ -48,11 +53,6 @@ obo_if = args.obo_if
 #table_prefix = "test_"
 #regen = True
 #obo_if = "/home/clinto/Desktop/OBO/mpath.obo"
-#
-# python OBO_populator.py -H www.berndtlab.pitt.edu -u clinto -p **** -i mpath.obo -r
-## FOR PRODUCTION
-# python OBO_populator.py -H www.berndtlab.pitt.edu -t mpath_ -d phenotypes -u ror -p **** -i mpath.obo -r
-# python OBO_populator.py -H www.berndtlab.pitt.edu -t anat_ -d phenotypes -u ror -p **** -i adult_mouse_anatomy.obo -r
 #########################################################
 
 
@@ -71,7 +71,7 @@ if regen:
         cursor.execute('DROP TABLE IF EXISTS %srelationships;' % table_prefix)
         cursor.execute('DROP TABLE IF EXISTS %salts;' % table_prefix)
     
-        cursor.execute('CREATE TABLE %sterms ( id INT(11) PRIMARY KEY NOT NULL, term VARCHAR(16), name VARCHAR(128), def TEXT, tag TEXT, comment TEXT, is_obsolete BIT, created_by VARCHAR(64), created_on DATE, xref TEXT );' % table_prefix)
+        cursor.execute('CREATE TABLE %sterms ( id INT(11) PRIMARY KEY NOT NULL, term VARCHAR(16), name VARCHAR(128), def TEXT, tag TEXT, comment TEXT, is_obsolete TINYINT(1), created_by VARCHAR(64), created_on DATE, xref TEXT );' % table_prefix)
         cursor.execute('CREATE TABLE %ssynonyms ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), name VARCHAR(128), type VARCHAR(16), tag TEXT );' % (table_prefix, table_prefix))
         cursor.execute('CREATE TABLE %sis_as ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), is_a INT(11) );' % (table_prefix, table_prefix))
         cursor.execute('CREATE TABLE %srelationships ( id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL, %sterm_id INT(11), type VARCHAR(16), relationship INT(11) );' % (table_prefix, table_prefix))
@@ -102,10 +102,21 @@ match = term_section.match(line)
 while not match:
     line = obo_ifh.readline().rstrip()
     match = term_section.match(line)
-    line_no = line_no + 1 
+    line_no = line_no + 1
+
+no_isa_count = 0
+both_count = 0
 
 id_ = None
-in_term_sec = False
+in_term_sec = True
+matched_is_a = False
+
+# Goes line by line through the OBO file, first looking for a [Term] section and then using
+# regular expressions to match the definitions (defined above). The parent node is considered 
+# to be the is_a relationship unless not defined, in which case the relationship: part_of id is 
+# attempted to be used
+# A blank line denotes the end of a [Term] definition 
+# line = obo_ifh.next()
 for line in obo_ifh:
     line = line.rstrip()
     line_no = line_no + 1 
@@ -129,7 +140,8 @@ for line in obo_ifh:
         id_ = None
         #print ">>>"
         in_term_sec = False
-    
+        matched_is_a = False
+
     
     match = id_line.match(line)
     if match:
@@ -144,18 +156,34 @@ for line in obo_ifh:
         cursor.execute('UPDATE %sterms SET name="%s" WHERE id=%d' % (table_prefix, match.group('name'), id_))
         #print "name["+match.group('name').rstrip()+"]"
     
+    match = is_a_line.match(line)
+    if match:
+        did_match = True
+        matched_is_a = True
+        #print "is_a["+match.group('is_a').rstrip()+"]"
+        is_a = int(match.group('is_a'))
+        cursor.execute('INSERT INTO %sis_as (%sterm_id, is_a) VALUES(%d, %d)' % ( table_prefix, table_prefix, id_, int(match.group('is_a') )))
+        #print "is_a["+match.group('is_a').rstrip()+"]"
+    
+    match = relation_line.match(line)
+    if match:
+        did_match = True
+        if not matched_is_a:
+            #print "is_a["+match.group('relationship').rstrip()+"]"
+            relationship = int(match.group('relationship'))
+            cursor.execute('INSERT INTO %srelationships (type, relationship, %sterm_id) VALUES("%s", "%s", %d)' % (table_prefix, table_prefix, match.group('type'), int(match.group('relationship')), id_))
+            #print("Added relationship node: %s with id %d and parent %d" %(node['title'], node['key'],node['parent']))
+            no_isa_count = no_isa_count+1
+        else:
+            both_count = both_count+1
+    
+    
     match = def_line.match(line)
     if match:
         did_match = True
         cursor.execute('UPDATE %sterms SET def="%s", tag="%s" WHERE id=%d' % (table_prefix, match.group('def').translate(None, '"'), match.group('tag'), id_))
         #print "def["+match.group('def').rstrip()+"]"
         #print "tag["+match.group('tag').rstrip()+"]"
-    
-    match = is_a_line.match(line)
-    if match:
-        did_match = True
-        cursor.execute('INSERT INTO %sis_as (%sterm_id, is_a) VALUES(%d, %d)' % ( table_prefix, table_prefix, id_, int(match.group('is_a') )))
-        #print "is_a["+match.group('is_a').rstrip()+"]"
     
     match = synonym_line.match(line)
     if match:
@@ -180,7 +208,7 @@ for line in obo_ifh:
     if match:
         did_match = True
         obsolete = True
-        cursor.execute('UPDATE %sterms SET is_obsolete=%d WHERE id=%d' % (table_prefix, obsolete, id_))
+        cursor.execute('UPDATE %sterms SET is_obsolete=%d WHERE id=%d' % (table_prefix, 1, id_))
     
     match = comment_line.match(line)
     if match:
@@ -192,11 +220,6 @@ for line in obo_ifh:
         did_match = True
         cursor.execute('UPDATE %sterms SET xref="%s" WHERE id=%d' % (table_prefix, match.group('xref'), id_))
     
-    match = relation_line.match(line)
-    if match:
-        did_match = True
-        cursor.execute('INSERT INTO %srelationships (type, relationship, %sterm_id) VALUES("%s", "%s", %d)' % (table_prefix, table_prefix, match.group('type'), int(match.group('relationship')), id_))
-    
     match = alt_line.match(line)
     if match:
         did_match = True
@@ -204,149 +227,3 @@ for line in obo_ifh:
     
     if not did_match:
         print "Line %d: WARNING! No regular expression matched: '%s'" % (line_no, line)
-
-
-'''
-    cursor = connection.cursor(cursorclass=MySQLdb.cursors.Cursor)
-    print "Getting a batch of SNP IDs (this may take a few minutes)..."
-    # Get all the SNP ids from the snp position table
-    
-    cursor.execute('SELECT id FROM snp_positions WHERE id > %s LIMIT 4000000'%cur_snp_cut)
-    SNP_ids = cursor.fetchall()
-    cur_snp_cut += 4000000
-    
-    # Convert the list of tuples to just a list
-    SNP_ids = map(lambda k: k[0], SNP_ids)
-    # Switch to a dict cursor 
-    cursor = connection.cursor(cursorclass=MySQLdb.cursors.DictCursor)
-    
-    VEPinput = []
-    last_SNP_id = 0
-    print "Preparing VEP input for the first submission batch..."
-    for SNP_id in SNP_ids:
-        sys.stdout.write("\rAnalyzing SNP: %d " % (SNP_id) )
-        sys.stdout.flush()
-        # Check to see if the entry already exists for this SNP
-        cursor.execute('SELECT snp_position_id from %s WHERE snp_position_id=%s' % (args.VEP_table, SNP_id))
-        if cursor.fetchone():
-            sys.stdout.write("[already populated]")
-            sys.stdout.flush()
-            last_SNP_id = SNP_id
-            continue
-        cursor.execute('SELECT id, chromosome, position FROM snp_positions WHERE id = %s' % (SNP_id))
-        snp = cursor.fetchone()
-    
-        # Convert chr 20 to X for VEP input
-        if snp['chromosome']==20:
-            snp['chromosome']="X"
-        
-        # Get posible alleles for this SNP
-        alleles = []
-        if args.biallelic:
-            cursor.execute('SELECT allele1, allele2 from alleles WHERE snp_position_id=%s' % (SNP_id))
-            alleles = cursor.fetchall()
-            alleles1 =  map(lambda k: k['allele1'], alleles)
-            alleles2 =  map(lambda k: k['allele2'], alleles)
-            alleles = alleles1 + alleles2
-        else:
-            cursor.execute('SELECT allele from alleles WHERE snp_position_id=%s' % (SNP_id))
-            alleles = cursor.fetchall()
-            alleles =  map(lambda k: k['allele'], alleles)
-        
-        alleles = uniq(alleles, False, False)  # Get case insensitive alleles including N
-        if 'N' in alleles:
-            alleles = ['A','C','T','G']
-        # For each possible combination of changes (mutuations), create a VEP input entry
-        for allele1 in alleles:
-            for allele2 in alleles:
-                if allele1==allele2:
-                    continue # No need to submit a no change!
-                else:
-                    # Find out what the id of the mutation from A->B is and create a VEP input entry
-                    cursor.execute('SELECT id from mutations WHERE ref="%s" AND alt="%s"' % (allele1, allele2))
-                    mutation_id = cursor.fetchone()['id']
-                    # Chromsome, Start, Stop, Alleles (Maj/Min and Min/Maj), Strand = '+', ID
-                    VEPinput.append([ snp['chromosome'], snp['position'], snp['position'], allele1+'/'+allele2, '+', str(snp['id'])+'-'+str(mutation_id) ]) # A->B
-                    # NOTE: The below is not needed due to loop design                
-                    # Find out what the id of the mutation from B->A is and create an VEP input entry
-                    #cursor.execute('SELECT id from mutations WHERE ref="%s" AND alt="%s"' % (allele2, allele1))
-                    #mutation_id = cursor.fetchone()['id']
-                    #VEPinput.append([ snp['chromosome'], snp['position'], snp['position'], allele2+'/'+allele1, '+', str(snp['id'])+'-'+str(mutation_id) ]) # B->A 
-                    ### NOTE: the SNP ID and muation IDs are encoded as "snp['id']-mutation_id" in the 5th column of the VEP file (returns as 'Uploaded_variation')
-    
-        
-        if((len(VEPinput)>=SNP_SUBMIT_MAX) or (SNP_id==SNP_ids[-1])):
-            # Write the input file
-            outfile = open(VEP_if, 'wb')
-            SNPresults = csv.writer(outfile, delimiter='\t')
-            for line in VEPinput:
-                SNPresults.writerow(line)
-            outfile.close()
-
-            # Submit the file to the VEP Perl script downloaded from Ensembl.
-            print "\nRunning Ensembl Variant Effect Predictor for SNPs: %s-%s [up to %d at once]" % (str(last_SNP_id+1), str(SNP_id), SNP_SUBMIT_MAX)
-            # Close the log file so that perl can write to it (not necessary but cleaner)
-            cmd =   'perl ' + args.VEP_dir + '/variant_effect_predictor.pl' \
-            + ' --input_file ' + VEP_if \
-            + ' --output_file ' + VEP_of \
-            + ' --no_progress' \
-            + ' --force_overwrite' \
-            + ' --species mus_musculus' \
-            + ' --terms so' \
-            + ' --protein' \
-            + ' --gene' \
-            + ' --check_existing' \
-            + ' --host useastdb.ensembl.org' \
-            + ' --user anonymous' \
-            + ' --port 5306 2>/dev/null'
-            subprocess.call(cmd, shell=True)
-            ################################################################################
-            print "Postprocessing VEP output and populating the database..."
-            # Load the VEP results as a dict
-            infile = open(VEP_of, 'rb')
-            # Read the '##' comment lines from VEP output (and discard them)
-            last_pos = infile.tell()
-            line = infile.readline()
-            while line != '':
-              if not line.startswith("##"):
-                infile.seek(last_pos)
-                break
-              last_pos = infile.tell()
-              line = infile.readline()
-    
-            # Remove the '#' Character from the header line
-            infile.read(1)
-            # Load the rest of the VEP output into a dictionary
-            VEPresults_dr = csv.DictReader(infile, delimiter='\t')
-            VEPresults = [ line for line in VEPresults_dr ]
-            infile.close()
-    
-            # Parse VEP results       
-            cursor = connection.cursor()
-            for VEPresult in VEPresults:
-                #if VEPresult['Uploaded_variation']=="X":
-                #    VEPresult['Uploaded_variation'] = 20
-                VEP_SNP_id, VEP_mutation_id = map(lambda k: long(k), VEPresult['Uploaded_variation'].split('-'))
-                for consequence in VEPresult['Consequence'].split(','):
-                    try:
-                        classification = SO_classification[consequence]
-                        # Get the consequence ID
-                        cursor.execute('SELECT id FROM %s WHERE name="%s"' % (args.cons_table, consequence))
-                        cons_id = cursor.fetchone()
-                        #print 'SELECT id FROM consequences WHERE name="%s"' % consequence
-                        cons_id = cons_id[0]
-                        cursor.execute('INSERT IGNORE INTO %s (consequence_id, snp_position_id, mutation_id, classification) VALUES(%d, %d, %d, "%s")' % (args.VEP_table, cons_id, VEP_SNP_id, VEP_mutation_id, classification))
-                    except:
-                        continue
-                        
-            # Cleanup for next iteration
-            VEPinput = []
-            last_SNP_id = SNP_id
-            # Switch back to a dict cursor 
-            cursor = connection.cursor(cursorclass=MySQLdb.cursors.DictCursor)
-            print "Preparing VEP input for the next submission batch..."
-            
-    if len(SNP_ids)<4000000:
-        break
-
-'''

@@ -29,7 +29,7 @@ class StatWorker
         # Perform a Tukey HSD test on the model to find strain significance groupings
         @@myr[job_key].eval "results <- HSD.test(amod, 'data$strains')"
         # Pull out the relavant data from the results
-	# ===> NOTE: The agricolae package seems to switch between whether or not the '$groups' container is needed or not <=== 
+        # ===> NOTE: The agricolae package seems to switch between whether or not the '$groups' container is needed or not <=== 
         @@myr[job_key].eval "strains <- as.vector(results$groups$trt)"
         @@myr[job_key].eval "means <- as.vector(results$groups$means)"
         @@myr[job_key].eval "stderrs <- as.vector(results$means$std.err)"

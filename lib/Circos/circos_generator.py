@@ -22,6 +22,7 @@
 #  2012 12 12 --    Added gene track
 #  2013 04 08 --    Redis key now passed as an argument in the configuration file
 #  2013 05 31 --    Minor modification to parse final result file for user
+#  2013 07 10 --    Modified VEP and Gene track generating calls and database.conf to use new method of generating these tracks
 #===============================================================================
 
 import sys              # General system functions
@@ -167,8 +168,8 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         print "\nGenerating VEP track"
         VEP_if = MHP_of
         VEP_of = os.path.join(project_dir, 'VEP_track.txt')
-        params = map(lambda k: db_settings[k], ['host','user','password','port','database','vep_table','cons_table','mut_table'])
-        cmd = 'python circos_VEP_track.py -H %s -u %s -p %s -P %s -d %s -v %s -c %s -m %s -i %s -o %s'%tuple(params+[VEP_if, VEP_of])
+        params = map(lambda k: db_settings[k], ['host','user','password','port', 'snp_db', 'mus_core_db', 'mus_var_db'])
+        cmd = 'python circos_VEP_track.py -H %s -u %s -p %s -P %s -s %s -c %s -v %s -i %s -o %s'%tuple(params+[VEP_if, VEP_of])
         print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return VEP_of
@@ -177,8 +178,8 @@ def generate_track_data(track_name, project_dir=str(args.project_dir), db_settin
         print "\nGenerating gene track"
         gene_if = MHP_of
         gene_of = os.path.join(project_dir, 'gene_track.txt')
-        params = map(lambda k: db_settings[k], ['host','user','password','port'])
-        cmd = 'python circos_gene_track.py -H %s -u %s -p %s -P %s -i %s -o %s'%tuple(params+[gene_if, gene_of])
+        params = map(lambda k: db_settings[k], ['host','user','password','port', 'snp_db', 'mus_core_db', 'mus_var_db'])
+        cmd = 'python circos_gene_track.py -H %s -u %s -p %s -P %s -s %s -c %s -v %s -i %s -o %s'%tuple(params+[gene_if, gene_of])
         print cmd
         subprocess.call(cmd, cwd = script_dir, shell=True)
         return gene_of

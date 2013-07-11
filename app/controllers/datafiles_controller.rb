@@ -1,6 +1,3 @@
-# Clinton Cario
-# 7/4/2013
-
 class DatafilesController < ApplicationController
 	before_filter :signed_in_user, :only => [:create, :destroy, :reload]
 	before_filter :correct_user, :only => [:update, :destroy]

@@ -37,7 +37,7 @@ class MicropostsController < ApplicationController
 			end
 		end
 		
-		# Post the message
+		# Post the message to either the intended group(s) or user(s)
 		recipients = recipients.is_a?(Array) ? recipients : [recipients]
 		if @micropost.recipient_type == 'group'
 			@micropost.group_recipients = recipients
@@ -45,6 +45,7 @@ class MicropostsController < ApplicationController
 			@micropost.user_recipients = recipients
 		end
 		
+		# Update a flash message
 		if @micropost.save
 			flash[:success] = "The micropost was successfully created."
 		else
@@ -56,7 +57,7 @@ class MicropostsController < ApplicationController
 		end
 	end
 	
-	
+	# Simple AJAX destroy function 
 	def destroy
 		if @micropost.destroy
 			flash[:success] = "The datafile was successfully deleted."
@@ -79,7 +80,7 @@ class MicropostsController < ApplicationController
 		page = 1 if @page==""
 		@show_listing_on_load = (params.has_key? :expand) ? params[:expand]=="true" : true
 
-		# Load microposts for the viewer (group/user)
+		# Load microposts for the viewer (group or user depending on context)
 		@user = nil
 		@viewer = nil
 		@micropost = nil

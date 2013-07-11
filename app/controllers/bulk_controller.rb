@@ -1,3 +1,5 @@
+# Coded by: Matt Richardson
+
 require 'securerandom'
 
 class BulkController < ApplicationController

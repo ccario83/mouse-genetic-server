@@ -12,10 +12,11 @@ class PhenotypesController < ApplicationController
   
   # The landing page after the phenotypes are selected
   def show
+    # Get the mouse pathology (mpath) and mouse anatomy (anat) term's ids from those selected in the tree
     @mpath_ids = JSON.parse(params['mpath_ids']).map! { |x| x.to_i }
     @anat_ids =  JSON.parse(params['anat_ids']).map! { |x| x.to_i }
 
-    # Select the Diagnoses with this mpath/manat combination, join the mice strain names, ages, and codes
+    # Select the Diagnoses with this mpath/manat combination and join the mice strain names, ages, and codes
     @mice = Diagnosis.where(:mouse_anatomy_term_id => @anat_ids, :path_base_term_id => @mpath_ids)
     @mice = @mice.joins(:mouse => :strain).select('strains.name AS strain, age, code')
     if @mice.empty?

@@ -101,6 +101,8 @@ function custom_select(select, node)
 // Attach dynatree objects to the two trees (see dynatree documentation)
 $(function()
 {
+	// Loads the dynatree content into the empty mpath div. 
+	// The important function definitions here are the onSelect, which loads custom_select functionality and initAjax, which uses AJAX to load the tree from the OBO file in the public directory
 	$("#mpath_tree").dynatree({
 		initAjax: {
 			url: "/phenotypes/get_mpath_tree",

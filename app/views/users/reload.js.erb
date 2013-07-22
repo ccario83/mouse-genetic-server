@@ -10,15 +10,17 @@ $("#member-panel").html("<%= escape_javascript(render :partial => 'groups/member
 rotate($('#collapse-members'), 0, -5, -90);
 <% end %>
 
-
+// If the member modal is being displayed, keep it displayed.
+// First test if the CSS display is set to 'block'. If the modal is closed, it will be set to 'hidden'.
 var display_modal = ($('#edit-members').css('display') == 'block');
+// The modals state should be open. Attach the bootstrap .modal() function to it, and remove the 'hide' and 'fade' css classes so it becomes displayed
 if (display_modal)
 {
 $('#edit-members').modal();
 $('#edit-members').removeClass('hide');
 $('#edit-members').removeClass('fade');
 
-// Hack to prevend double backdrops
+// Hack to prevend double backdrops when redisplaying the modal.
 $('.modal-backdrop').not(':last').remove();
 }
 

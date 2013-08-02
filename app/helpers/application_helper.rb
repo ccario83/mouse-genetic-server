@@ -12,7 +12,7 @@ module ApplicationHelper
 	
 	def color_tag(record)
 		tag = ""
-		record[0] if record.is_a? Array and record.length == 1
+		record = record[0] if record.is_a? Array and record.length == 1
 		if record.is_a? Array
 			if record[0].class == User
 				if record == current_user

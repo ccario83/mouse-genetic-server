@@ -147,7 +147,7 @@ class UsersController < ApplicationController
 		# Verify the user has permissions to accept the group (was invited) and confirm the membership
 		if (not current_user.is_member?(@group)) || (current_user.confirmed_member?(@group))
 			flash[:error] = "Nice try..."
-			redirect_to :back
+			render :json => { :type => 'bad'}.to_json
 		else
 			current_user.confirm_membership(@group)
 			# Return the data to the client so jQuery can update page
@@ -165,7 +165,7 @@ class UsersController < ApplicationController
 		# Verify the user has permissions to decline the group (was invited) and decline the membership
 		if (not current_user.is_member?(@group)) || (current_user.confirmed_member?(@group))
 			flash[:error] = "Nice try..."
-			redirect_to :back
+			render :json => { :type => 'bad'}.to_json
 		else
 			# A membership is declined by destroying the membership (request)
 			current_user.memberships.where(:group_id => @group.id)[0].destroy
@@ -183,8 +183,8 @@ class UsersController < ApplicationController
 		
 		# Verify the user has permissions to do this and also that the current_user isn't the group creator
 		if (not current_user.is_member?(@group)) || (current_user == @group.creator)
-			flash[:error] = "Nice try..."
-			redirect_to :back
+			flash[:error] = "You cannot leave a group you created, delete it instead."
+			render :json => { :type => 'bad'}.to_json
 		else
 			# A group is left by destroying the users membership to it
 			current_user.memberships.where(:group_id => @group.id)[0].destroy
@@ -203,7 +203,7 @@ class UsersController < ApplicationController
 		# Verify the user has permissions to destroy the group (is the creator)
 		if @group.creator != current_user
 			flash[:error] = "Nice try..."
-			redirect_to :back
+			render :json => { :type => 'bad'}.to_json
 		else
 			# And destroy it
 			@group.destroy

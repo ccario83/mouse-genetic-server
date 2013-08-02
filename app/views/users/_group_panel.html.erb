@@ -17,9 +17,6 @@
 		<i class="icon-list<% if confirmed_groups.length != all_groups_length %> pulsate <% end %><% if all_groups_length == 0  %> disabled<% end %>" data-toggle="modal" data-target="#edit-groups"></i>
 	</div>
 </div>
-<div id="edit-groups" class="modal hide fade">
-	<%= render 'users/group_management_form', groups: @user.groups.order(:name) %>
-</div>
 
 <div id="new-group" class="modal hide fade">
 	<%= render 'groups/group_form' %>

@@ -44,7 +44,7 @@ class MicropostsController < ApplicationController
 		elsif @micropost.recipient_type == 'user'
 			@micropost.user_recipients = recipients
 		end
-		
+
 		# Update a flash message
 		if @micropost.save
 			flash[:success] = "The micropost was successfully created."

@@ -20,6 +20,7 @@ flash_notice("<%= notice %>", "<%= alert_type %>");
 	<% end %>
 <% else %>
 	$("#new-group").modal('hide');
+	$("#edit-groups").html("<%= escape_javascript(render :partial => 'users/group_management_form', :locals => { groups: @user.groups.order(:name) }) %>");
 	update_div('#group-panel');
 	update_div('#datafile-panel');
 	update_div('#job-panel');

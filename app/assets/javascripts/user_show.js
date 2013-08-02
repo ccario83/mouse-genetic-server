@@ -188,22 +188,6 @@ function post_group_change(response)
 			// Enable the leave button and attach the leave callback
 			$('#'+response['id']+'.icon-signout').addClass('leave');
 			$('#'+response['id']+'.leave').removeClass('disabled');
-			$('#'+response['id']+'.leave').click(function()
-			{
-				var id = $(this)[0].id;
-				$.ajax(
-				{
-					// Send the request as a get to the url /phenotypes/query
-					//async: false,
-					type:'post',
-					url: '/users/leave_group',
-					headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')},
-					data: {id: id},
-					dataType: 'json',
-					success: function(response) {post_group_change(response)},
-					error: function(XMLHttpRequest, textStatus, errorThrown) { ajax_error(XMLHttpRequest, textStatus, errorThrown); },
-				});
-			});
 			
 			// Solidify group icon
 			$('#'+response['id']+'.icon-group').removeClass('faded');
@@ -244,6 +228,10 @@ function post_group_change(response)
 			$(row).animate({backgroundColor:'#f2dede'},'fast');
 			$(row).animate({backgroundColor:'white'},'fast');
 			$(row).fadeOut('slow');
+		break;
+
+		case 'bad':
+			alert('There was an error handling AJAX on rubys end');
 		break;
 	}
 	// Update the group panel 

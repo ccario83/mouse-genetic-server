@@ -18,8 +18,7 @@
 		<%= f.association :groups, :collection => groups, :selected => datafile.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:514px;", :class => 'edit_datafile_groups', :id => "datafile-#{datafile.id || 'new'}" } %>
 		<% else %>
 			<% if mode=='Create' %>
-			The uploaded data will automatically be shared with this group.<br/><br/>
-			<%= f.association :groups, :collection => groups, :selected => @viewer.id, :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:514px;", :class => 'edit_datafile_groups', :id => "datafile-#{datafile.id || 'new'}" }, :as => :hidden %>
+			<%= f.association :groups, :collection => groups, :selected => @viewer.id, :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:514px;", :class => 'edit_datafile_groups', :id => "datafile-#{datafile.id || 'new'}" }  %>
 			<% else %>
 			<%= f.association :groups, :collection => groups, :selected => datafile.groups.map(&:id), :label => 'Share with group(s):', :input_html => { 'data-placeholder'=> 'No groups selected (private)', :style => "width:514px;", :class => 'edit_datafile_groups', :id => "datafile-#{datafile.id || 'new'}" } %>
 			<% end %>

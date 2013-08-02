@@ -18,6 +18,9 @@
 <div id="group-panel" class="row-fluid">
 	<%= render 'users/group_panel' %>
 </div>
+<div id="edit-groups" class="modal hide fade">
+	<%= render 'users/group_management_form', groups: @user.groups.order(:name) %>
+</div>
 <hr>
 
 <div id= "datafile-panel" class="row-fluid">

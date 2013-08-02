@@ -32,8 +32,7 @@ class Micropost < ActiveRecord::Base
 		# Make sure there is at least one recipient 
 		def recipient_presence
 			if self.user_recipients.empty? && self.group_recipients.empty?
-				errors.add(:group_recipient, "Please specify at least one group or user recipient")
-				errors.add(:user_recipient, "Please specify at least one group or user recipient")
+				errors.add(:user_recipients, "Please specify at least one group or user recipient")
 			end
 		end
 
